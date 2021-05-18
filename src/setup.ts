@@ -1,6 +1,6 @@
-import { Color, ROLES, Square } from './types';
-import { SquareSet } from './squareSet';
-import { Board } from './board';
+import {Color, ROLES, Square} from './types';
+import {SquareSet} from './squareSet';
+import {Board} from './board';
 
 export class MaterialSide {
   pawn: number;
@@ -110,6 +110,10 @@ export class RemainingChecks {
 
   static default(): RemainingChecks {
     return new RemainingChecks(3, 3);
+  }
+
+  static twoCheck(): RemainingChecks {
+    return new RemainingChecks(2, 2);
   }
 
   clone(): RemainingChecks {

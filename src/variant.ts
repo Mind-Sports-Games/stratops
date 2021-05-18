@@ -313,7 +313,7 @@ export class TwoCheck extends Chess {
 
   static default(): TwoCheck {
     const pos = super.default();
-    pos.remainingChecks = RemainingChecks.default();
+    pos.remainingChecks = RemainingChecks.twoCheck();
     return pos;
   }
 
