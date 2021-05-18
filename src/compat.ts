@@ -1,6 +1,6 @@
-import { Rules, SquareName, Move, isDrop } from './types';
-import { makeSquare, squareFile } from './util';
-import { Position } from './chess';
+import {Rules, SquareName, Move, isDrop} from './types';
+import {makeSquare, squareFile} from './util';
+import {Position} from './chess';
 
 export interface ChessgroundDestsOpts {
   chess960?: boolean;
@@ -52,6 +52,7 @@ export function lichessVariantRules(
     | 'antichess'
     | 'fromPosition'
     | 'kingOfTheHill'
+    | 'twoCheck'
     | 'threeCheck'
     | 'atomic'
     | 'horde'
@@ -65,6 +66,8 @@ export function lichessVariantRules(
       return 'chess';
     case 'threeCheck':
       return '3check';
+    case 'twoCheck':
+      return '2check';
     case 'kingOfTheHill':
       return 'kingofthehill';
     case 'racingKings':
