@@ -1,13 +1,13 @@
-import {Result} from '@badrap/result';
-import {Square, Outcome, Color, COLORS, Piece, Rules} from './types';
-import {defined, opposite} from './util';
-import {between, kingAttacks} from './attacks';
-import {SquareSet} from './squareSet';
-import {Board} from './board';
-import {Setup, RemainingChecks, Material} from './setup';
-import {PositionError, Position, IllegalSetup, Context, Castles, Chess} from './chess';
+import { Result } from '@badrap/result';
+import { Square, Outcome, Color, COLORS, Piece, Rules } from './types';
+import { defined, opposite } from './util';
+import { between, kingAttacks } from './attacks';
+import { SquareSet } from './squareSet';
+import { Board } from './board';
+import { Setup, RemainingChecks, Material } from './setup';
+import { PositionError, Position, IllegalSetup, Context, Castles, Chess } from './chess';
 
-export {Position, PositionError, IllegalSetup, Context, Chess, Castles};
+export { Position, PositionError, IllegalSetup, Context, Chess, Castles };
 
 export class Crazyhouse extends Chess {
   protected constructor() {
@@ -68,8 +68,8 @@ export class Crazyhouse extends Chess {
         this.pockets?.[this.turn].hasNonPawns()
           ? SquareSet.full()
           : this.pockets?.[this.turn].hasPawns()
-            ? SquareSet.backranks().complement()
-            : SquareSet.empty()
+          ? SquareSet.backranks().complement()
+          : SquareSet.empty()
       );
 
     ctx = ctx || this.ctx();
@@ -172,7 +172,7 @@ export class Atomic extends Chess {
     let dests = SquareSet.empty();
     for (const to of this.pseudoDests(square, ctx)) {
       const after = this.clone();
-      after.play({from: square, to});
+      after.play({ from: square, to });
       const ourKing = after.board.kingOf(this.turn);
       if (
         defined(ourKing) &&
@@ -191,7 +191,7 @@ export class Atomic extends Chess {
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     for (const color of COLORS) {
-      if (this.board.pieces(color, 'king').isEmpty()) return {winner: opposite(color)};
+      if (this.board.pieces(color, 'king').isEmpty()) return { winner: opposite(color) };
     }
     return;
   }
@@ -267,7 +267,7 @@ export class Antichess extends Chess {
   variantOutcome(ctx?: Context): Outcome | undefined {
     ctx = ctx || this.ctx();
     if (ctx.variantEnd || this.isStalemate(ctx)) {
-      return {winner: this.turn};
+      return { winner: this.turn };
     }
     return;
   }
@@ -300,7 +300,7 @@ export class KingOfTheHill extends Chess {
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     for (const color of COLORS) {
-      if (this.board.pieces(color, 'king').intersects(SquareSet.center())) return {winner: color};
+      if (this.board.pieces(color, 'king').intersects(SquareSet.center())) return { winner: color };
     }
     return;
   }
@@ -339,7 +339,7 @@ export class TwoCheck extends Chess {
   variantOutcome(_ctx?: Context): Outcome | undefined {
     if (this.remainingChecks) {
       for (const color of COLORS) {
-        if (this.remainingChecks[color] <= 0) return {winner: color};
+        if (this.remainingChecks[color] <= 0) return { winner: color };
       }
     }
     return;
@@ -379,7 +379,7 @@ export class ThreeCheck extends Chess {
   variantOutcome(_ctx?: Context): Outcome | undefined {
     if (this.remainingChecks) {
       for (const color of COLORS) {
-        if (this.remainingChecks[color] <= 0) return {winner: color};
+        if (this.remainingChecks[color] <= 0) return { winner: color };
       }
     }
     return;
@@ -431,7 +431,7 @@ class RacingKings extends Chess {
     let dests = SquareSet.empty();
     for (const to of super.dests(square, ctx)) {
       // Valid, because there are no promotions (or even pawns).
-      const move = {from: square, to};
+      const move = { from: square, to };
       const after = this.clone();
       after.play(move);
       if (!after.isCheck()) dests = dests.with(to);
@@ -465,9 +465,9 @@ class RacingKings extends Chess {
     const goal = SquareSet.fromRank(7);
     const blackInGoal = this.board.pieces('black', 'king').intersects(goal);
     const whiteInGoal = this.board.pieces('white', 'king').intersects(goal);
-    if (blackInGoal && !whiteInGoal) return {winner: 'black'};
-    if (whiteInGoal && !blackInGoal) return {winner: 'white'};
-    return {winner: undefined};
+    if (blackInGoal && !whiteInGoal) return { winner: 'black' };
+    if (whiteInGoal && !blackInGoal) return { winner: 'white' };
+    return { winner: undefined };
   }
 }
 
@@ -525,8 +525,8 @@ export class Horde extends Chess {
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
-    if (this.board.white.isEmpty()) return {winner: 'black'};
-    if (this.board.black.isEmpty()) return {winner: 'white'};
+    if (this.board.white.isEmpty()) return { winner: 'black' };
+    if (this.board.black.isEmpty()) return { winner: 'white' };
     return;
   }
 }

@@ -1,6 +1,6 @@
-import {Rules, SquareName, Move, isDrop} from './types';
-import {makeSquare, squareFile} from './util';
-import {Position} from './chess';
+import { Rules, SquareName, Move, isDrop } from './types';
+import { makeSquare, squareFile } from './util';
+import { Position } from './chess';
 
 export interface ChessgroundDestsOpts {
   chess960?: boolean;

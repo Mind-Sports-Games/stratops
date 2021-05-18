@@ -1,6 +1,6 @@
-import {Color, ROLES, Square} from './types';
-import {SquareSet} from './squareSet';
-import {Board} from './board';
+import { Color, ROLES, Square } from './types';
+import { SquareSet } from './squareSet';
+import { Board } from './board';
 
 export class MaterialSide {
   pawn: number;
