@@ -57,6 +57,7 @@ export function lichessVariantRules(
     | 'horde'
     | 'racingKings'
     | 'crazyhouse'
+    | 'linesOfAction'
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -69,6 +70,8 @@ export function lichessVariantRules(
       return 'kingofthehill';
     case 'racingKings':
       return 'racingkings';
+    case 'linesOfAction':
+      return 'linesofaction';
     default:
       return variant;
   }

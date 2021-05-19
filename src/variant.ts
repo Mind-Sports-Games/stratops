@@ -491,6 +491,45 @@ export class Horde extends Chess {
   }
 }
 
+export class LinesOfAction extends Chess {
+  protected constructor() {
+    super('linesofaction');
+  }
+
+  static default(): LinesOfAction {
+    const pos = super.default();
+    pos.castles = Castles.empty();
+    return pos as LinesOfAction;
+  }
+
+  static fromSetup(setup: Setup): Result<LinesOfAction, PositionError> {
+    return super.fromSetup(setup).map(pos => {
+        pos.castles = Castles.empty();
+      return pos as LinesOfAction;
+    });
+  }
+
+  clone(): LinesOfAction {
+    return super.clone() as LinesOfAction;
+  }
+
+  hasInsufficientMaterial(color: Color): boolean {
+    return this.board.pieces(color, 'king').equals(this.board[color]);
+  }
+
+  isVariantEnd(): boolean {
+    return this.board[this.turn].isEmpty();
+  }
+
+  variantOutcome(ctx?: Context): Outcome | undefined {
+    ctx = ctx || this.ctx();
+    if (ctx.variantEnd || this.isStalemate(ctx)) {
+      return { winner: this.turn };
+    }
+    return;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -509,6 +548,8 @@ export function defaultPosition(rules: Rules): Position {
       return ThreeCheck.default();
     case 'crazyhouse':
       return Crazyhouse.default();
+    case 'linesofaction':
+      return LinesOfAction.default();
   }
 }
 
@@ -530,5 +571,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return ThreeCheck.fromSetup(setup);
     case 'crazyhouse':
       return Crazyhouse.fromSetup(setup);
+    case 'linesofaction':
+      return LinesOfAction.fromSetup(setup);
   }
 }
