@@ -124,7 +124,9 @@ export function parseSan(pos: Position, san: string): Move | undefined {
   // Optimization: Reduce set of candidates
   const pawnAdvance = role === 'pawn' ? SquareSet.fromFile(squareFile(to)) : SquareSet.empty();
   candidates = candidates.intersect(
-    pawnAdvance.union(attacks({ color: opposite(pos.turn), role }, to, pos.board.occupied))
+    pawnAdvance.union(
+      attacks({ color: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.white, pos.board.black)
+    )
   );
 
   // Check uniqueness and legality
