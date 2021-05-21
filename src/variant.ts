@@ -491,6 +491,71 @@ export class Horde extends Chess {
   }
 }
 
+export class LinesOfAction extends Chess {
+  protected constructor() {
+    super('linesofaction');
+  }
+
+  static default(): LinesOfAction {
+    const pos = new this();
+    pos.board = Board.linesOfAction();
+    pos.pockets = undefined;
+    pos.turn = 'white';
+    pos.castles = Castles.empty();
+    pos.epSquare = undefined;
+    pos.remainingChecks = undefined;
+    pos.halfmoves = 0;
+    pos.fullmoves = 1;
+    return pos;
+  }
+
+  static fromSetup(setup: Setup): Result<LinesOfAction, PositionError> {
+    return super.fromSetup(setup) as Result<LinesOfAction, PositionError>;
+  }
+
+  protected validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+    // TODO: maybe do some more validation of the position
+    return Result.ok(undefined);
+  }
+
+  clone(): LinesOfAction {
+    return super.clone() as LinesOfAction;
+  }
+
+  hasInsufficientMaterial(): boolean {
+    return false;
+  }
+
+  isVariantEnd(): boolean {
+    return !!this.variantOutcome();
+  }
+
+  isColorConnected(color: Color): boolean {
+    let pieces = color === 'white' ? this.board.white : this.board.black;
+    let connected = SquareSet.empty();
+
+    let next = pieces.first();
+    while (next) {
+      connected = connected.with(next);
+      next = kingAttacks(next).intersect(pieces).diff(connected).first();
+    }
+    return connected.size() > 0 && connected.size() == pieces.size();
+  }
+
+  variantOutcome(_ctx?: Context): Outcome | undefined {
+    const whiteWins = this.isColorConnected('white');
+    const blackWins = this.isColorConnected('black');
+    if (whiteWins && !blackWins) {
+      return { winner: 'white' };
+    } else if (!whiteWins && blackWins) {
+      return { winner: 'black' };
+    } else {
+      return undefined;
+    }
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -509,6 +574,8 @@ export function defaultPosition(rules: Rules): Position {
       return ThreeCheck.default();
     case 'crazyhouse':
       return Crazyhouse.default();
+    case 'linesofaction':
+      return LinesOfAction.default();
   }
 }
 
@@ -530,5 +597,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return ThreeCheck.fromSetup(setup);
     case 'crazyhouse':
       return Crazyhouse.fromSetup(setup);
+    case 'linesofaction':
+      return LinesOfAction.fromSetup(setup);
   }
 }

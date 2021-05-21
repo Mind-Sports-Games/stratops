@@ -12,15 +12,19 @@
  * @packageDocumentation
  */
 
-import { squareFile, squareRank } from './util';
+import { squareFile, squareRank, zip } from './util';
 import { Square, Piece, Color, BySquare } from './types';
 import { SquareSet } from './squareSet';
+
+function isValid(square: Square): boolean {
+  return square >= 0 && square < 64;
+}
 
 function computeRange(square: Square, deltas: number[]): SquareSet {
   let range = SquareSet.empty();
   for (const delta of deltas) {
     const sq = square + delta;
-    if (0 <= sq && sq < 64 && Math.abs(squareFile(square) - squareFile(sq)) <= 2) {
+    if (isValid(sq) && Math.abs(squareFile(square) - squareFile(sq)) <= 2) {
       range = range.with(sq);
     }
   }
@@ -124,10 +128,47 @@ export function queenAttacks(square: Square, occupied: SquareSet): SquareSet {
 }
 
 /**
+ * Gets squares attacked or defended by a loachecker on `square`, given `occupied`
+ * squares.
+ */
+export function linesOfActionAttacks(
+  color: Color,
+  square: Square,
+  occupied: SquareSet,
+  white: SquareSet,
+  black: SquareSet
+): SquareSet {
+  // TODO: write some tests.
+  const ours = color === 'white' ? white : black;
+
+  const theirs = color === 'black' ? white : black;
+  const deltaToSquare = (delta: Square) => square + delta;
+  const pieceCountInRay = (dir: Square) => (isValid(dir) ? ray(square, dir).intersect(occupied).size() : 0);
+  const nearby = [-9, -8, -7, -1, 1, 7, 8, 9];
+  // Currently this calculates the rays twice for pieces on the interior of the board.
+  // but we have to deal with pieces on the exterior too.
+  const pieceCountPerRay = nearby.map(deltaToSquare).map(pieceCountInRay);
+  const possibleTargets = zip(nearby, pieceCountPerRay)
+    // NOTE: The following line can produce invalid moves
+    .filter(([_, numPieces]) => numPieces > 0)
+    .map(([delta, numPieces]) => square + numPieces * delta)
+    .filter(isValid);
+  const destsByPieceCount = possibleTargets.reduce((range, dest) => range.with(dest), SquareSet.empty());
+  const nonBlockedSquares = bishopAttacks(square, theirs).xor(rookAttacks(square, theirs));
+  return nonBlockedSquares.intersect(destsByPieceCount).diff(ours);
+}
+
+/**
  * Gets squares attacked or defended by a `piece` on `square`, given
  * `occupied` squares.
  */
-export function attacks(piece: Piece, square: Square, occupied: SquareSet): SquareSet {
+export function attacks(
+  piece: Piece,
+  square: Square,
+  occupied: SquareSet,
+  white: SquareSet,
+  black: SquareSet
+): SquareSet {
   switch (piece.role) {
     case 'pawn':
       return pawnAttacks(piece.color, square);
@@ -141,6 +182,8 @@ export function attacks(piece: Piece, square: Square, occupied: SquareSet): Squa
       return queenAttacks(square, occupied);
     case 'king':
       return kingAttacks(square);
+    case 'loachecker':
+      return linesOfActionAttacks(piece.color, square, occupied, white, black);
   }
 }
 

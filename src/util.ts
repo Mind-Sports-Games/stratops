@@ -30,10 +30,12 @@ export function roleToChar(role: Role): string {
       return 'q';
     case 'king':
       return 'k';
+    case 'loachecker':
+      return 'l';
   }
 }
 
-export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K'): Role;
+export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'l' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'L'): Role;
 export function charToRole(ch: string): Role | undefined;
 export function charToRole(ch: string): Role | undefined {
   switch (ch) {
@@ -55,6 +57,9 @@ export function charToRole(ch: string): Role | undefined {
     case 'K':
     case 'k':
       return 'king';
+    case 'L':
+    case 'l':
+      return 'loachecker';
     default:
       return;
   }
@@ -103,4 +108,8 @@ export function makeUci(move: Move): string {
 
 export function kingCastlesTo(color: Color, side: CastlingSide): Square {
   return color === 'white' ? (side === 'a' ? 2 : 6) : side === 'a' ? 58 : 62;
+}
+
+export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
+  return a.map((k, i) => [k, b[i]]);
 }
