@@ -109,3 +109,7 @@ export function makeUci(move: Move): string {
 export function kingCastlesTo(color: Color, side: CastlingSide): Square {
   return color === 'white' ? (side === 'a' ? 2 : 6) : side === 'a' ? 58 : 62;
 }
+
+export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
+  return a.map((k, i) => [k, b[i]]);
+}
