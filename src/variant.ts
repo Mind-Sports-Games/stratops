@@ -504,7 +504,7 @@ export class LinesOfAction extends Chess {
 
   static fromSetup(setup: Setup): Result<LinesOfAction, PositionError> {
     return super.fromSetup(setup).map(pos => {
-        pos.castles = Castles.empty();
+      pos.castles = Castles.empty();
       return pos as LinesOfAction;
     });
   }
