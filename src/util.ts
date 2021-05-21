@@ -30,10 +30,12 @@ export function roleToChar(role: Role): string {
       return 'q';
     case 'king':
       return 'k';
+    case 'loachecker':
+      return 'l';
   }
 }
 
-export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K'): Role;
+export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'l' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'L'): Role;
 export function charToRole(ch: string): Role | undefined;
 export function charToRole(ch: string): Role | undefined {
   switch (ch) {
@@ -55,6 +57,9 @@ export function charToRole(ch: string): Role | undefined {
     case 'K':
     case 'k':
       return 'king';
+    case 'L':
+    case 'l':
+      return 'loachecker';
     default:
       return;
   }

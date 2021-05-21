@@ -1,3 +1,4 @@
+// TODO: SAN isn't really great for other games, should we bother implementing it?
 import { FILE_NAMES, RANK_NAMES, isDrop, Move, CastlingSide } from './types';
 import { charToRole, defined, roleToChar, parseSquare, makeSquare, squareFile, squareRank, opposite } from './util';
 import { SquareSet } from './squareSet';

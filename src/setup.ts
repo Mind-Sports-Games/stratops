@@ -9,6 +9,7 @@ export class MaterialSide {
   rook: number;
   queen: number;
   king: number;
+  loachecker: number;
 
   private constructor() {}
 
@@ -53,11 +54,14 @@ export class MaterialSide {
   }
 
   hasNonPawns(): boolean {
-    return this.knight > 0 || this.bishop > 0 || this.rook > 0 || this.queen > 0 || this.king > 0;
+    // TODO: I don't know if we should be editing this.
+    return (
+      this.knight > 0 || this.bishop > 0 || this.rook > 0 || this.queen > 0 || this.king > 0 || this.loachecker > 0
+    );
   }
 
   count(): number {
-    return this.pawn + this.knight + this.bishop + this.rook + this.queen + this.king;
+    return this.pawn + this.knight + this.bishop + this.rook + this.queen + this.king + this.loachecker;
   }
 }
 

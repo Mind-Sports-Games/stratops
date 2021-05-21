@@ -124,6 +124,14 @@ export function queenAttacks(square: Square, occupied: SquareSet): SquareSet {
 }
 
 /**
+ * Gets squares attacked or defended by a loachecker on `square`, given `occupied`
+ * squares.
+ */
+export function linesOfActionAttacks(square: Square, occupied: SquareSet): SquareSet {
+  return bishopAttacks(square, occupied).xor(rookAttacks(square, occupied));
+}
+
+/**
  * Gets squares attacked or defended by a `piece` on `square`, given
  * `occupied` squares.
  */
@@ -141,6 +149,8 @@ export function attacks(piece: Piece, square: Square, occupied: SquareSet): Squa
       return queenAttacks(square, occupied);
     case 'king':
       return kingAttacks(square);
+    case 'loachecker':
+      return linesOfActionAttacks(square, occupied);
   }
 }
 

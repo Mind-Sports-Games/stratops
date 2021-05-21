@@ -29,6 +29,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   rook: SquareSet;
   queen: SquareSet;
   king: SquareSet;
+  loachecker: SquareSet;
 
   private constructor() {}
 
@@ -50,6 +51,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     board.rook = new SquareSet(0x4242, 0);
     board.queen = new SquareSet(0x0081, 0);
     board.king = new SquareSet(0x8100, 0);
+    board.loachecker = new SquareSet(0, 0);
     return board;
   }
 
@@ -65,6 +67,23 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     board.rook = new SquareSet(0, 0x8100_0000);
     board.queen = new SquareSet(0, 0x0800_0000);
     board.king = new SquareSet(0, 0x1000_0000);
+    board.loachecker = new SquareSet(0, 0);
+    return board;
+  }
+
+  static loa(): Board {
+    const board = new Board();
+    board.occupied = new SquareSet(0x8181_817e, 0x7e81_8181);
+    board.promoted = SquareSet.empty();
+    board.white = new SquareSet(0x8181_8100, 0x0081_8181);
+    board.black = new SquareSet(0x007e, 0x7300_0000);
+    board.pawn = new SquareSet(0, 0);
+    board.knight = new SquareSet(0, 0);
+    board.bishop = new SquareSet(0, 0);
+    board.rook = new SquareSet(0, 0);
+    board.queen = new SquareSet(0, 0);
+    board.king = new SquareSet(0, 0);
+    board.loachecker = board.occupied;
     return board;
   }
 
@@ -82,6 +101,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     this.rook = new SquareSet(0x81, 0x8100_0000);
     this.queen = new SquareSet(0x8, 0x0800_0000);
     this.king = new SquareSet(0x10, 0x1000_0000);
+    this.loachecker = new SquareSet(0, 0);
   }
 
   static empty(): Board {

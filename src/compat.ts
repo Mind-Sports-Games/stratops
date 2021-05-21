@@ -31,6 +31,7 @@ export function chessgroundMove(move: Move): SquareName[] {
 }
 
 export function scalachessCharPair(move: Move): string {
+  // TODO: Update this once we have it in scala chess.
   if (isDrop(move))
     return String.fromCharCode(
       35 + move.to,
@@ -57,6 +58,7 @@ export function lichessVariantRules(
     | 'horde'
     | 'racingKings'
     | 'crazyhouse'
+    | 'linesOfAction'
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -69,6 +71,8 @@ export function lichessVariantRules(
       return 'kingofthehill';
     case 'racingKings':
       return 'racingkings';
+    case 'linesOfAction':
+      return 'linesofaction';
     default:
       return variant;
   }
