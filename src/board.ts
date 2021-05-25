@@ -75,8 +75,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     const board = new Board();
     board.occupied = new SquareSet(0x8181_817e, 0x7e81_8181);
     board.promoted = SquareSet.empty();
-    board.white = new SquareSet(0x007e, 0x7e00_0000);
-    board.black = new SquareSet(0x8181_8100, 0x0081_8181);
+    board.white = new SquareSet(0x8181_8100, 0x0081_8181);
+    board.black = new SquareSet(0x007e, 0x7e00_0000);
     board.pawn = new SquareSet(0, 0);
     board.knight = new SquareSet(0, 0);
     board.bishop = new SquareSet(0, 0);

@@ -31,21 +31,21 @@ type LoaMoveTest = {
 test('lines-of-action first move generation', () => {
   const pos = Board.linesOfAction();
   const tests: LoaMoveTest[] = [
-    { color: 'white', start: parseSquare('b8'), targets: ['b6', 'd6', 'h8'] },
-    { color: 'white', start: parseSquare('c8'), targets: ['a6', 'c6', 'e6'] },
-    { color: 'white', start: parseSquare('d8'), targets: ['b6', 'd6', 'f6'] },
-    { color: 'white', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
-    { color: 'white', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
-    { color: 'white', start: parseSquare('f8'), targets: ['d6', 'f6', 'h6'] },
-    { color: 'white', start: parseSquare('g8'), targets: ['a8', 'e6', 'g6'] },
+    { color: 'black', start: parseSquare('b8'), targets: ['b6', 'd6', 'h8'] },
+    { color: 'black', start: parseSquare('c8'), targets: ['a6', 'c6', 'e6'] },
+    { color: 'black', start: parseSquare('d8'), targets: ['b6', 'd6', 'f6'] },
+    { color: 'black', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
+    { color: 'black', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
+    { color: 'black', start: parseSquare('f8'), targets: ['d6', 'f6', 'h6'] },
+    { color: 'black', start: parseSquare('g8'), targets: ['a8', 'e6', 'g6'] },
 
-    { color: 'white', start: parseSquare('b1'), targets: ['b3', 'd3', 'h1'] },
-    { color: 'white', start: parseSquare('c1'), targets: ['a3', 'c3', 'e3'] },
-    { color: 'white', start: parseSquare('d1'), targets: ['b3', 'd3', 'f3'] },
-    { color: 'white', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
-    { color: 'white', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
-    { color: 'white', start: parseSquare('f1'), targets: ['d3', 'f3', 'h3'] },
-    { color: 'white', start: parseSquare('g1'), targets: ['a1', 'e3', 'g3'] },
+    { color: 'black', start: parseSquare('b1'), targets: ['b3', 'd3', 'h1'] },
+    { color: 'black', start: parseSquare('c1'), targets: ['a3', 'c3', 'e3'] },
+    { color: 'black', start: parseSquare('d1'), targets: ['b3', 'd3', 'f3'] },
+    { color: 'black', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
+    { color: 'black', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
+    { color: 'black', start: parseSquare('f1'), targets: ['d3', 'f3', 'h3'] },
+    { color: 'black', start: parseSquare('g1'), targets: ['a1', 'e3', 'g3'] },
   ];
   tests.forEach(({ color, start, targets }) => {
     if (!defined(start)) return;
@@ -68,19 +68,19 @@ test('lines-of-action second move generation', () => {
   }
   pos.set(c6, piece);
   const tests: LoaMoveTest[] = [
-    { color: 'black', start: parseSquare('a7'), targets: ['a1', 'c5', 'c7'] },
-    { color: 'black', start: parseSquare('a6'), targets: ['b7', 'c4'] },
-    { color: 'black', start: parseSquare('a5'), targets: ['c7', 'c5', 'c3'] },
-    { color: 'black', start: parseSquare('a4'), targets: ['c4', 'c2'] },
-    { color: 'black', start: parseSquare('a3'), targets: ['c5', 'c3', 'c1'] },
-    { color: 'black', start: parseSquare('a2'), targets: ['a8', 'c2', 'c4'] },
+    { color: 'white', start: parseSquare('a7'), targets: ['a1', 'c5', 'c7'] },
+    { color: 'white', start: parseSquare('a6'), targets: ['b7', 'c4'] },
+    { color: 'white', start: parseSquare('a5'), targets: ['c7', 'c5', 'c3'] },
+    { color: 'white', start: parseSquare('a4'), targets: ['c4', 'c2'] },
+    { color: 'white', start: parseSquare('a3'), targets: ['c5', 'c3', 'c1'] },
+    { color: 'white', start: parseSquare('a2'), targets: ['a8', 'c2', 'c4'] },
 
-    { color: 'black', start: parseSquare('h7'), targets: ['h1', 'f5', 'f7'] },
-    { color: 'black', start: parseSquare('h6'), targets: ['e6', 'f4', 'f8'] },
-    { color: 'black', start: parseSquare('h5'), targets: ['f7', 'f5', 'f3'] },
-    { color: 'black', start: parseSquare('h4'), targets: ['f6', 'f4', 'f2'] },
-    { color: 'black', start: parseSquare('h3'), targets: ['f3', 'f1', 'g4'] },
-    { color: 'black', start: parseSquare('h2'), targets: ['h8', 'f2', 'f4'] },
+    { color: 'white', start: parseSquare('h7'), targets: ['h1', 'f5', 'f7'] },
+    { color: 'white', start: parseSquare('h6'), targets: ['e6', 'f4', 'f8'] },
+    { color: 'white', start: parseSquare('h5'), targets: ['f7', 'f5', 'f3'] },
+    { color: 'white', start: parseSquare('h4'), targets: ['f6', 'f4', 'f2'] },
+    { color: 'white', start: parseSquare('h3'), targets: ['f3', 'f1', 'g4'] },
+    { color: 'white', start: parseSquare('h2'), targets: ['h8', 'f2', 'f4'] },
   ];
   tests.forEach(({ color, start, targets }) => {
     if (!defined(start)) return;
