@@ -497,36 +497,62 @@ export class LinesOfAction extends Chess {
   }
 
   static default(): LinesOfAction {
-    const pos = super.default();
+    const pos = new this();
+    pos.board = Board.linesOfAction();
+    pos.pockets = undefined;
+    pos.turn = 'white';
     pos.castles = Castles.empty();
-    return pos as LinesOfAction;
+    pos.epSquare = undefined;
+    pos.remainingChecks = undefined;
+    pos.halfmoves = 0;
+    pos.fullmoves = 1;
+    return pos;
   }
 
   static fromSetup(setup: Setup): Result<LinesOfAction, PositionError> {
-    return super.fromSetup(setup).map(pos => {
-      pos.castles = Castles.empty();
-      return pos as LinesOfAction;
-    });
+    return super.fromSetup(setup) as Result<LinesOfAction, PositionError>;
+  }
+
+  protected validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+    // TODO: maybe do some more validation of the position
+    return Result.ok(undefined);
   }
 
   clone(): LinesOfAction {
     return super.clone() as LinesOfAction;
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
-    return this.board.pieces(color, 'king').equals(this.board[color]);
+  hasInsufficientMaterial(): boolean {
+    return false;
   }
 
   isVariantEnd(): boolean {
-    return this.board[this.turn].isEmpty();
+    return !!this.variantOutcome();
   }
 
-  variantOutcome(ctx?: Context): Outcome | undefined {
-    ctx = ctx || this.ctx();
-    if (ctx.variantEnd || this.isStalemate(ctx)) {
-      return { winner: this.turn };
+  isColorConnected(color: Color): boolean {
+    let pieces = color === 'white' ? this.board.white : this.board.black;
+    let connected = SquareSet.empty();
+
+    let next = pieces.first();
+    while (next) {
+      connected = connected.with(next);
+      next = kingAttacks(next).intersect(pieces).diff(connected).first();
     }
-    return;
+    return connected.size() > 0 && connected.size() == pieces.size();
+  }
+
+  variantOutcome(_ctx?: Context): Outcome | undefined {
+    const whiteWins = this.isColorConnected('white');
+    const blackWins = this.isColorConnected('black');
+    if (whiteWins && !blackWins) {
+      return { winner: 'white' };
+    } else if (!whiteWins && blackWins) {
+      return { winner: 'black' };
+    } else {
+      return undefined;
+    }
   }
 }
 

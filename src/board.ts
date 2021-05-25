@@ -71,7 +71,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     return board;
   }
 
-  static loa(): Board {
+  static linesOfAction(): Board {
     const board = new Board();
     board.occupied = new SquareSet(0x8181_817e, 0x7e81_8181);
     board.promoted = SquareSet.empty();

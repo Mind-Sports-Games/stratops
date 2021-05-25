@@ -129,3 +129,28 @@ test('atomic king exploded', () => {
   expect(pos.isVariantEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'white' });
 });
+
+test('lines of action wins', () => {
+  let pos = setupPosition('linesofaction', parseFen('1LLLLLL1/8/8/8/8/8/8/8 b - - 0 1').unwrap()).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.isVariantEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'white' });
+
+  pos = setupPosition(
+    'linesofaction',
+    parseFen('1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 b - - 0 1').unwrap()
+  ).unwrap();
+  expect(pos.isEnd()).toBe(false);
+  expect(pos.isVariantEnd()).toBe(false);
+  expect(pos.outcome()).toBeUndefined();
+
+  pos = setupPosition('linesofaction', parseFen('8/l6l/l6l/l6l/l6l/l6l/l6l/8 b - - 0 1').unwrap()).unwrap();
+  expect(pos.isEnd()).toBe(false);
+  expect(pos.isVariantEnd()).toBe(false);
+  expect(pos.outcome()).toBeUndefined();
+
+  pos = setupPosition('linesofaction', parseFen('8/l7/l7/l7/l7/l7/l7/8 b - - 0 1').unwrap()).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.isVariantEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'black' });
+});

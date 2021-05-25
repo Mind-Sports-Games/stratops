@@ -29,7 +29,7 @@ type LoaMoveTest = {
 };
 
 test('lines-of-action first move generation', () => {
-  const pos = Board.loa();
+  const pos = Board.linesOfAction();
   const tests: LoaMoveTest[] = [
     { color: 'white', start: parseSquare('b8'), targets: ['b6', 'd6', 'h8'] },
     { color: 'white', start: parseSquare('c8'), targets: ['a6', 'c6', 'e6'] },
@@ -59,7 +59,7 @@ test('lines-of-action first move generation', () => {
 });
 
 test('lines-of-action second move generation', () => {
-  const pos = Board.loa();
+  const pos = Board.linesOfAction();
   const c8 = 58;
   const c6 = 42;
   const piece = pos.take(c8);
