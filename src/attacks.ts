@@ -16,7 +16,7 @@ import { squareFile, squareRank, zip } from './util';
 import { Square, Piece, Color, BySquare } from './types';
 import { SquareSet } from './squareSet';
 
-function isValidSquare(square: Square): boolean {
+function isValid(square: Square): boolean {
   return square >= 0 && square < 64;
 }
 
@@ -24,7 +24,7 @@ function computeRange(square: Square, deltas: number[]): SquareSet {
   let range = SquareSet.empty();
   for (const delta of deltas) {
     const sq = square + delta;
-    if (isValidSquare(sq) && Math.abs(squareFile(square) - squareFile(sq)) <= 2) {
+    if (isValid(sq) && Math.abs(squareFile(square) - squareFile(sq)) <= 2) {
       range = range.with(sq);
     }
   }
@@ -140,20 +140,20 @@ export function linesOfActionAttacks(
 ): SquareSet {
   // TODO: write some tests.
   const ours = color === 'white' ? white : black;
-  const theirs = color === 'black' ? black : white;
+
+  const theirs = color === 'black' ? white : black;
   const deltaToSquare = (delta: Square) => square + delta;
-  const pieceCountInRay = (dir: Square) => ray(square, dir).intersect(occupied).size();
+  const pieceCountInRay = (dir: Square) => (isValid(dir) ? ray(square, dir).intersect(occupied).size() : 0);
   const nearby = [-9, -8, -7, -1, 1, 7, 8, 9];
   // Currently this calculates the rays twice for pieces on the interior of the board.
   // but we have to deal with pieces on the exterior too.
-  const pieceCountPerRay = nearby.map(deltaToSquare).filter(isValidSquare).map(pieceCountInRay);
-
-  const destsByPieceCount = computeRange(
-    square,
-    zip(nearby, pieceCountPerRay)
-      .map(([delta, numPieces]) => square + numPieces * delta)
-      .filter(isValidSquare)
-  );
+  const pieceCountPerRay = nearby.map(deltaToSquare).map(pieceCountInRay);
+  const possibleTargets = zip(nearby, pieceCountPerRay)
+    // NOTE: The following line can produce invalid moves
+    .filter(([_, numPieces]) => numPieces > 0)
+    .map(([delta, numPieces]) => square + numPieces * delta)
+    .filter(isValid);
+  const destsByPieceCount = possibleTargets.reduce((range, dest) => range.with(dest), SquareSet.empty());
   const nonBlockedSquares = bishopAttacks(square, theirs).xor(rookAttacks(square, theirs));
   return nonBlockedSquares.intersect(destsByPieceCount).diff(ours);
 }
