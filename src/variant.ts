@@ -500,7 +500,7 @@ export class LinesOfAction extends Chess {
     const pos = new this();
     pos.board = Board.linesOfAction();
     pos.pockets = undefined;
-    pos.turn = 'black';
+    pos.turn = 'white';
     pos.castles = Castles.empty();
     pos.epSquare = undefined;
     pos.remainingChecks = undefined;
