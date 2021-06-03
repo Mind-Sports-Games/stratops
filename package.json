@@ -1,17 +1,17 @@
 {
   "name": "chessops",
-  "version": "0.8.1",
+  "version": "0.8.1-pstrat1",
   "description": "Chess and chess variant rules and operations",
   "keywords": [
     "chess",
-    "lichess",
+    "playstrategy",
     "fen",
     "pgn",
     "uci",
     "typescript"
   ],
-  "repository": "https://github.com/niklasf/chessops",
-  "author": "Niklas Fiekas <niklas.fiekas@backscattering.de>",
+  "repository": "https://github.com/Mind-Sports-Games/chessops",
+  "author": "playstrategy.org",
   "license": "GPL-3.0-or-later",
   "type": "commonjs",
   "sideEffects": false,
