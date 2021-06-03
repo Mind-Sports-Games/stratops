@@ -26,7 +26,7 @@ export type ByColor<T> = {
   [color in Color]: T;
 };
 
-export const ROLES = ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king'] as const;
+export const ROLES = ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king', 'loachecker'] as const;
 
 export type Role = typeof ROLES[number];
 
@@ -84,6 +84,7 @@ export const RULES = [
   'horde',
   'racingkings',
   'crazyhouse',
+  'linesofaction',
 ] as const;
 
 export type Rules = typeof RULES[number];

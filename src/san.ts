@@ -1,3 +1,4 @@
+// TODO: SAN isn't really great for other games, should we bother implementing it?
 import { FILE_NAMES, RANK_NAMES, isDrop, Move, CastlingSide } from './types';
 import { charToRole, defined, roleToChar, parseSquare, makeSquare, squareFile, squareRank, opposite } from './util';
 import { SquareSet } from './squareSet';
@@ -123,7 +124,9 @@ export function parseSan(pos: Position, san: string): Move | undefined {
   // Optimization: Reduce set of candidates
   const pawnAdvance = role === 'pawn' ? SquareSet.fromFile(squareFile(to)) : SquareSet.empty();
   candidates = candidates.intersect(
-    pawnAdvance.union(attacks({ color: opposite(pos.turn), role }, to, pos.board.occupied))
+    pawnAdvance.union(
+      attacks({ color: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.white, pos.board.black)
+    )
   );
 
   // Check uniqueness and legality

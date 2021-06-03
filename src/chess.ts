@@ -523,7 +523,7 @@ export class Chess extends Position {
     const piece = this.board.get(square);
     if (!piece || piece.color !== this.turn) return SquareSet.empty();
 
-    let pseudo = attacks(piece, square, this.board.occupied);
+    let pseudo = attacks(piece, square, this.board.occupied, this.board.white, this.board.black);
     if (piece.role === 'pawn') {
       let captureTargets = this.board[opposite(this.turn)];
       if (defined(this.epSquare)) captureTargets = captureTargets.with(this.epSquare);
