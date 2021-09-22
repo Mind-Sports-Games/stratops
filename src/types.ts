@@ -80,6 +80,7 @@ export const RULES = [
   'antichess',
   'kingofthehill',
   '3check',
+  '5check',
   'atomic',
   'horde',
   'racingkings',

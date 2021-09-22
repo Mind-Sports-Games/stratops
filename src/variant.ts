@@ -346,6 +346,46 @@ export class ThreeCheck extends Chess {
   }
 }
 
+export class FiveCheck extends Chess {
+  protected constructor() {
+    super('5check');
+  }
+
+  static default(): FiveCheck {
+    const pos = super.default();
+    pos.remainingChecks = RemainingChecks.fiveCheck();
+    return pos;
+  }
+
+  static fromSetup(setup: Setup): Result<FiveCheck, PositionError> {
+    return super.fromSetup(setup).map(pos => {
+      pos.remainingChecks = setup.remainingChecks ? setup.remainingChecks.clone() : RemainingChecks.default();
+      return pos;
+    });
+  }
+
+  clone(): FiveCheck {
+    return super.clone() as FiveCheck;
+  }
+
+  hasInsufficientMaterial(color: Color): boolean {
+    return this.board.pieces(color, 'king').equals(this.board[color]);
+  }
+
+  isVariantEnd(): boolean {
+    return !!this.remainingChecks && (this.remainingChecks.white <= 0 || this.remainingChecks.black <= 0);
+  }
+
+  variantOutcome(_ctx?: Context): Outcome | undefined {
+    if (this.remainingChecks) {
+      for (const color of COLORS) {
+        if (this.remainingChecks[color] <= 0) return { winner: color };
+      }
+    }
+    return;
+  }
+}
+
 class RacingKings extends Chess {
   protected constructor() {
     super('racingkings');
@@ -572,6 +612,8 @@ export function defaultPosition(rules: Rules): Position {
       return KingOfTheHill.default();
     case '3check':
       return ThreeCheck.default();
+    case '5check':
+      return FiveCheck.default();
     case 'crazyhouse':
       return Crazyhouse.default();
     case 'linesofaction':
@@ -595,6 +637,8 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return KingOfTheHill.fromSetup(setup);
     case '3check':
       return ThreeCheck.fromSetup(setup);
+    case '5check':
+      return FiveCheck.fromSetup(setup);
     case 'crazyhouse':
       return Crazyhouse.fromSetup(setup);
     case 'linesofaction':
