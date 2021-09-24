@@ -359,7 +359,7 @@ export class FiveCheck extends Chess {
 
   static fromSetup(setup: Setup): Result<FiveCheck, PositionError> {
     return super.fromSetup(setup).map(pos => {
-      pos.remainingChecks = setup.remainingChecks ? setup.remainingChecks.clone() : RemainingChecks.default();
+      pos.remainingChecks = setup.remainingChecks ? setup.remainingChecks.clone() : RemainingChecks.fiveCheck();
       return pos;
     });
   }
