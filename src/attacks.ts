@@ -170,20 +170,22 @@ export function attacks(
   black: SquareSet
 ): SquareSet {
   switch (piece.role) {
-    case 'pawn':
+    case 'p-piece':
       return pawnAttacks(piece.color, square);
-    case 'knight':
+    case 'n-piece':
       return knightAttacks(square);
-    case 'bishop':
+    case 'b-piece':
       return bishopAttacks(square, occupied);
-    case 'rook':
+    case 'r-piece':
       return rookAttacks(square, occupied);
-    case 'queen':
+    case 'q-piece':
       return queenAttacks(square, occupied);
-    case 'king':
+    case 'k-piece':
       return kingAttacks(square);
-    case 'loachecker':
+    case 'l-piece':
       return linesOfActionAttacks(piece.color, square, occupied, white, black);
+    default:
+      return SquareSet.empty()
   }
 }
 

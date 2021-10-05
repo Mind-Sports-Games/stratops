@@ -3,13 +3,13 @@ import { SquareSet } from './squareSet';
 import { Board } from './board';
 
 export class MaterialSide {
-  pawn: number;
-  knight: number;
-  bishop: number;
-  rook: number;
-  queen: number;
-  king: number;
-  loachecker: number;
+  'p-piece': number;
+  'n-piece': number;
+  'b-piece': number;
+  'r-piece': number;
+  'q-piece': number;
+  'k-piece': number;
+  'l-piece': number;
 
   private constructor() {}
 
@@ -50,18 +50,18 @@ export class MaterialSide {
   }
 
   hasPawns(): boolean {
-    return this.pawn > 0;
+    return this['p-piece'] > 0;
   }
 
   hasNonPawns(): boolean {
     // TODO: I don't know if we should be editing this.
     return (
-      this.knight > 0 || this.bishop > 0 || this.rook > 0 || this.queen > 0 || this.king > 0 || this.loachecker > 0
+      this['n-piece'] > 0 || this['b-piece'] > 0 || this['r-piece'] > 0 || this['q-piece'] > 0 || this['k-piece'] > 0 || this['l-piece'] > 0
     );
   }
 
   count(): number {
-    return this.pawn + this.knight + this.bishop + this.rook + this.queen + this.king + this.loachecker;
+    return this['p-piece'] + this['n-piece'] + this['b-piece'] + this['r-piece'] + this['q-piece'] + this['k-piece'] + this['l-piece'];
   }
 }
 

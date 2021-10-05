@@ -50,8 +50,8 @@ export function dests(dests: Map<Square, SquareSet>): string {
 export function perft(pos: Position, depth: number, log = false): number {
   if (depth < 1) return 1;
 
-  const promotionRoles: Role[] = ['queen', 'knight', 'rook', 'bishop'];
-  if (pos.rules === 'antichess') promotionRoles.push('king');
+  const promotionRoles: Role[] = ['q-piece', 'n-piece', 'r-piece', 'b-piece'];
+  if (pos.rules === 'antichess') promotionRoles.push('k-piece');
 
   const ctx = pos.ctx();
   const dropDests = pos.dropDests(ctx);
@@ -61,7 +61,7 @@ export function perft(pos: Position, depth: number, log = false): number {
     let nodes = 0;
     for (const [from, to] of pos.allDests(ctx)) {
       nodes += to.size();
-      if (pos.board.pawn.has(from)) {
+      if (pos.board['p-piece'].has(from)) {
         const backrank = SquareSet.backrank(opposite(pos.turn));
         nodes += to.intersect(backrank).size() * (promotionRoles.length - 1);
       }
@@ -71,7 +71,7 @@ export function perft(pos: Position, depth: number, log = false): number {
     let nodes = 0;
     for (const [from, dests] of pos.allDests(ctx)) {
       const promotions: Array<Role | undefined> =
-        squareRank(from) === (pos.turn === 'white' ? 6 : 1) && pos.board.pawn.has(from) ? promotionRoles : [undefined];
+        squareRank(from) === (pos.turn === 'white' ? 6 : 1) && pos.board['p-piece'].has(from) ? promotionRoles : [undefined];
       for (const to of dests) {
         for (const promotion of promotions) {
           const child = pos.clone();
@@ -86,7 +86,7 @@ export function perft(pos: Position, depth: number, log = false): number {
     if (pos.pockets) {
       for (const role of ROLES) {
         if (pos.pockets[pos.turn][role] > 0) {
-          for (const to of role === 'pawn' ? dropDests.diff(SquareSet.backranks()) : dropDests) {
+          for (const to of role === 'p-piece' ? dropDests.diff(SquareSet.backranks()) : dropDests) {
             const child = pos.clone();
             const move = { role, to };
             child.play(move);

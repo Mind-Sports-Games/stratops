@@ -23,13 +23,20 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   white: SquareSet;
   black: SquareSet;
 
-  pawn: SquareSet;
-  knight: SquareSet;
-  bishop: SquareSet;
-  rook: SquareSet;
-  queen: SquareSet;
-  king: SquareSet;
-  loachecker: SquareSet;
+  // pawn: SquareSet;
+  // knight: SquareSet;
+  // bishop: SquareSet;
+  // rook: SquareSet;
+  // queen: SquareSet;
+  // king: SquareSet;
+  // loachecker: SquareSet;
+  'p-piece': SquareSet;
+  'n-piece': SquareSet;
+  'b-piece': SquareSet;
+  'r-piece': SquareSet;
+  'q-piece': SquareSet;
+  'k-piece': SquareSet;
+  'l-piece': SquareSet;
 
   private constructor() {}
 
@@ -45,13 +52,13 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     board.promoted = SquareSet.empty();
     board.white = new SquareSet(0xf0f0, 0);
     board.black = new SquareSet(0x0f0f, 0);
-    board.pawn = SquareSet.empty();
-    board.knight = new SquareSet(0x1818, 0);
-    board.bishop = new SquareSet(0x2424, 0);
-    board.rook = new SquareSet(0x4242, 0);
-    board.queen = new SquareSet(0x0081, 0);
-    board.king = new SquareSet(0x8100, 0);
-    board.loachecker = new SquareSet(0, 0);
+    board['p-piece'] = SquareSet.empty();
+    board['n-piece'] = new SquareSet(0x1818, 0);
+    board['b-piece'] = new SquareSet(0x2424, 0);
+    board['r-piece'] = new SquareSet(0x4242, 0);
+    board['q-piece'] = new SquareSet(0x0081, 0);
+    board['k-piece'] = new SquareSet(0x8100, 0);
+    board['l-piece'] = new SquareSet(0, 0);
     return board;
   }
 
@@ -61,13 +68,13 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     board.promoted = SquareSet.empty();
     board.white = new SquareSet(0xffff_ffff, 0x0000_0066);
     board.black = new SquareSet(0, 0xffff_0000);
-    board.pawn = new SquareSet(0xffff_ffff, 0x00ff_0066);
-    board.knight = new SquareSet(0, 0x4200_0000);
-    board.bishop = new SquareSet(0, 0x2400_0000);
-    board.rook = new SquareSet(0, 0x8100_0000);
-    board.queen = new SquareSet(0, 0x0800_0000);
-    board.king = new SquareSet(0, 0x1000_0000);
-    board.loachecker = new SquareSet(0, 0);
+    board['p-piece'] = new SquareSet(0xffff_ffff, 0x00ff_0066);
+    board['n-piece'] = new SquareSet(0, 0x4200_0000);
+    board['b-piece'] = new SquareSet(0, 0x2400_0000);
+    board['r-piece'] = new SquareSet(0, 0x8100_0000);
+    board['q-piece'] = new SquareSet(0, 0x0800_0000);
+    board['k-piece'] = new SquareSet(0, 0x1000_0000);
+    board['l-piece'] = new SquareSet(0, 0);
     return board;
   }
 
@@ -77,13 +84,13 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     board.promoted = SquareSet.empty();
     board.white = new SquareSet(0x8181_8100, 0x0081_8181);
     board.black = new SquareSet(0x007e, 0x7e00_0000);
-    board.pawn = new SquareSet(0, 0);
-    board.knight = new SquareSet(0, 0);
-    board.bishop = new SquareSet(0, 0);
-    board.rook = new SquareSet(0, 0);
-    board.queen = new SquareSet(0, 0);
-    board.king = new SquareSet(0, 0);
-    board.loachecker = board.occupied;
+    board['p-piece'] = new SquareSet(0, 0);
+    board['n-piece'] = new SquareSet(0, 0);
+    board['b-piece'] = new SquareSet(0, 0);
+    board['r-piece'] = new SquareSet(0, 0);
+    board['q-piece'] = new SquareSet(0, 0);
+    board['k-piece'] = new SquareSet(0, 0);
+    board['l-piece'] = board.occupied;
     return board;
   }
 
@@ -95,13 +102,13 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     this.promoted = SquareSet.empty();
     this.white = new SquareSet(0xffff, 0);
     this.black = new SquareSet(0, 0xffff_0000);
-    this.pawn = new SquareSet(0xff00, 0x00ff_0000);
-    this.knight = new SquareSet(0x42, 0x4200_0000);
-    this.bishop = new SquareSet(0x24, 0x2400_0000);
-    this.rook = new SquareSet(0x81, 0x8100_0000);
-    this.queen = new SquareSet(0x8, 0x0800_0000);
-    this.king = new SquareSet(0x10, 0x1000_0000);
-    this.loachecker = new SquareSet(0, 0);
+    this['p-piece'] = new SquareSet(0xff00, 0x00ff_0000);
+    this['n-piece'] = new SquareSet(0x42, 0x4200_0000);
+    this['b-piece'] = new SquareSet(0x24, 0x2400_0000);
+    this['r-piece'] = new SquareSet(0x81, 0x8100_0000);
+    this['q-piece'] = new SquareSet(0x8, 0x0800_0000);
+    this['k-piece'] = new SquareSet(0x10, 0x1000_0000);
+    this['l-piece'] = new SquareSet(0, 0);
   }
 
   static empty(): Board {
@@ -198,17 +205,17 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   }
 
   rooksAndQueens(): SquareSet {
-    return this.rook.union(this.queen);
+    return this['r-piece'].union(this['q-piece']);
   }
 
   bishopsAndQueens(): SquareSet {
-    return this.bishop.union(this.queen);
+    return this['b-piece'].union(this['q-piece']);
   }
 
   /**
    * Finds the unique unpromoted king of the given `color`, if any.
    */
   kingOf(color: Color): Square | undefined {
-    return this.king.intersect(this[color]).diff(this.promoted).singleSquare();
+    return this['k-piece'].intersect(this[color]).diff(this.promoted).singleSquare();
   }
 }
