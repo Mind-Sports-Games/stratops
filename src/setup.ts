@@ -3,13 +3,18 @@ import { SquareSet } from './squareSet';
 import { Board } from './board';
 
 export class MaterialSide {
-  'p-piece': number;
-  'n-piece': number;
-  'b-piece': number;
-  'r-piece': number;
-  'q-piece': number;
-  'k-piece': number;
-  'l-piece': number;
+  'a-piece': number; 'b-piece': number; 'c-piece': number; 'd-piece': number; 'e-piece': number; 
+  'f-piece': number; 'g-piece': number; 'h-piece': number; 'i-piece': number; 'j-piece': number; 
+  'k-piece': number; 'l-piece': number; 'm-piece': number; 'n-piece': number; 'o-piece': number; 
+  'p-piece': number; 'q-piece': number; 'r-piece': number; 's-piece': number; 't-piece': number; 
+  'u-piece': number; 'v-piece': number; 'w-piece': number; 'x-piece': number; 'y-piece': number; 
+  'z-piece': number;
+  'pa-piece': number; 'pb-piece': number; 'pc-piece': number; 'pd-piece': number; 'pe-piece': number; 
+  'pf-piece': number; 'pg-piece': number; 'ph-piece': number; 'pi-piece': number; 'pj-piece': number; 
+  'pk-piece': number; 'pl-piece': number; 'pm-piece': number; 'pn-piece': number; 'po-piece': number; 
+  'pp-piece': number; 'pq-piece': number; 'pr-piece': number; 'ps-piece': number; 'pt-piece': number; 
+  'pu-piece': number; 'pv-piece': number; 'pw-piece': number; 'px-piece': number; 'py-piece': number; 
+  'pz-piece': number;
 
   private constructor() {}
 

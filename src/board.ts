@@ -22,21 +22,18 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
 
   white: SquareSet;
   black: SquareSet;
-
-  // pawn: SquareSet;
-  // knight: SquareSet;
-  // bishop: SquareSet;
-  // rook: SquareSet;
-  // queen: SquareSet;
-  // king: SquareSet;
-  // loachecker: SquareSet;
-  'p-piece': SquareSet;
-  'n-piece': SquareSet;
-  'b-piece': SquareSet;
-  'r-piece': SquareSet;
-  'q-piece': SquareSet;
-  'k-piece': SquareSet;
-  'l-piece': SquareSet;
+  'a-piece': SquareSet; 'b-piece': SquareSet; 'c-piece': SquareSet; 'd-piece': SquareSet; 'e-piece': SquareSet; 
+  'f-piece': SquareSet; 'g-piece': SquareSet; 'h-piece': SquareSet; 'i-piece': SquareSet; 'j-piece': SquareSet; 
+  'k-piece': SquareSet; 'l-piece': SquareSet; 'm-piece': SquareSet; 'n-piece': SquareSet; 'o-piece': SquareSet; 
+  'p-piece': SquareSet; 'q-piece': SquareSet; 'r-piece': SquareSet; 's-piece': SquareSet; 't-piece': SquareSet; 
+  'u-piece': SquareSet; 'v-piece': SquareSet; 'w-piece': SquareSet; 'x-piece': SquareSet; 'y-piece': SquareSet; 
+  'z-piece': SquareSet;
+  'pa-piece': SquareSet; 'pb-piece': SquareSet; 'pc-piece': SquareSet; 'pd-piece': SquareSet; 'pe-piece': SquareSet; 
+  'pf-piece': SquareSet; 'pg-piece': SquareSet; 'ph-piece': SquareSet; 'pi-piece': SquareSet; 'pj-piece': SquareSet; 
+  'pk-piece': SquareSet; 'pl-piece': SquareSet; 'pm-piece': SquareSet; 'pn-piece': SquareSet; 'po-piece': SquareSet; 
+  'pp-piece': SquareSet; 'pq-piece': SquareSet; 'pr-piece': SquareSet; 'ps-piece': SquareSet; 'pt-piece': SquareSet; 
+  'pu-piece': SquareSet; 'pv-piece': SquareSet; 'pw-piece': SquareSet; 'px-piece': SquareSet; 'py-piece': SquareSet; 
+  'pz-piece': SquareSet;
 
   private constructor() {}
 
