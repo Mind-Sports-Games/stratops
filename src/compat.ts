@@ -41,7 +41,10 @@ export function scalachessCharPair(move: Move): string {
     return String.fromCharCode(
       35 + move.from,
       move.promotion
-        ? 35 + 64 + 8 * ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'k-piece'].indexOf(move.promotion) + squareFile(move.to)
+        ? 35 +
+            64 +
+            8 * ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'k-piece'].indexOf(move.promotion) +
+            squareFile(move.to)
         : 35 + move.to
     );
 }

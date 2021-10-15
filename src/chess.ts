@@ -280,7 +280,8 @@ export abstract class Position {
     } else {
       if (move.promotion === 'p-piece') return false;
       if (move.promotion === 'k-piece' && this.rules !== 'antichess') return false;
-      if (!!move.promotion !== (this.board['p-piece'].has(move.from) && SquareSet.backranks().has(move.to))) return false;
+      if (!!move.promotion !== (this.board['p-piece'].has(move.from) && SquareSet.backranks().has(move.to)))
+        return false;
       const dests = this.dests(move.from, ctx);
       return dests.has(move.to) || dests.has(this.normalizeMove(move).to);
     }

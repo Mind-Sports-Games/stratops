@@ -71,7 +71,9 @@ export function perft(pos: Position, depth: number, log = false): number {
     let nodes = 0;
     for (const [from, dests] of pos.allDests(ctx)) {
       const promotions: Array<Role | undefined> =
-        squareRank(from) === (pos.turn === 'white' ? 6 : 1) && pos.board['p-piece'].has(from) ? promotionRoles : [undefined];
+        squareRank(from) === (pos.turn === 'white' ? 6 : 1) && pos.board['p-piece'].has(from)
+          ? promotionRoles
+          : [undefined];
       for (const to of dests) {
         for (const promotion of promotions) {
           const child = pos.clone();

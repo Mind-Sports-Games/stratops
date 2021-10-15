@@ -532,7 +532,7 @@ export class LinesOfAction extends Chess {
   }
 
   isColorConnected(color: Color): boolean {
-    let pieces = color === 'white' ? this.board.white : this.board.black;
+    const pieces = color === 'white' ? this.board.white : this.board.black;
     let connected = SquareSet.empty();
 
     let next = pieces.first();
@@ -540,7 +540,7 @@ export class LinesOfAction extends Chess {
       connected = connected.with(next);
       next = kingAttacks(next).intersect(pieces).diff(connected).first();
     }
-    return connected.size() > 0 && connected.size() == pieces.size();
+    return connected.size() > 0 && connected.size() === pieces.size();
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {

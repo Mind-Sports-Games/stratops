@@ -26,14 +26,40 @@ export type ByColor<T> = {
   [color in Color]: T;
 };
 
-//curretnly supported pieces, should change to use Role to accept all new peices. 
+//curretnly supported pieces, should change to use Role to accept all new peices.
 export const ROLES = ['p-piece', 'n-piece', 'b-piece', 'r-piece', 'q-piece', 'k-piece', 'l-piece'] as const;
 //export type Role = typeof ROLES[number];
 
-export const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] as const;
+export const letters = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+] as const;
 export type Letter = typeof letters[number];
 export type Role = `${Letter}-piece` | `p${Letter}-piece`;
-
 
 /**
  * Indexable by `pawn`, `knight`, `bishop`, `rook`, `queen`, and `king`.

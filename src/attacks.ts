@@ -185,7 +185,7 @@ export function attacks(
     case 'l-piece':
       return linesOfActionAttacks(piece.color, square, occupied, white, black);
     default:
-      return SquareSet.empty()
+      return SquareSet.empty();
   }
 }
 

@@ -16,11 +16,10 @@ export function squareFile(square: Square): number {
   return square & 0x7;
 }
 
-export function roleToChar(role: Role): string{
+export function roleToChar(role: Role): string {
   const letterPart = role.slice(0, role.indexOf('-'));
-  return (letterPart.length > 1) ? letterPart.replace('p', '+') : letterPart;
+  return letterPart.length > 1 ? letterPart.replace('p', '+') : letterPart;
 }
-
 
 export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'l' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'L'): Role;
 export function charToRole(ch: string): Role | undefined;

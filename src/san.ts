@@ -26,7 +26,8 @@ function makeSanWithoutSuffix(pos: Position, move: Move): string {
         if (role === 'k-piece') others = kingAttacks(move.to).intersect(pos.board['k-piece']);
         else if (role === 'q-piece') others = queenAttacks(move.to, pos.board.occupied).intersect(pos.board['q-piece']);
         else if (role === 'r-piece') others = rookAttacks(move.to, pos.board.occupied).intersect(pos.board['r-piece']);
-        else if (role === 'b-piece') others = bishopAttacks(move.to, pos.board.occupied).intersect(pos.board['b-piece']);
+        else if (role === 'b-piece')
+          others = bishopAttacks(move.to, pos.board.occupied).intersect(pos.board['b-piece']);
         else others = knightAttacks(move.to).intersect(pos.board['n-piece']);
         others = others.intersect(pos.board[pos.turn]).without(move.from);
         if (others.nonEmpty()) {
