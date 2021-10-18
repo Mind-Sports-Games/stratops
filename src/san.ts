@@ -8,26 +8,27 @@ import { attacks, kingAttacks, queenAttacks, rookAttacks, bishopAttacks, knightA
 function makeSanWithoutSuffix(pos: Position, move: Move): string {
   let san = '';
   if (isDrop(move)) {
-    if (move.role !== 'pawn') san = roleToChar(move.role).toUpperCase();
+    if (move.role !== 'p-piece') san = roleToChar(move.role).toUpperCase();
     san += '@' + makeSquare(move.to);
   } else {
     const role = pos.board.getRole(move.from);
     if (!role) return '--';
-    if (role === 'king' && (pos.board[pos.turn].has(move.to) || Math.abs(move.to - move.from) === 2)) {
+    if (role === 'k-piece' && (pos.board[pos.turn].has(move.to) || Math.abs(move.to - move.from) === 2)) {
       san = move.to > move.from ? 'O-O' : 'O-O-O';
     } else {
       const capture =
-        pos.board.occupied.has(move.to) || (role === 'pawn' && squareFile(move.from) !== squareFile(move.to));
-      if (role !== 'pawn') {
+        pos.board.occupied.has(move.to) || (role === 'p-piece' && squareFile(move.from) !== squareFile(move.to));
+      if (role !== 'p-piece') {
         san = roleToChar(role).toUpperCase();
 
         // Disambiguation
         let others;
-        if (role === 'king') others = kingAttacks(move.to).intersect(pos.board.king);
-        else if (role === 'queen') others = queenAttacks(move.to, pos.board.occupied).intersect(pos.board.queen);
-        else if (role === 'rook') others = rookAttacks(move.to, pos.board.occupied).intersect(pos.board.rook);
-        else if (role === 'bishop') others = bishopAttacks(move.to, pos.board.occupied).intersect(pos.board.bishop);
-        else others = knightAttacks(move.to).intersect(pos.board.knight);
+        if (role === 'k-piece') others = kingAttacks(move.to).intersect(pos.board['k-piece']);
+        else if (role === 'q-piece') others = queenAttacks(move.to, pos.board.occupied).intersect(pos.board['q-piece']);
+        else if (role === 'r-piece') others = rookAttacks(move.to, pos.board.occupied).intersect(pos.board['r-piece']);
+        else if (role === 'b-piece')
+          others = bishopAttacks(move.to, pos.board.occupied).intersect(pos.board['b-piece']);
+        else others = knightAttacks(move.to).intersect(pos.board['n-piece']);
         others = others.intersect(pos.board[pos.turn]).without(move.from);
         if (others.nonEmpty()) {
           const ctx = pos.ctx();
@@ -105,24 +106,24 @@ export function parseSan(pos: Position, san: string): Move | undefined {
     const match = san.match(/^([pnbrqkPNBRQK])?@([a-h][1-8])[+#]?$/);
     if (!match) return;
     const move = {
-      role: charToRole(match[1]) || 'pawn',
+      role: charToRole(match[1]) || 'p-piece',
       to: parseSquare(match[2])!,
     };
     return pos.isLegal(move, ctx) ? move : undefined;
   }
-  const role = charToRole(match[1]) || 'pawn';
+  const role = charToRole(match[1]) || 'p-piece';
   const to = parseSquare(match[4])!;
 
   const promotion = charToRole(match[5]);
-  if (!!promotion !== (role === 'pawn' && SquareSet.backranks().has(to))) return;
-  if (promotion === 'king' && pos.rules !== 'antichess') return;
+  if (!!promotion !== (role === 'p-piece' && SquareSet.backranks().has(to))) return;
+  if (promotion === 'k-piece' && pos.rules !== 'antichess') return;
 
   let candidates = pos.board.pieces(pos.turn, role);
   if (match[2]) candidates = candidates.intersect(SquareSet.fromFile(match[2].charCodeAt(0) - 'a'.charCodeAt(0)));
   if (match[3]) candidates = candidates.intersect(SquareSet.fromRank(match[3].charCodeAt(0) - '1'.charCodeAt(0)));
 
   // Optimization: Reduce set of candidates
-  const pawnAdvance = role === 'pawn' ? SquareSet.fromFile(squareFile(to)) : SquareSet.empty();
+  const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile(squareFile(to)) : SquareSet.empty();
   candidates = candidates.intersect(
     pawnAdvance.union(
       attacks({ color: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.white, pos.board.black)

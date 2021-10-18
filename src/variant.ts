@@ -29,7 +29,7 @@ export class Crazyhouse extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     return super.validate().chain(_ => {
-      if (this.pockets && (this.pockets.white.king > 0 || this.pockets.black.king > 0)) {
+      if (this.pockets && (this.pockets.white['k-piece'] > 0 || this.pockets.black['k-piece'] > 0)) {
         return Result.err(new PositionError(IllegalSetup.Kings));
       }
       if ((this.pockets ? this.pockets.count() : 0) + this.board.occupied.size() > 64) {
@@ -49,15 +49,15 @@ export class Crazyhouse extends Chess {
     if (!this.pockets) return super.hasInsufficientMaterial(color);
     return (
       this.board.occupied.size() + this.pockets.count() <= 3 &&
-      this.board.pawn.isEmpty() &&
+      this.board['p-piece'].isEmpty() &&
       this.board.promoted.isEmpty() &&
       this.board.rooksAndQueens().isEmpty() &&
-      this.pockets.white.pawn <= 0 &&
-      this.pockets.black.pawn <= 0 &&
-      this.pockets.white.rook <= 0 &&
-      this.pockets.black.rook <= 0 &&
-      this.pockets.white.queen <= 0 &&
-      this.pockets.black.queen <= 0
+      this.pockets.white['p-piece'] <= 0 &&
+      this.pockets.black['p-piece'] <= 0 &&
+      this.pockets.white['r-piece'] <= 0 &&
+      this.pockets.black['r-piece'] <= 0 &&
+      this.pockets.white['q-piece'] <= 0 &&
+      this.pockets.black['q-piece'] <= 0
     );
   }
 
@@ -101,20 +101,20 @@ export class Atomic extends Chess {
   protected validate(): Result<undefined, PositionError> {
     // Like chess, but allow our king to be missing and any number of checkers.
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    if (this.board.king.size() > 2) return Result.err(new PositionError(IllegalSetup.Kings));
+    if (this.board['k-piece'].size() > 2) return Result.err(new PositionError(IllegalSetup.Kings));
     const otherKing = this.board.kingOf(opposite(this.turn));
     if (!defined(otherKing)) return Result.err(new PositionError(IllegalSetup.Kings));
     if (this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty()) {
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
     }
-    if (SquareSet.backranks().intersects(this.board.pawn)) {
+    if (SquareSet.backranks().intersects(this.board['p-piece'])) {
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
     }
     return Result.ok(undefined);
   }
 
   protected kingAttackers(square: Square, attacker: Color, occupied: SquareSet): SquareSet {
-    if (kingAttacks(square).intersects(this.board.pieces(attacker, 'king'))) {
+    if (kingAttacks(square).intersects(this.board.pieces(attacker, 'k-piece'))) {
       return SquareSet.empty();
     }
     return super.kingAttackers(square, attacker, occupied);
@@ -123,45 +123,45 @@ export class Atomic extends Chess {
   protected playCaptureAt(square: Square, captured: Piece): void {
     super.playCaptureAt(square, captured);
     this.board.take(square);
-    for (const explode of kingAttacks(square).intersect(this.board.occupied).diff(this.board.pawn)) {
+    for (const explode of kingAttacks(square).intersect(this.board.occupied).diff(this.board['p-piece'])) {
       const piece = this.board.take(explode);
-      if (piece && piece.role === 'rook') this.castles.discardRook(explode);
-      if (piece && piece.role === 'king') this.castles.discardSide(piece.color);
+      if (piece && piece.role === 'r-piece') this.castles.discardRook(explode);
+      if (piece && piece.role === 'k-piece') this.castles.discardSide(piece.color);
     }
   }
 
   hasInsufficientMaterial(color: Color): boolean {
     // Remaining material does not matter if the enemy king is already
     // exploded.
-    if (this.board.pieces(opposite(color), 'king').isEmpty()) return false;
+    if (this.board.pieces(opposite(color), 'k-piece').isEmpty()) return false;
 
     // Bare king cannot mate.
-    if (this.board[color].diff(this.board.king).isEmpty()) return true;
+    if (this.board[color].diff(this.board['k-piece']).isEmpty()) return true;
 
     // As long as the enemy king is not alone, there is always a chance their
     // own pieces explode next to it.
-    if (this.board[opposite(color)].diff(this.board.king).nonEmpty()) {
+    if (this.board[opposite(color)].diff(this.board['k-piece']).nonEmpty()) {
       // Unless there are only bishops that cannot explode each other.
-      if (this.board.occupied.equals(this.board.bishop.union(this.board.king))) {
-        if (!this.board.bishop.intersect(this.board.white).intersects(SquareSet.darkSquares())) {
-          return !this.board.bishop.intersect(this.board.black).intersects(SquareSet.lightSquares());
+      if (this.board.occupied.equals(this.board['b-piece'].union(this.board['k-piece']))) {
+        if (!this.board['b-piece'].intersect(this.board.white).intersects(SquareSet.darkSquares())) {
+          return !this.board['b-piece'].intersect(this.board.black).intersects(SquareSet.lightSquares());
         }
-        if (!this.board.bishop.intersect(this.board.white).intersects(SquareSet.lightSquares())) {
-          return !this.board.bishop.intersect(this.board.black).intersects(SquareSet.darkSquares());
+        if (!this.board['b-piece'].intersect(this.board.white).intersects(SquareSet.lightSquares())) {
+          return !this.board['b-piece'].intersect(this.board.black).intersects(SquareSet.darkSquares());
         }
       }
       return false;
     }
 
     // Queen or pawn (future queen) can give mate against bare king.
-    if (this.board.queen.nonEmpty() || this.board.pawn.nonEmpty()) return false;
+    if (this.board['q-piece'].nonEmpty() || this.board['p-piece'].nonEmpty()) return false;
 
     // Single knight, bishop or rook cannot mate against bare king.
-    if (this.board.knight.union(this.board.bishop).union(this.board.rook).isSingleSquare()) return true;
+    if (this.board['n-piece'].union(this.board['b-piece']).union(this.board['r-piece']).isSingleSquare()) return true;
 
     // If only knights, more than two are required to mate bare king.
-    if (this.board.occupied.equals(this.board.knight.union(this.board.king))) {
-      return this.board.knight.size() <= 2;
+    if (this.board.occupied.equals(this.board['n-piece'].union(this.board['k-piece']))) {
+      return this.board['n-piece'].size() <= 2;
     }
 
     return false;
@@ -191,7 +191,7 @@ export class Atomic extends Chess {
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     for (const color of COLORS) {
-      if (this.board.pieces(color, 'king').isEmpty()) return { winner: opposite(color) };
+      if (this.board.pieces(color, 'k-piece').isEmpty()) return { winner: opposite(color) };
     }
     return;
   }
@@ -221,7 +221,7 @@ export class Antichess extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    if (SquareSet.backranks().intersects(this.board.pawn))
+    if (SquareSet.backranks().intersects(this.board['p-piece']))
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
     return Result.ok(undefined);
   }
@@ -250,7 +250,7 @@ export class Antichess extends Chess {
   }
 
   hasInsufficientMaterial(color: Color): boolean {
-    if (this.board.occupied.equals(this.board.bishop)) {
+    if (this.board.occupied.equals(this.board['b-piece'])) {
       const weSomeOnLight = this.board[color].intersects(SquareSet.lightSquares());
       const weSomeOnDark = this.board[color].intersects(SquareSet.darkSquares());
       const theyAllOnDark = this.board[opposite(color)].isDisjoint(SquareSet.lightSquares());
@@ -295,12 +295,12 @@ export class KingOfTheHill extends Chess {
   }
 
   isVariantEnd(): boolean {
-    return this.board.king.intersects(SquareSet.center());
+    return this.board['k-piece'].intersects(SquareSet.center());
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     for (const color of COLORS) {
-      if (this.board.pieces(color, 'king').intersects(SquareSet.center())) return { winner: color };
+      if (this.board.pieces(color, 'k-piece').intersects(SquareSet.center())) return { winner: color };
     }
     return;
   }
@@ -329,7 +329,7 @@ export class ThreeCheck extends Chess {
   }
 
   hasInsufficientMaterial(color: Color): boolean {
-    return this.board.pieces(color, 'king').equals(this.board[color]);
+    return this.board.pieces(color, 'k-piece').equals(this.board[color]);
   }
 
   isVariantEnd(): boolean {
@@ -373,7 +373,7 @@ class RacingKings extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     if (this.isCheck()) return Result.err(new PositionError(IllegalSetup.ImpossibleCheck));
-    if (this.board.pawn.nonEmpty()) return Result.err(new PositionError(IllegalSetup.Variant));
+    if (this.board['p-piece'].nonEmpty()) return Result.err(new PositionError(IllegalSetup.Variant));
     return super.validate();
   }
 
@@ -405,7 +405,7 @@ class RacingKings extends Chess {
 
   isVariantEnd(): boolean {
     const goal = SquareSet.fromRank(7);
-    const inGoal = this.board.king.intersect(goal);
+    const inGoal = this.board['k-piece'].intersect(goal);
     if (inGoal.isEmpty()) return false;
     if (this.turn === 'white' || inGoal.intersects(this.board.black)) return true;
 
@@ -423,8 +423,8 @@ class RacingKings extends Chess {
   variantOutcome(ctx?: Context): Outcome | undefined {
     if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
     const goal = SquareSet.fromRank(7);
-    const blackInGoal = this.board.pieces('black', 'king').intersects(goal);
-    const whiteInGoal = this.board.pieces('white', 'king').intersects(goal);
+    const blackInGoal = this.board.pieces('black', 'k-piece').intersects(goal);
+    const whiteInGoal = this.board.pieces('white', 'k-piece').intersects(goal);
     if (blackInGoal && !whiteInGoal) return { winner: 'black' };
     if (whiteInGoal && !blackInGoal) return { winner: 'white' };
     return { winner: undefined };
@@ -456,15 +456,15 @@ export class Horde extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    if (!this.board.king.isSingleSquare()) return Result.err(new PositionError(IllegalSetup.Kings));
-    if (!this.board.king.diff(this.board.promoted).isSingleSquare())
+    if (!this.board['k-piece'].isSingleSquare()) return Result.err(new PositionError(IllegalSetup.Kings));
+    if (!this.board['k-piece'].diff(this.board.promoted).isSingleSquare())
       return Result.err(new PositionError(IllegalSetup.Kings));
 
     const otherKing = this.board.kingOf(opposite(this.turn));
     if (defined(otherKing) && this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty())
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
     for (const color of COLORS) {
-      if (this.board.pieces(color, 'pawn').intersects(SquareSet.backrank(opposite(color)))) {
+      if (this.board.pieces(color, 'p-piece').intersects(SquareSet.backrank(opposite(color)))) {
         return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
       }
     }
@@ -532,7 +532,7 @@ export class LinesOfAction extends Chess {
   }
 
   isColorConnected(color: Color): boolean {
-    let pieces = color === 'white' ? this.board.white : this.board.black;
+    const pieces = color === 'white' ? this.board.white : this.board.black;
     let connected = SquareSet.empty();
 
     let next = pieces.first();
@@ -540,7 +540,7 @@ export class LinesOfAction extends Chess {
       connected = connected.with(next);
       next = kingAttacks(next).intersect(pieces).diff(connected).first();
     }
-    return connected.size() > 0 && connected.size() == pieces.size();
+    return connected.size() > 0 && connected.size() === pieces.size();
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {

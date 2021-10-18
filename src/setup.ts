@@ -3,13 +3,58 @@ import { SquareSet } from './squareSet';
 import { Board } from './board';
 
 export class MaterialSide {
-  pawn: number;
-  knight: number;
-  bishop: number;
-  rook: number;
-  queen: number;
-  king: number;
-  loachecker: number;
+  'a-piece': number;
+  'b-piece': number;
+  'c-piece': number;
+  'd-piece': number;
+  'e-piece': number;
+  'f-piece': number;
+  'g-piece': number;
+  'h-piece': number;
+  'i-piece': number;
+  'j-piece': number;
+  'k-piece': number;
+  'l-piece': number;
+  'm-piece': number;
+  'n-piece': number;
+  'o-piece': number;
+  'p-piece': number;
+  'q-piece': number;
+  'r-piece': number;
+  's-piece': number;
+  't-piece': number;
+  'u-piece': number;
+  'v-piece': number;
+  'w-piece': number;
+  'x-piece': number;
+  'y-piece': number;
+  'z-piece': number;
+  'pa-piece': number;
+  'pb-piece': number;
+  'pc-piece': number;
+  'pd-piece': number;
+  'pe-piece': number;
+  'pf-piece': number;
+  'pg-piece': number;
+  'ph-piece': number;
+  'pi-piece': number;
+  'pj-piece': number;
+  'pk-piece': number;
+  'pl-piece': number;
+  'pm-piece': number;
+  'pn-piece': number;
+  'po-piece': number;
+  'pp-piece': number;
+  'pq-piece': number;
+  'pr-piece': number;
+  'ps-piece': number;
+  'pt-piece': number;
+  'pu-piece': number;
+  'pv-piece': number;
+  'pw-piece': number;
+  'px-piece': number;
+  'py-piece': number;
+  'pz-piece': number;
 
   private constructor() {}
 
@@ -50,18 +95,31 @@ export class MaterialSide {
   }
 
   hasPawns(): boolean {
-    return this.pawn > 0;
+    return this['p-piece'] > 0;
   }
 
   hasNonPawns(): boolean {
     // TODO: I don't know if we should be editing this.
     return (
-      this.knight > 0 || this.bishop > 0 || this.rook > 0 || this.queen > 0 || this.king > 0 || this.loachecker > 0
+      this['n-piece'] > 0 ||
+      this['b-piece'] > 0 ||
+      this['r-piece'] > 0 ||
+      this['q-piece'] > 0 ||
+      this['k-piece'] > 0 ||
+      this['l-piece'] > 0
     );
   }
 
   count(): number {
-    return this.pawn + this.knight + this.bishop + this.rook + this.queen + this.king + this.loachecker;
+    return (
+      this['p-piece'] +
+      this['n-piece'] +
+      this['b-piece'] +
+      this['r-piece'] +
+      this['q-piece'] +
+      this['k-piece'] +
+      this['l-piece']
+    );
   }
 }
 

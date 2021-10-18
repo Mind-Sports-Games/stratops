@@ -17,22 +17,8 @@ export function squareFile(square: Square): number {
 }
 
 export function roleToChar(role: Role): string {
-  switch (role) {
-    case 'pawn':
-      return 'p';
-    case 'knight':
-      return 'n';
-    case 'bishop':
-      return 'b';
-    case 'rook':
-      return 'r';
-    case 'queen':
-      return 'q';
-    case 'king':
-      return 'k';
-    case 'loachecker':
-      return 'l';
-  }
+  const letterPart = role.slice(0, role.indexOf('-'));
+  return letterPart.length > 1 ? letterPart.replace('p', '+') : letterPart;
 }
 
 export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'l' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'L'): Role;
@@ -41,25 +27,25 @@ export function charToRole(ch: string): Role | undefined {
   switch (ch) {
     case 'P':
     case 'p':
-      return 'pawn';
+      return 'p-piece';
     case 'N':
     case 'n':
-      return 'knight';
+      return 'n-piece';
     case 'B':
     case 'b':
-      return 'bishop';
+      return 'b-piece';
     case 'R':
     case 'r':
-      return 'rook';
+      return 'r-piece';
     case 'Q':
     case 'q':
-      return 'queen';
+      return 'q-piece';
     case 'K':
     case 'k':
-      return 'king';
+      return 'k-piece';
     case 'L':
     case 'l':
-      return 'loachecker';
+      return 'l-piece';
     default:
       return;
   }
