@@ -62,6 +62,8 @@ export function lichessVariantRules(
     | 'racingKings'
     | 'crazyhouse'
     | 'linesOfAction'
+    | 'shogi'
+    | 'xiangqi'
 ): Rules {
   switch (variant) {
     case 'standard':

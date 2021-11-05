@@ -576,6 +576,9 @@ export function defaultPosition(rules: Rules): Position {
       return Crazyhouse.default();
     case 'linesofaction':
       return LinesOfAction.default();
+    default:
+      //TODO fix this for xiangqi, shogi and fairy games
+      return Chess.default();
   }
 }
 
@@ -599,5 +602,8 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Crazyhouse.fromSetup(setup);
     case 'linesofaction':
       return LinesOfAction.fromSetup(setup);
+    default:
+      //TODO fix this for xiangqi, shogi and fairy games
+      return Chess.fromSetup(setup);
   }
 }
