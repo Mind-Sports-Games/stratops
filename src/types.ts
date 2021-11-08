@@ -116,6 +116,8 @@ export const RULES = [
   'racingkings',
   'crazyhouse',
   'linesofaction',
+  'shogi',
+  'xiangqi',
 ] as const;
 
 export type Rules = typeof RULES[number];

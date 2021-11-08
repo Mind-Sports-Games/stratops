@@ -556,6 +556,52 @@ export class LinesOfAction extends Chess {
   }
 }
 
+export class Shogi extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('shogi');
+  }
+
+  static default(): Shogi {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Shogi, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Shogi {
+    return super.clone() as Shogi;
+  }
+
+  hasInsufficientMaterial(_color: Color): boolean {
+    return false;
+  }
+}
+
+export class Xiangqi extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('xiangqi');
+  }
+
+  static default(): Xiangqi {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Xiangqi, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Xiangqi {
+    return super.clone() as Xiangqi;
+  }
+
+  hasInsufficientMaterial(_color: Color): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -576,6 +622,10 @@ export function defaultPosition(rules: Rules): Position {
       return Crazyhouse.default();
     case 'linesofaction':
       return LinesOfAction.default();
+    case 'shogi':
+      return Shogi.default();
+    case 'xiangqi':
+      return Xiangqi.default();
   }
 }
 
@@ -599,5 +649,9 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Crazyhouse.fromSetup(setup);
     case 'linesofaction':
       return LinesOfAction.fromSetup(setup);
+    case 'shogi':
+      return Shogi.fromSetup(setup);
+    case 'xiangqi':
+      return Xiangqi.fromSetup(setup);
   }
 }
