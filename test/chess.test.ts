@@ -111,7 +111,7 @@ test('castling moves', () => {
 
 test('test illegal promotion', () => {
   const pos = Chess.default();
-  expect(pos.isLegal({ from: 12, to: 20, promotion: 'queen' })).toBe(false);
+  expect(pos.isLegal({ from: 12, to: 20, promotion: 'q-piece' })).toBe(false);
 });
 
 test('starting perft', () => {

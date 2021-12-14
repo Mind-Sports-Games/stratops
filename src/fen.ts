@@ -100,8 +100,8 @@ export function parseCastlingFen(board: Board, castlingPart: string): Result<Squ
     else if (lower === 'k') candidates = backrank.reversed();
     else candidates = SquareSet.fromSquare(lower.charCodeAt(0) - 'a'.charCodeAt(0)).intersect(backrank);
     for (const square of candidates) {
-      if (board.king.has(square) && !board.promoted.has(square)) break;
-      if (board.rook.has(square)) {
+      if (board['k-piece'].has(square) && !board.promoted.has(square)) break;
+      if (board['r-piece'].has(square)) {
         unmovedRooks = unmovedRooks.with(square);
         break;
       }
@@ -277,7 +277,7 @@ export function makeCastlingFen(board: Board, unmovedRooks: SquareSet, opts?: Fe
     const backrank = SquareSet.backrank(color);
     const king = board.kingOf(color);
     if (!defined(king) || !backrank.has(king)) continue;
-    const candidates = board.pieces(color, 'rook').intersect(backrank);
+    const candidates = board.pieces(color, 'r-piece').intersect(backrank);
     for (const rook of unmovedRooks.intersect(candidates).reversed()) {
       if (!shredder && rook === candidates.first() && rook < king) {
         fen += color === 'white' ? 'Q' : 'q';
