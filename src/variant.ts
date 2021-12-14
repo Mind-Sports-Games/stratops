@@ -369,7 +369,7 @@ export class FiveCheck extends Chess {
   }
 
   hasInsufficientMaterial(color: Color): boolean {
-    return this.board.pieces(color, 'king').equals(this.board[color]);
+    return this.board.pieces(color, 'k-piece').equals(this.board[color]);
   }
 
   isVariantEnd(): boolean {
