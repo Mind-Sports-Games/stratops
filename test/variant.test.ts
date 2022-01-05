@@ -70,6 +70,9 @@ const insufficientMaterial: [Rules, string, boolean, boolean][] = [
   ['3check', '8/5k2/8/8/8/8/3K4/8 w - - 3+3', true, true],
   ['3check', '8/5k2/8/8/8/8/3K2N1/8 w - - 3+3', false, true],
 
+  ['5check', '8/5k2/8/8/8/8/3K4/8 w - - 5+5', true, true],
+  ['5check', '8/5k2/8/8/8/8/3K2N1/8 w - - 5+5', false, true],
+
   ['crazyhouse', '8/5k2/8/8/8/8/3K2N1/8[] w - -', true, true],
   ['crazyhouse', '8/5k2/8/8/8/5B2/3KB3/8[] w - -', false, false],
 

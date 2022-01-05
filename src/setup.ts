@@ -174,6 +174,10 @@ export class RemainingChecks {
     return new RemainingChecks(3, 3);
   }
 
+  static fiveCheck(): RemainingChecks {
+    return new RemainingChecks(5, 5);
+  }
+
   clone(): RemainingChecks {
     return new RemainingChecks(this.white, this.black);
   }

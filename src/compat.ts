@@ -57,6 +57,7 @@ export function lichessVariantRules(
     | 'fromPosition'
     | 'kingOfTheHill'
     | 'threeCheck'
+    | 'fiveCheck'
     | 'atomic'
     | 'horde'
     | 'racingKings'
@@ -72,6 +73,8 @@ export function lichessVariantRules(
       return 'chess';
     case 'threeCheck':
       return '3check';
+    case 'fiveCheck':
+      return '5check';
     case 'kingOfTheHill':
       return 'kingofthehill';
     case 'racingKings':
