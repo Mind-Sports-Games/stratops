@@ -62,7 +62,9 @@ export function lichessVariantRules(
     | 'horde'
     | 'racingKings'
     | 'crazyhouse'
+    | 'noCastling'
     | 'linesOfAction'
+    | 'scrambledEggs'
     | 'shogi'
     | 'xiangqi'
 ): Rules {
@@ -79,8 +81,12 @@ export function lichessVariantRules(
       return 'kingofthehill';
     case 'racingKings':
       return 'racingkings';
+    case 'noCastling':
+      return 'nocastling';
     case 'linesOfAction':
       return 'linesofaction';
+    case 'scrambledEggs':
+      return 'scrambledeggs';
     default:
       return variant;
   }
