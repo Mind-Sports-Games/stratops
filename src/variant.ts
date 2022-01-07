@@ -531,6 +531,30 @@ export class Horde extends Chess {
   }
 }
 
+export class NoCastling extends Chess {
+  protected constructor() {
+    super('nocastling');
+  }
+
+  static default(): NoCastling {
+    const pos = super.default();
+    pos.castles = Castles.empty();
+    return pos as NoCastling;
+  }
+
+  static fromSetup(setup: Setup): Result<NoCastling, PositionError> {
+    return super.fromSetup(setup).map(pos => {
+      pos.castles = Castles.empty();
+      return pos as NoCastling;
+    });
+  }
+
+  clone(): NoCastling {
+    return super.clone() as NoCastling;
+  }
+
+}
+
 export class LinesOfAction extends Chess {
   protected constructor() {
     super('linesofaction');
@@ -561,6 +585,72 @@ export class LinesOfAction extends Chess {
 
   clone(): LinesOfAction {
     return super.clone() as LinesOfAction;
+  }
+
+  hasInsufficientMaterial(): boolean {
+    return false;
+  }
+
+  isVariantEnd(): boolean {
+    return !!this.variantOutcome();
+  }
+
+  isColorConnected(color: Color): boolean {
+    const pieces = color === 'white' ? this.board.white : this.board.black;
+    let connected = SquareSet.empty();
+
+    let next = pieces.first();
+    while (next) {
+      connected = connected.with(next);
+      next = kingAttacks(next).intersect(pieces).diff(connected).first();
+    }
+    return connected.size() > 0 && connected.size() === pieces.size();
+  }
+
+  variantOutcome(_ctx?: Context): Outcome | undefined {
+    const whiteWins = this.isColorConnected('white');
+    const blackWins = this.isColorConnected('black');
+    if (whiteWins && !blackWins) {
+      return { winner: 'white' };
+    } else if (!whiteWins && blackWins) {
+      return { winner: 'black' };
+    } else {
+      return undefined;
+    }
+  }
+}
+
+
+export class ScrambledEggs extends Chess {
+  protected constructor() {
+    super('scrambledeggs');
+  }
+
+  static default(): ScrambledEggs {
+    const pos = new this();
+    pos.board = Board.linesOfAction();
+    pos.pockets = undefined;
+    pos.turn = 'white';
+    pos.castles = Castles.empty();
+    pos.epSquare = undefined;
+    pos.remainingChecks = undefined;
+    pos.halfmoves = 0;
+    pos.fullmoves = 1;
+    return pos;
+  }
+
+  static fromSetup(setup: Setup): Result<ScrambledEggs, PositionError> {
+    return super.fromSetup(setup) as Result<ScrambledEggs, PositionError>;
+  }
+
+  protected validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+    // TODO: maybe do some more validation of the position
+    return Result.ok(undefined);
+  }
+
+  clone(): ScrambledEggs {
+    return super.clone() as ScrambledEggs;
   }
 
   hasInsufficientMaterial(): boolean {
@@ -662,8 +752,12 @@ export function defaultPosition(rules: Rules): Position {
       return FiveCheck.default();
     case 'crazyhouse':
       return Crazyhouse.default();
+    case 'nocastling':
+      return NoCastling.default();
     case 'linesofaction':
       return LinesOfAction.default();
+    case 'scrambledeggs':
+      return ScrambledEggs.default();
     case 'shogi':
       return Shogi.default();
     case 'xiangqi':
@@ -691,8 +785,12 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return FiveCheck.fromSetup(setup);
     case 'crazyhouse':
       return Crazyhouse.fromSetup(setup);
+    case 'nocastling':
+        return NoCastling.fromSetup(setup);  
     case 'linesofaction':
       return LinesOfAction.fromSetup(setup);
+    case 'scrambledeggs':
+      return ScrambledEggs.fromSetup(setup);
     case 'shogi':
       return Shogi.fromSetup(setup);
     case 'xiangqi':

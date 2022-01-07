@@ -116,6 +116,8 @@ export const RULES = [
   'horde',
   'racingkings',
   'crazyhouse',
+  'nocastling',
+  'scrambledeggs',
   'linesofaction',
   'shogi',
   'xiangqi',
