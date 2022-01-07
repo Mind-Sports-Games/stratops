@@ -552,7 +552,6 @@ export class NoCastling extends Chess {
   clone(): NoCastling {
     return super.clone() as NoCastling;
   }
-
 }
 
 export class LinesOfAction extends Chess {
@@ -619,7 +618,6 @@ export class LinesOfAction extends Chess {
     }
   }
 }
-
 
 export class ScrambledEggs extends Chess {
   protected constructor() {
@@ -786,7 +784,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
     case 'crazyhouse':
       return Crazyhouse.fromSetup(setup);
     case 'nocastling':
-        return NoCastling.fromSetup(setup);  
+      return NoCastling.fromSetup(setup);
     case 'linesofaction':
       return LinesOfAction.fromSetup(setup);
     case 'scrambledeggs':

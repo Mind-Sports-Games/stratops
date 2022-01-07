@@ -86,7 +86,7 @@ export function lichessVariantRules(
     case 'linesOfAction':
       return 'linesofaction';
     case 'scrambledEggs':
-      return 'scrambledeggs'
+      return 'scrambledeggs';
     default:
       return variant;
   }
