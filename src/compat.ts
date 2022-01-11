@@ -66,7 +66,9 @@ export function lichessVariantRules(
     | 'linesOfAction'
     | 'scrambledEggs'
     | 'shogi'
+    | 'minishogi'
     | 'xiangqi'
+    | 'minixiangqi'
 ): Rules {
   switch (variant) {
     case 'standard':

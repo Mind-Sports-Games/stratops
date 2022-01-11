@@ -707,6 +707,28 @@ export class Shogi extends Chess {
   }
 }
 
+export class MiniShogi extends Chess {
+  protected constructor() {
+    super('minishogi');
+  }
+
+  static default(): MiniShogi {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<MiniShogi, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): MiniShogi {
+    return super.clone() as MiniShogi;
+  }
+
+  hasInsufficientMaterial(_color: Color): boolean {
+    return false;
+  }
+}
+
 export class Xiangqi extends Chess {
   //TODO - move into own class and have variant family
   protected constructor() {
@@ -723,6 +745,28 @@ export class Xiangqi extends Chess {
 
   clone(): Xiangqi {
     return super.clone() as Xiangqi;
+  }
+
+  hasInsufficientMaterial(_color: Color): boolean {
+    return false;
+  }
+}
+
+export class MiniXiangqi extends Chess {
+  protected constructor() {
+    super('minixiangqi');
+  }
+
+  static default(): MiniXiangqi {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<MiniXiangqi, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): MiniXiangqi {
+    return super.clone() as MiniXiangqi;
   }
 
   hasInsufficientMaterial(_color: Color): boolean {
@@ -758,8 +802,12 @@ export function defaultPosition(rules: Rules): Position {
       return ScrambledEggs.default();
     case 'shogi':
       return Shogi.default();
+    case 'minishogi':
+      return MiniShogi.default();
     case 'xiangqi':
       return Xiangqi.default();
+    case 'minixiangqi':
+      return MiniXiangqi.default();
   }
 }
 
@@ -791,7 +839,11 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return ScrambledEggs.fromSetup(setup);
     case 'shogi':
       return Shogi.fromSetup(setup);
+    case 'minishogi':
+      return MiniShogi.fromSetup(setup);
     case 'xiangqi':
       return Xiangqi.fromSetup(setup);
+    case 'minixiangqi':
+      return MiniXiangqi.fromSetup(setup);
   }
 }
