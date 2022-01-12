@@ -120,7 +120,9 @@ export const RULES = [
   'scrambledeggs',
   'linesofaction',
   'shogi',
+  'minishogi',
   'xiangqi',
+  'minixiangqi',
 ] as const;
 
 export type Rules = typeof RULES[number];
