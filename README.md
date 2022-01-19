@@ -12,7 +12,7 @@ Chess and chess variant rules and operations in TypeScript.
 ## Features
 
 - [Read and write FEN](https://niklasf.github.io/chessops/modules/fen.html)
-- Vocabulary (Square, SquareSet, Color, Role, Piece, Board, Castles, Setup,
+- Vocabulary (Square, SquareSet, PlayerIndex, Role, Piece, Board, Castles, Setup,
   Position)
 - [Variant rules](https://niklasf.github.io/chessops/modules/variant.html): Standard chess, Crazyhouse, King of the Hill, Three-check,
   Antichess, Atomic, Horde, Racing Kings

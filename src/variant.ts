@@ -1,5 +1,5 @@
 import { Result } from '@badrap/result';
-import { Square, Outcome, Color, COLORS, Piece, Rules } from './types';
+import { Square, Outcome, PlayerIndex, PLAYERINDEXES, Piece, Rules } from './types';
 import { defined, opposite } from './util';
 import { between, kingAttacks } from './attacks';
 import { SquareSet } from './squareSet';
@@ -29,7 +29,7 @@ export class Crazyhouse extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     return super.validate().chain(_ => {
-      if (this.pockets && (this.pockets.white['k-piece'] > 0 || this.pockets.black['k-piece'] > 0)) {
+      if (this.pockets && (this.pockets.p1['k-piece'] > 0 || this.pockets.p2['k-piece'] > 0)) {
         return Result.err(new PositionError(IllegalSetup.Kings));
       }
       if ((this.pockets ? this.pockets.count() : 0) + this.board.occupied.size() > 64) {
@@ -43,21 +43,21 @@ export class Crazyhouse extends Chess {
     return super.clone() as Crazyhouse;
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
+  hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
     // No material can leave the game, but we can easily check this for
     // custom positions.
-    if (!this.pockets) return super.hasInsufficientMaterial(color);
+    if (!this.pockets) return super.hasInsufficientMaterial(playerIndex);
     return (
       this.board.occupied.size() + this.pockets.count() <= 3 &&
       this.board['p-piece'].isEmpty() &&
       this.board.promoted.isEmpty() &&
       this.board.rooksAndQueens().isEmpty() &&
-      this.pockets.white['p-piece'] <= 0 &&
-      this.pockets.black['p-piece'] <= 0 &&
-      this.pockets.white['r-piece'] <= 0 &&
-      this.pockets.black['r-piece'] <= 0 &&
-      this.pockets.white['q-piece'] <= 0 &&
-      this.pockets.black['q-piece'] <= 0
+      this.pockets.p1['p-piece'] <= 0 &&
+      this.pockets.p2['p-piece'] <= 0 &&
+      this.pockets.p1['r-piece'] <= 0 &&
+      this.pockets.p2['r-piece'] <= 0 &&
+      this.pockets.p1['q-piece'] <= 0 &&
+      this.pockets.p2['q-piece'] <= 0
     );
   }
 
@@ -113,7 +113,7 @@ export class Atomic extends Chess {
     return Result.ok(undefined);
   }
 
-  protected kingAttackers(square: Square, attacker: Color, occupied: SquareSet): SquareSet {
+  protected kingAttackers(square: Square, attacker: PlayerIndex, occupied: SquareSet): SquareSet {
     if (kingAttacks(square).intersects(this.board.pieces(attacker, 'k-piece'))) {
       return SquareSet.empty();
     }
@@ -126,28 +126,28 @@ export class Atomic extends Chess {
     for (const explode of kingAttacks(square).intersect(this.board.occupied).diff(this.board['p-piece'])) {
       const piece = this.board.take(explode);
       if (piece && piece.role === 'r-piece') this.castles.discardRook(explode);
-      if (piece && piece.role === 'k-piece') this.castles.discardSide(piece.color);
+      if (piece && piece.role === 'k-piece') this.castles.discardSide(piece.playerIndex);
     }
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
+  hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
     // Remaining material does not matter if the enemy king is already
     // exploded.
-    if (this.board.pieces(opposite(color), 'k-piece').isEmpty()) return false;
+    if (this.board.pieces(opposite(playerIndex), 'k-piece').isEmpty()) return false;
 
     // Bare king cannot mate.
-    if (this.board[color].diff(this.board['k-piece']).isEmpty()) return true;
+    if (this.board[playerIndex].diff(this.board['k-piece']).isEmpty()) return true;
 
     // As long as the enemy king is not alone, there is always a chance their
     // own pieces explode next to it.
-    if (this.board[opposite(color)].diff(this.board['k-piece']).nonEmpty()) {
+    if (this.board[opposite(playerIndex)].diff(this.board['k-piece']).nonEmpty()) {
       // Unless there are only bishops that cannot explode each other.
       if (this.board.occupied.equals(this.board['b-piece'].union(this.board['k-piece']))) {
-        if (!this.board['b-piece'].intersect(this.board.white).intersects(SquareSet.darkSquares())) {
-          return !this.board['b-piece'].intersect(this.board.black).intersects(SquareSet.lightSquares());
+        if (!this.board['b-piece'].intersect(this.board.p1).intersects(SquareSet.darkSquares())) {
+          return !this.board['b-piece'].intersect(this.board.p2).intersects(SquareSet.lightSquares());
         }
-        if (!this.board['b-piece'].intersect(this.board.white).intersects(SquareSet.lightSquares())) {
-          return !this.board['b-piece'].intersect(this.board.black).intersects(SquareSet.darkSquares());
+        if (!this.board['b-piece'].intersect(this.board.p1).intersects(SquareSet.lightSquares())) {
+          return !this.board['b-piece'].intersect(this.board.p2).intersects(SquareSet.darkSquares());
         }
       }
       return false;
@@ -190,8 +190,8 @@ export class Atomic extends Chess {
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
-    for (const color of COLORS) {
-      if (this.board.pieces(color, 'k-piece').isEmpty()) return { winner: opposite(color) };
+    for (const playerIndex of PLAYERINDEXES) {
+      if (this.board.pieces(playerIndex, 'k-piece').isEmpty()) return { winner: opposite(playerIndex) };
     }
     return;
   }
@@ -226,7 +226,7 @@ export class Antichess extends Chess {
     return Result.ok(undefined);
   }
 
-  protected kingAttackers(_square: Square, _attacker: Color, _occupied: SquareSet): SquareSet {
+  protected kingAttackers(_square: Square, _attacker: PlayerIndex, _occupied: SquareSet): SquareSet {
     return SquareSet.empty();
   }
 
@@ -249,12 +249,12 @@ export class Antichess extends Chess {
     return dests.intersect(this.board[opposite(this.turn)]);
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
+  hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
     if (this.board.occupied.equals(this.board['b-piece'])) {
-      const weSomeOnLight = this.board[color].intersects(SquareSet.lightSquares());
-      const weSomeOnDark = this.board[color].intersects(SquareSet.darkSquares());
-      const theyAllOnDark = this.board[opposite(color)].isDisjoint(SquareSet.lightSquares());
-      const theyAllOnLight = this.board[opposite(color)].isDisjoint(SquareSet.darkSquares());
+      const weSomeOnLight = this.board[playerIndex].intersects(SquareSet.lightSquares());
+      const weSomeOnDark = this.board[playerIndex].intersects(SquareSet.darkSquares());
+      const theyAllOnDark = this.board[opposite(playerIndex)].isDisjoint(SquareSet.lightSquares());
+      const theyAllOnLight = this.board[opposite(playerIndex)].isDisjoint(SquareSet.darkSquares());
       return (weSomeOnLight && theyAllOnDark) || (weSomeOnDark && theyAllOnLight);
     }
     return false;
@@ -290,7 +290,7 @@ export class KingOfTheHill extends Chess {
     return super.clone() as KingOfTheHill;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
 
@@ -299,8 +299,8 @@ export class KingOfTheHill extends Chess {
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
-    for (const color of COLORS) {
-      if (this.board.pieces(color, 'k-piece').intersects(SquareSet.center())) return { winner: color };
+    for (const playerIndex of PLAYERINDEXES) {
+      if (this.board.pieces(playerIndex, 'k-piece').intersects(SquareSet.center())) return { winner: playerIndex };
     }
     return;
   }
@@ -328,18 +328,18 @@ export class ThreeCheck extends Chess {
     return super.clone() as ThreeCheck;
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
-    return this.board.pieces(color, 'k-piece').equals(this.board[color]);
+  hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
+    return this.board.pieces(playerIndex, 'k-piece').equals(this.board[playerIndex]);
   }
 
   isVariantEnd(): boolean {
-    return !!this.remainingChecks && (this.remainingChecks.white <= 0 || this.remainingChecks.black <= 0);
+    return !!this.remainingChecks && (this.remainingChecks.p1 <= 0 || this.remainingChecks.p2 <= 0);
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     if (this.remainingChecks) {
-      for (const color of COLORS) {
-        if (this.remainingChecks[color] <= 0) return { winner: color };
+      for (const playerIndex of PLAYERINDEXES) {
+        if (this.remainingChecks[playerIndex] <= 0) return { winner: playerIndex };
       }
     }
     return;
@@ -368,18 +368,18 @@ export class FiveCheck extends Chess {
     return super.clone() as FiveCheck;
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
-    return this.board.pieces(color, 'k-piece').equals(this.board[color]);
+  hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
+    return this.board.pieces(playerIndex, 'k-piece').equals(this.board[playerIndex]);
   }
 
   isVariantEnd(): boolean {
-    return !!this.remainingChecks && (this.remainingChecks.white <= 0 || this.remainingChecks.black <= 0);
+    return !!this.remainingChecks && (this.remainingChecks.p1 <= 0 || this.remainingChecks.p2 <= 0);
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     if (this.remainingChecks) {
-      for (const color of COLORS) {
-        if (this.remainingChecks[color] <= 0) return { winner: color };
+      for (const playerIndex of PLAYERINDEXES) {
+        if (this.remainingChecks[playerIndex] <= 0) return { winner: playerIndex };
       }
     }
     return;
@@ -395,7 +395,7 @@ class RacingKings extends Chess {
     const pos = new this();
     pos.board = Board.racingKings();
     pos.pockets = undefined;
-    pos.turn = 'white';
+    pos.turn = 'p1';
     pos.castles = Castles.empty();
     pos.epSquare = undefined;
     pos.remainingChecks = undefined;
@@ -439,7 +439,7 @@ class RacingKings extends Chess {
     return dests;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
 
@@ -447,14 +447,14 @@ class RacingKings extends Chess {
     const goal = SquareSet.fromRank(7);
     const inGoal = this.board['k-piece'].intersect(goal);
     if (inGoal.isEmpty()) return false;
-    if (this.turn === 'white' || inGoal.intersects(this.board.black)) return true;
+    if (this.turn === 'p1' || inGoal.intersects(this.board.p2)) return true;
 
-    // White has reached the backrank. Check if black can catch up.
-    const blackKing = this.board.kingOf('black');
-    if (defined(blackKing)) {
-      const occ = this.board.occupied.without(blackKing);
-      for (const target of kingAttacks(blackKing).intersect(goal).diff(this.board.black)) {
-        if (this.kingAttackers(target, 'white', occ).isEmpty()) return false;
+    // P1 has reached the backrank. Check if p2 can catch up.
+    const p2King = this.board.kingOf('p2');
+    if (defined(p2King)) {
+      const occ = this.board.occupied.without(p2King);
+      for (const target of kingAttacks(p2King).intersect(goal).diff(this.board.p2)) {
+        if (this.kingAttackers(target, 'p1', occ).isEmpty()) return false;
       }
     }
     return true;
@@ -463,10 +463,10 @@ class RacingKings extends Chess {
   variantOutcome(ctx?: Context): Outcome | undefined {
     if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
     const goal = SquareSet.fromRank(7);
-    const blackInGoal = this.board.pieces('black', 'k-piece').intersects(goal);
-    const whiteInGoal = this.board.pieces('white', 'k-piece').intersects(goal);
-    if (blackInGoal && !whiteInGoal) return { winner: 'black' };
-    if (whiteInGoal && !blackInGoal) return { winner: 'white' };
+    const p2InGoal = this.board.pieces('p2', 'k-piece').intersects(goal);
+    const p1InGoal = this.board.pieces('p1', 'k-piece').intersects(goal);
+    if (p2InGoal && !p1InGoal) return { winner: 'p2' };
+    if (p1InGoal && !p2InGoal) return { winner: 'p1' };
     return { winner: undefined };
   }
 }
@@ -480,9 +480,9 @@ export class Horde extends Chess {
     const pos = new this();
     pos.board = Board.horde();
     pos.pockets = undefined;
-    pos.turn = 'white';
+    pos.turn = 'p1';
     pos.castles = Castles.default();
-    pos.castles.discardSide('white');
+    pos.castles.discardSide('p1');
     pos.epSquare = undefined;
     pos.remainingChecks = undefined;
     pos.halfmoves = 0;
@@ -503,8 +503,8 @@ export class Horde extends Chess {
     const otherKing = this.board.kingOf(opposite(this.turn));
     if (defined(otherKing) && this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty())
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
-    for (const color of COLORS) {
-      if (this.board.pieces(color, 'p-piece').intersects(SquareSet.backrank(opposite(color)))) {
+    for (const playerIndex of PLAYERINDEXES) {
+      if (this.board.pieces(playerIndex, 'p-piece').intersects(SquareSet.backrank(opposite(playerIndex)))) {
         return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
       }
     }
@@ -515,18 +515,18 @@ export class Horde extends Chess {
     return super.clone() as Horde;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     // TODO: Could detect cases where the horde cannot mate.
     return false;
   }
 
   isVariantEnd(): boolean {
-    return this.board.white.isEmpty() || this.board.black.isEmpty();
+    return this.board.p1.isEmpty() || this.board.p2.isEmpty();
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
-    if (this.board.white.isEmpty()) return { winner: 'black' };
-    if (this.board.black.isEmpty()) return { winner: 'white' };
+    if (this.board.p1.isEmpty()) return { winner: 'p2' };
+    if (this.board.p2.isEmpty()) return { winner: 'p1' };
     return;
   }
 }
@@ -563,7 +563,7 @@ export class LinesOfAction extends Chess {
     const pos = new this();
     pos.board = Board.linesOfAction();
     pos.pockets = undefined;
-    pos.turn = 'white';
+    pos.turn = 'p1';
     pos.castles = Castles.empty();
     pos.epSquare = undefined;
     pos.remainingChecks = undefined;
@@ -594,8 +594,8 @@ export class LinesOfAction extends Chess {
     return !!this.variantOutcome();
   }
 
-  isColorConnected(color: Color): boolean {
-    const pieces = color === 'white' ? this.board.white : this.board.black;
+  isPlayerIndexConnected(playerIndex: PlayerIndex): boolean {
+    const pieces = playerIndex === 'p1' ? this.board.p1 : this.board.p2;
     let connected = SquareSet.empty();
 
     let next = pieces.first();
@@ -607,12 +607,12 @@ export class LinesOfAction extends Chess {
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
-    const whiteWins = this.isColorConnected('white');
-    const blackWins = this.isColorConnected('black');
-    if (whiteWins && !blackWins) {
-      return { winner: 'white' };
-    } else if (!whiteWins && blackWins) {
-      return { winner: 'black' };
+    const p1Wins = this.isPlayerIndexConnected('p1');
+    const p2Wins = this.isPlayerIndexConnected('p2');
+    if (p1Wins && !p2Wins) {
+      return { winner: 'p1' };
+    } else if (!p1Wins && p2Wins) {
+      return { winner: 'p2' };
     } else {
       return undefined;
     }
@@ -628,7 +628,7 @@ export class ScrambledEggs extends Chess {
     const pos = new this();
     pos.board = Board.linesOfAction();
     pos.pockets = undefined;
-    pos.turn = 'white';
+    pos.turn = 'p1';
     pos.castles = Castles.empty();
     pos.epSquare = undefined;
     pos.remainingChecks = undefined;
@@ -659,8 +659,8 @@ export class ScrambledEggs extends Chess {
     return !!this.variantOutcome();
   }
 
-  isColorConnected(color: Color): boolean {
-    const pieces = color === 'white' ? this.board.white : this.board.black;
+  isPlayerIndexConnected(playerIndex: PlayerIndex): boolean {
+    const pieces = playerIndex === 'p1' ? this.board.p1 : this.board.p2;
     let connected = SquareSet.empty();
 
     let next = pieces.first();
@@ -672,12 +672,12 @@ export class ScrambledEggs extends Chess {
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
-    const whiteWins = this.isColorConnected('white');
-    const blackWins = this.isColorConnected('black');
-    if (whiteWins && !blackWins) {
-      return { winner: 'white' };
-    } else if (!whiteWins && blackWins) {
-      return { winner: 'black' };
+    const p1Wins = this.isPlayerIndexConnected('p1');
+    const p2Wins = this.isPlayerIndexConnected('p2');
+    if (p1Wins && !p2Wins) {
+      return { winner: 'p1' };
+    } else if (!p1Wins && p2Wins) {
+      return { winner: 'p2' };
     } else {
       return undefined;
     }
@@ -702,7 +702,7 @@ export class Shogi extends Chess {
     return super.clone() as Shogi;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
 }
@@ -724,7 +724,7 @@ export class MiniShogi extends Chess {
     return super.clone() as MiniShogi;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
 }
@@ -747,7 +747,7 @@ export class Xiangqi extends Chess {
     return super.clone() as Xiangqi;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
 }
@@ -769,7 +769,7 @@ export class MiniXiangqi extends Chess {
     return super.clone() as MiniXiangqi;
   }
 
-  hasInsufficientMaterial(_color: Color): boolean {
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
 }

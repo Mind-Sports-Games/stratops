@@ -1,5 +1,5 @@
 import { Result } from '@badrap/result';
-import { Piece, Square, Color, COLORS, ROLES, FILE_NAMES } from './types';
+import { Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 import { Setup, MaterialSide, Material, RemainingChecks } from './setup';
@@ -41,7 +41,7 @@ function parseSmallUint(str: string): number | undefined {
 
 function charToPiece(ch: string): Piece | undefined {
   const role = charToRole(ch);
-  return role && { role, color: ch.toLowerCase() === ch ? 'black' : 'white' };
+  return role && { role, playerIndex: ch.toLowerCase() === ch ? 'p2' : 'p1' };
 }
 
 export function parseBoardFen(boardPart: string): Result<Board, FenError> {
@@ -80,7 +80,7 @@ export function parsePockets(pocketPart: string): Result<Material, FenError> {
   for (const c of pocketPart) {
     const piece = charToPiece(c);
     if (!piece) return Result.err(new FenError(InvalidFen.Pockets));
-    pockets[piece.color][piece.role]++;
+    pockets[piece.playerIndex][piece.role]++;
   }
   return Result.ok(pockets);
 }
@@ -93,8 +93,8 @@ export function parseCastlingFen(board: Board, castlingPart: string): Result<Squ
   }
   for (const c of castlingPart) {
     const lower = c.toLowerCase();
-    const color = c === lower ? 'black' : 'white';
-    const backrank = SquareSet.backrank(color).intersect(board[color]);
+    const playerIndex = c === lower ? 'p2' : 'p1';
+    const backrank = SquareSet.backrank(playerIndex).intersect(board[playerIndex]);
     let candidates: Iterable<Square>;
     if (lower === 'q') candidates = backrank;
     else if (lower === 'k') candidates = backrank.reversed();
@@ -113,17 +113,17 @@ export function parseCastlingFen(board: Board, castlingPart: string): Result<Squ
 export function parseRemainingChecks(part: string): Result<RemainingChecks, FenError> {
   const parts = part.split('+');
   if (parts.length === 3 && parts[0] === '') {
-    const white = parseSmallUint(parts[1]);
-    const black = parseSmallUint(parts[2]);
-    if (!defined(white) || white > 5 || !defined(black) || black > 5)
+    const p1 = parseSmallUint(parts[1]);
+    const p2 = parseSmallUint(parts[2]);
+    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5)
       return Result.err(new FenError(InvalidFen.RemainingChecks));
-    return Result.ok(new RemainingChecks(5 - white, 5 - black)); //Old notation counting down, not used in games, therefore using highest check mode 5
+    return Result.ok(new RemainingChecks(5 - p1, 5 - p2)); //Old notation counting down, not used in games, therefore using highest check mode 5
   } else if (parts.length === 2) {
-    const white = parseSmallUint(parts[0]);
-    const black = parseSmallUint(parts[1]);
-    if (!defined(white) || white > 5 || !defined(black) || black > 5)
+    const p1 = parseSmallUint(parts[0]);
+    const p2 = parseSmallUint(parts[1]);
+    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5)
       return Result.err(new FenError(InvalidFen.RemainingChecks));
-    return Result.ok(new RemainingChecks(white, black));
+    return Result.ok(new RemainingChecks(p1, p2));
   } else return Result.err(new FenError(InvalidFen.RemainingChecks));
 }
 
@@ -149,10 +149,10 @@ export function parseFen(fen: string): Result<Setup, FenError> {
   }
 
   // Turn
-  let turn: Color;
+  let turn: PlayerIndex;
   const turnPart = parts.shift();
-  if (!defined(turnPart) || turnPart === 'w') turn = 'white';
-  else if (turnPart === 'b') turn = 'black';
+  if (!defined(turnPart) || turnPart === 'w') turn = 'p1';
+  else if (turnPart === 'b') turn = 'p2';
   else return Result.err(new FenError(InvalidFen.Turn));
 
   return board.chain(board => {
@@ -229,7 +229,7 @@ export function parsePiece(str: string): Piece | undefined {
 
 export function makePiece(piece: Piece, opts?: FenOpts): string {
   let r = roleToChar(piece.role);
-  if (piece.color === 'white') r = r.toUpperCase();
+  if (piece.playerIndex === 'p1') r = r.toUpperCase();
   if (opts?.promoted && piece.promoted) r += '~';
   return r;
 }
@@ -267,25 +267,25 @@ export function makePocket(material: MaterialSide): string {
 }
 
 export function makePockets(pocket: Material): string {
-  return makePocket(pocket.white).toUpperCase() + makePocket(pocket.black);
+  return makePocket(pocket.p1).toUpperCase() + makePocket(pocket.p2);
 }
 
 export function makeCastlingFen(board: Board, unmovedRooks: SquareSet, opts?: FenOpts): string {
   const shredder = opts?.shredder;
   let fen = '';
-  for (const color of COLORS) {
-    const backrank = SquareSet.backrank(color);
-    const king = board.kingOf(color);
+  for (const playerIndex of PLAYERINDEXES) {
+    const backrank = SquareSet.backrank(playerIndex);
+    const king = board.kingOf(playerIndex);
     if (!defined(king) || !backrank.has(king)) continue;
-    const candidates = board.pieces(color, 'r-piece').intersect(backrank);
+    const candidates = board.pieces(playerIndex, 'r-piece').intersect(backrank);
     for (const rook of unmovedRooks.intersect(candidates).reversed()) {
       if (!shredder && rook === candidates.first() && rook < king) {
-        fen += color === 'white' ? 'Q' : 'q';
+        fen += playerIndex === 'p1' ? 'Q' : 'q';
       } else if (!shredder && rook === candidates.last() && king < rook) {
-        fen += color === 'white' ? 'K' : 'k';
+        fen += playerIndex === 'p1' ? 'K' : 'k';
       } else {
         const file = FILE_NAMES[squareFile(rook)];
-        fen += color === 'white' ? file.toUpperCase() : file;
+        fen += playerIndex === 'p1' ? file.toUpperCase() : file;
       }
     }
   }
@@ -293,7 +293,7 @@ export function makeCastlingFen(board: Board, unmovedRooks: SquareSet, opts?: Fe
 }
 
 export function makeRemainingChecks(checks: RemainingChecks): string {
-  return `${checks.white}+${checks.black}`;
+  return `${checks.p1}+${checks.p2}`;
 }
 
 export function makeFen(setup: Setup, opts?: FenOpts): string {

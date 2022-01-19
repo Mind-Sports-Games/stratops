@@ -3,10 +3,10 @@ import {
   Rules,
   CastlingSide,
   CASTLING_SIDES,
-  Color,
-  COLORS,
+  PlayerIndex,
+  PLAYERINDEXES,
   Square,
-  ByColor,
+  ByPlayerIndex,
   ByCastlingSide,
   Move,
   NormalMove,
@@ -41,7 +41,7 @@ export enum IllegalSetup {
 
 export class PositionError extends Error {}
 
-function attacksTo(square: Square, attacker: Color, board: Board, occupied: SquareSet): SquareSet {
+function attacksTo(square: Square, attacker: PlayerIndex, board: Board, occupied: SquareSet): SquareSet {
   return board[attacker].intersect(
     rookAttacks(square, occupied)
       .intersect(board.rooksAndQueens())
@@ -52,14 +52,14 @@ function attacksTo(square: Square, attacker: Color, board: Board, occupied: Squa
   );
 }
 
-function rookCastlesTo(color: Color, side: CastlingSide): Square {
-  return color === 'white' ? (side === 'a' ? 3 : 5) : side === 'a' ? 59 : 61;
+function rookCastlesTo(playerIndex: PlayerIndex, side: CastlingSide): Square {
+  return playerIndex === 'p1' ? (side === 'a' ? 3 : 5) : side === 'a' ? 59 : 61;
 }
 
 export class Castles {
   unmovedRooks: SquareSet;
-  rook: ByColor<ByCastlingSide<Square | undefined>>;
-  path: ByColor<ByCastlingSide<SquareSet>>;
+  rook: ByPlayerIndex<ByCastlingSide<Square | undefined>>;
+  path: ByPlayerIndex<ByCastlingSide<SquareSet>>;
 
   private constructor() {}
 
@@ -67,12 +67,12 @@ export class Castles {
     const castles = new Castles();
     castles.unmovedRooks = SquareSet.corners();
     castles.rook = {
-      white: { a: 0, h: 7 },
-      black: { a: 56, h: 63 },
+      p1: { a: 0, h: 7 },
+      p2: { a: 56, h: 63 },
     };
     castles.path = {
-      white: { a: new SquareSet(0xe, 0), h: new SquareSet(0x60, 0) },
-      black: { a: new SquareSet(0, 0x0e000000), h: new SquareSet(0, 0x60000000) },
+      p1: { a: new SquareSet(0xe, 0), h: new SquareSet(0x60, 0) },
+      p2: { a: new SquareSet(0, 0x0e000000), h: new SquareSet(0, 0x60000000) },
     };
     return castles;
   }
@@ -81,12 +81,12 @@ export class Castles {
     const castles = new Castles();
     castles.unmovedRooks = SquareSet.empty();
     castles.rook = {
-      white: { a: undefined, h: undefined },
-      black: { a: undefined, h: undefined },
+      p1: { a: undefined, h: undefined },
+      p2: { a: undefined, h: undefined },
     };
     castles.path = {
-      white: { a: SquareSet.empty(), h: SquareSet.empty() },
-      black: { a: SquareSet.empty(), h: SquareSet.empty() },
+      p1: { a: SquareSet.empty(), h: SquareSet.empty() },
+      p2: { a: SquareSet.empty(), h: SquareSet.empty() },
     };
     return castles;
   }
@@ -95,22 +95,22 @@ export class Castles {
     const castles = new Castles();
     castles.unmovedRooks = this.unmovedRooks;
     castles.rook = {
-      white: { a: this.rook.white.a, h: this.rook.white.h },
-      black: { a: this.rook.black.a, h: this.rook.black.h },
+      p1: { a: this.rook.p1.a, h: this.rook.p1.h },
+      p2: { a: this.rook.p2.a, h: this.rook.p2.h },
     };
     castles.path = {
-      white: { a: this.path.white.a, h: this.path.white.h },
-      black: { a: this.path.black.a, h: this.path.black.h },
+      p1: { a: this.path.p1.a, h: this.path.p1.h },
+      p2: { a: this.path.p2.a, h: this.path.p2.h },
     };
     return castles;
   }
 
-  private add(color: Color, side: CastlingSide, king: Square, rook: Square): void {
-    const kingTo = kingCastlesTo(color, side);
-    const rookTo = rookCastlesTo(color, side);
+  private add(playerIndex: PlayerIndex, side: CastlingSide, king: Square, rook: Square): void {
+    const kingTo = kingCastlesTo(playerIndex, side);
+    const rookTo = rookCastlesTo(playerIndex, side);
     this.unmovedRooks = this.unmovedRooks.with(rook);
-    this.rook[color][side] = rook;
-    this.path[color][side] = between(rook, rookTo)
+    this.rook[playerIndex][side] = rook;
+    this.path[playerIndex][side] = between(rook, rookTo)
       .with(rookTo)
       .union(between(king, kingTo).with(kingTo))
       .without(king)
@@ -120,15 +120,15 @@ export class Castles {
   static fromSetup(setup: Setup): Castles {
     const castles = Castles.empty();
     const rooks = setup.unmovedRooks.intersect(setup.board['r-piece']);
-    for (const color of COLORS) {
-      const backrank = SquareSet.backrank(color);
-      const king = setup.board.kingOf(color);
+    for (const playerIndex of PLAYERINDEXES) {
+      const backrank = SquareSet.backrank(playerIndex);
+      const king = setup.board.kingOf(playerIndex);
       if (!defined(king) || !backrank.has(king)) continue;
-      const side = rooks.intersect(setup.board[color]).intersect(backrank);
+      const side = rooks.intersect(setup.board[playerIndex]).intersect(backrank);
       const aSide = side.first();
-      if (defined(aSide) && aSide < king) castles.add(color, 'a', king, aSide);
+      if (defined(aSide) && aSide < king) castles.add(playerIndex, 'a', king, aSide);
       const hSide = side.last();
-      if (defined(hSide) && king < hSide) castles.add(color, 'h', king, hSide);
+      if (defined(hSide) && king < hSide) castles.add(playerIndex, 'h', king, hSide);
     }
     return castles;
   }
@@ -136,18 +136,18 @@ export class Castles {
   discardRook(square: Square): void {
     if (this.unmovedRooks.has(square)) {
       this.unmovedRooks = this.unmovedRooks.without(square);
-      for (const color of COLORS) {
+      for (const playerIndex of PLAYERINDEXES) {
         for (const side of CASTLING_SIDES) {
-          if (this.rook[color][side] === square) this.rook[color][side] = undefined;
+          if (this.rook[playerIndex][side] === square) this.rook[playerIndex][side] = undefined;
         }
       }
     }
   }
 
-  discardSide(color: Color): void {
-    this.unmovedRooks = this.unmovedRooks.diff(SquareSet.backrank(color));
-    this.rook[color].a = undefined;
-    this.rook[color].h = undefined;
+  discardSide(playerIndex: PlayerIndex): void {
+    this.unmovedRooks = this.unmovedRooks.diff(SquareSet.backrank(playerIndex));
+    this.rook[playerIndex].a = undefined;
+    this.rook[playerIndex].h = undefined;
   }
 }
 
@@ -162,7 +162,7 @@ export interface Context {
 export abstract class Position {
   board: Board;
   pockets: Material | undefined;
-  turn: Color;
+  turn: PlayerIndex;
   castles: Castles;
   epSquare: Square | undefined;
   remainingChecks: RemainingChecks | undefined;
@@ -179,9 +179,9 @@ export abstract class Position {
   abstract dests(square: Square, ctx?: Context): SquareSet;
   abstract isVariantEnd(): boolean;
   abstract variantOutcome(ctx?: Context): Outcome | undefined;
-  abstract hasInsufficientMaterial(color: Color): boolean;
+  abstract hasInsufficientMaterial(playerIndex: PlayerIndex): boolean;
 
-  protected kingAttackers(square: Square, attacker: Color, occupied: SquareSet): SquareSet {
+  protected kingAttackers(square: Square, attacker: PlayerIndex, occupied: SquareSet): SquareSet {
     return attacksTo(square, attacker, this.board, occupied);
   }
 
@@ -192,7 +192,7 @@ export abstract class Position {
   protected playCaptureAt(square: Square, captured: Piece): void {
     this.halfmoves = 0;
     if (captured.role === 'r-piece') this.castles.discardRook(square);
-    if (this.pockets) this.pockets[opposite(captured.color)][captured.role]++;
+    if (this.pockets) this.pockets[opposite(captured.playerIndex)][captured.role]++;
   }
 
   ctx(): Context {
@@ -261,7 +261,7 @@ export abstract class Position {
   }
 
   isInsufficientMaterial(): boolean {
-    return COLORS.every(color => this.hasInsufficientMaterial(color));
+    return PLAYERINDEXES.every(playerIndex => this.hasInsufficientMaterial(playerIndex));
   }
 
   hasDests(ctx?: Context): boolean {
@@ -351,11 +351,11 @@ export abstract class Position {
 
     this.epSquare = undefined;
     this.halfmoves += 1;
-    if (turn === 'black') this.fullmoves += 1;
+    if (turn === 'p2') this.fullmoves += 1;
     this.turn = opposite(turn);
 
     if (isDrop(move)) {
-      this.board.set(move.to, { role: move.role, color: turn });
+      this.board.set(move.to, { role: move.role, playerIndex: turn });
       if (this.pockets) this.pockets[turn][move.role]--;
       if (move.role === 'p-piece') this.halfmoves = 0;
     } else {
@@ -366,7 +366,7 @@ export abstract class Position {
       if (piece.role === 'p-piece') {
         this.halfmoves = 0;
         if (move.to === epSquare) {
-          epCapture = this.board.take(move.to + (turn === 'white' ? -8 : 8));
+          epCapture = this.board.take(move.to + (turn === 'p1' ? -8 : 8));
         }
         const delta = move.from - move.to;
         if (Math.abs(delta) === 16 && 8 <= move.from && move.from <= 55) {
@@ -417,7 +417,7 @@ export class Chess extends Position {
     const pos = new this();
     pos.board = Board.default();
     pos.pockets = undefined;
-    pos.turn = 'white';
+    pos.turn = 'p1';
     pos.castles = Castles.default();
     pos.epSquare = undefined;
     pos.remainingChecks = undefined;
@@ -481,8 +481,8 @@ export class Chess extends Position {
 
   private validEpSquare(square: Square | undefined): Square | undefined {
     if (!defined(square)) return;
-    const epRank = this.turn === 'white' ? 5 : 2;
-    const forward = this.turn === 'white' ? 8 : -8;
+    const epRank = this.turn === 'p1' ? 5 : 2;
+    const forward = this.turn === 'p1' ? 8 : -8;
     if (squareRank(square) !== epRank) return;
     if (this.board.occupied.has(square + forward)) return;
     const pawn = square - forward;
@@ -514,7 +514,7 @@ export class Chess extends Position {
     if (!defined(this.epSquare)) return false;
     if (!pawnAttacks(this.turn, pawn).has(this.epSquare)) return false;
     if (!defined(ctx.king)) return true;
-    const captured = this.epSquare + (this.turn === 'white' ? -8 : 8);
+    const captured = this.epSquare + (this.turn === 'p1' ? -8 : 8);
     const occupied = this.board.occupied.toggle(pawn).toggle(this.epSquare).toggle(captured);
     return !this.kingAttackers(ctx.king, opposite(this.turn), occupied).intersects(occupied);
   }
@@ -522,18 +522,18 @@ export class Chess extends Position {
   protected pseudoDests(square: Square, ctx: Context): SquareSet {
     if (ctx.variantEnd) return SquareSet.empty();
     const piece = this.board.get(square);
-    if (!piece || piece.color !== this.turn) return SquareSet.empty();
+    if (!piece || piece.playerIndex !== this.turn) return SquareSet.empty();
 
-    let pseudo = attacks(piece, square, this.board.occupied, this.board.white, this.board.black);
+    let pseudo = attacks(piece, square, this.board.occupied, this.board.p1, this.board.p2);
     if (piece.role === 'p-piece') {
       let captureTargets = this.board[opposite(this.turn)];
       if (defined(this.epSquare)) captureTargets = captureTargets.with(this.epSquare);
       pseudo = pseudo.intersect(captureTargets);
-      const delta = this.turn === 'white' ? 8 : -8;
+      const delta = this.turn === 'p1' ? 8 : -8;
       const step = square + delta;
       if (0 <= step && step < 64 && !this.board.occupied.has(step)) {
         pseudo = pseudo.with(step);
-        const canDoubleStep = this.turn === 'white' ? square < 16 : square >= 64 - 16;
+        const canDoubleStep = this.turn === 'p1' ? square < 16 : square >= 64 - 16;
         const doubleStep = step + delta;
         if (canDoubleStep && !this.board.occupied.has(doubleStep)) {
           pseudo = pseudo.with(doubleStep);
@@ -551,16 +551,16 @@ export class Chess extends Position {
     ctx = ctx || this.ctx();
     if (ctx.variantEnd) return SquareSet.empty();
     const piece = this.board.get(square);
-    if (!piece || piece.color !== this.turn) return SquareSet.empty();
+    if (!piece || piece.playerIndex !== this.turn) return SquareSet.empty();
 
     let pseudo, legal;
     if (piece.role === 'p-piece') {
       pseudo = pawnAttacks(this.turn, square).intersect(this.board[opposite(this.turn)]);
-      const delta = this.turn === 'white' ? 8 : -8;
+      const delta = this.turn === 'p1' ? 8 : -8;
       const step = square + delta;
       if (0 <= step && step < 64 && !this.board.occupied.has(step)) {
         pseudo = pseudo.with(step);
-        const canDoubleStep = this.turn === 'white' ? square < 16 : square >= 64 - 16;
+        const canDoubleStep = this.turn === 'p1' ? square < 16 : square >= 64 - 16;
         const doubleStep = step + delta;
         if (canDoubleStep && !this.board.occupied.has(doubleStep)) {
           pseudo = pseudo.with(doubleStep);
@@ -610,19 +610,19 @@ export class Chess extends Position {
     return;
   }
 
-  hasInsufficientMaterial(color: Color): boolean {
-    if (this.board[color].intersect(this.board['p-piece'].union(this.board.rooksAndQueens())).nonEmpty()) return false;
-    if (this.board[color].intersects(this.board['n-piece'])) {
+  hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
+    if (this.board[playerIndex].intersect(this.board['p-piece'].union(this.board.rooksAndQueens())).nonEmpty()) return false;
+    if (this.board[playerIndex].intersects(this.board['n-piece'])) {
       return (
-        this.board[color].size() <= 2 &&
-        this.board[opposite(color)].diff(this.board['k-piece']).diff(this.board['q-piece']).isEmpty()
+        this.board[playerIndex].size() <= 2 &&
+        this.board[opposite(playerIndex)].diff(this.board['k-piece']).diff(this.board['q-piece']).isEmpty()
       );
     }
-    if (this.board[color].intersects(this.board['b-piece'])) {
-      const sameColor =
+    if (this.board[playerIndex].intersects(this.board['b-piece'])) {
+      const samePlayerIndex =
         !this.board['b-piece'].intersects(SquareSet.darkSquares()) ||
         !this.board['b-piece'].intersects(SquareSet.lightSquares());
-      return sameColor && this.board['p-piece'].isEmpty() && this.board['n-piece'].isEmpty();
+      return samePlayerIndex && this.board['p-piece'].isEmpty() && this.board['n-piece'].isEmpty();
     }
     return true;
   }

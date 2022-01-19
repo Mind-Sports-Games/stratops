@@ -79,10 +79,10 @@ const insufficientMaterial: [Rules, string, boolean, boolean][] = [
   ['horde', '8/5k2/8/8/8/4NN2/8/8 w - - 0 1', falseNegative, false],
 ];
 
-test.each(insufficientMaterial)('%s insufficient material: %s', (rules, fen, white, black) => {
+test.each(insufficientMaterial)('%s insufficient material: %s', (rules, fen, p1, p2) => {
   const pos = setupPosition(rules, parseFen(fen).unwrap()).unwrap();
-  expect(pos.hasInsufficientMaterial('white')).toBe(white);
-  expect(pos.hasInsufficientMaterial('black')).toBe(black);
+  expect(pos.hasInsufficientMaterial('p1')).toBe(p1);
+  expect(pos.hasInsufficientMaterial('p2')).toBe(p2);
 });
 
 test('king of the hill not over', () => {
@@ -107,20 +107,20 @@ test('racing kings end', () => {
   expect(draw.isEnd()).toBe(true);
   expect(draw.outcome()).toStrictEqual({ winner: undefined });
 
-  // White to move is lost because black reached the backrank.
-  const black = setupPosition('racingkings', parseFen('1k6/6K1/8/8/8/8/8/8 w - - 0 1').unwrap()).unwrap();
-  expect(black.isEnd()).toBe(true);
-  expect(black.outcome()).toStrictEqual({ winner: 'black' });
+  // P1 to move is lost because p2 reached the backrank.
+  const p2 = setupPosition('racingkings', parseFen('1k6/6K1/8/8/8/8/8/8 w - - 0 1').unwrap()).unwrap();
+  expect(p2.isEnd()).toBe(true);
+  expect(p2.outcome()).toStrictEqual({ winner: 'p2' });
 
-  // Black is given a chance to catch up.
+  // P2 is given a chance to catch up.
   const pos = setupPosition('racingkings', parseFen('1K6/7k/8/8/8/8/8/8 b - - 0 1').unwrap()).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
-  // Black near backrank but cannot move there.
-  const white = setupPosition('racingkings', parseFen('2KR4/k7/2Q5/4q3/8/8/8/2N5 b - - 0 1').unwrap()).unwrap();
-  expect(white.isEnd()).toBe(true);
-  expect(white.outcome()).toStrictEqual({ winner: 'white' });
+  // P2 near backrank but cannot move there.
+  const p1 = setupPosition('racingkings', parseFen('2KR4/k7/2Q5/4q3/8/8/8/2N5 b - - 0 1').unwrap()).unwrap();
+  expect(p1.isEnd()).toBe(true);
+  expect(p1.outcome()).toStrictEqual({ winner: 'p1' });
 });
 
 test('atomic king exploded', () => {
@@ -130,14 +130,14 @@ test('atomic king exploded', () => {
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'white' });
+  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 });
 
 test('lines of action wins', () => {
   let pos = setupPosition('linesofaction', parseFen('1LLLLLL1/8/8/8/8/8/8/8 b - - 0 1').unwrap()).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'white' });
+  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 
   pos = setupPosition(
     'linesofaction',
@@ -155,5 +155,5 @@ test('lines of action wins', () => {
   pos = setupPosition('linesofaction', parseFen('8/l7/l7/l7/l7/l7/l7/8 b - - 0 1').unwrap()).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'black' });
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });

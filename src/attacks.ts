@@ -13,7 +13,7 @@
  */
 
 import { squareFile, squareRank, zip } from './util';
-import { Square, Piece, Color, BySquare } from './types';
+import { Square, Piece, PlayerIndex, BySquare } from './types';
 import { SquareSet } from './squareSet';
 
 function isValid(square: Square): boolean {
@@ -40,8 +40,8 @@ function tabulate<T>(f: (square: Square) => T): BySquare<T> {
 const KING_ATTACKS = tabulate(sq => computeRange(sq, [-9, -8, -7, -1, 1, 7, 8, 9]));
 const KNIGHT_ATTACKS = tabulate(sq => computeRange(sq, [-17, -15, -10, -6, 6, 10, 15, 17]));
 const PAWN_ATTACKS = {
-  white: tabulate(sq => computeRange(sq, [7, 9])),
-  black: tabulate(sq => computeRange(sq, [-7, -9])),
+  p1: tabulate(sq => computeRange(sq, [7, 9])),
+  p2: tabulate(sq => computeRange(sq, [-7, -9])),
 };
 
 /**
@@ -59,11 +59,11 @@ export function knightAttacks(square: Square): SquareSet {
 }
 
 /**
- * Gets squares attacked or defended by a pawn of the given `color`
+ * Gets squares attacked or defended by a pawn of the given `playerIndex`
  * on `square`.
  */
-export function pawnAttacks(color: Color, square: Square): SquareSet {
-  return PAWN_ATTACKS[color][square];
+export function pawnAttacks(playerIndex: PlayerIndex, square: Square): SquareSet {
+  return PAWN_ATTACKS[playerIndex][square];
 }
 
 const FILE_RANGE = tabulate(sq => SquareSet.fromFile(squareFile(sq)).without(sq));
@@ -132,16 +132,16 @@ export function queenAttacks(square: Square, occupied: SquareSet): SquareSet {
  * squares.
  */
 export function linesOfActionAttacks(
-  color: Color,
+  playerIndex: PlayerIndex,
   square: Square,
   occupied: SquareSet,
-  white: SquareSet,
-  black: SquareSet
+  p1: SquareSet,
+  p2: SquareSet
 ): SquareSet {
   // TODO: write some tests.
-  const ours = color === 'white' ? white : black;
+  const ours = playerIndex === 'p1' ? p1 : p2;
 
-  const theirs = color === 'black' ? white : black;
+  const theirs = playerIndex === 'p2' ? p1 : p2;
   const deltaToSquare = (delta: Square) => square + delta;
   const pieceCountInRay = (dir: Square) => (isValid(dir) ? ray(square, dir).intersect(occupied).size() : 0);
   const nearby = [-9, -8, -7, -1, 1, 7, 8, 9];
@@ -166,12 +166,12 @@ export function attacks(
   piece: Piece,
   square: Square,
   occupied: SquareSet,
-  white: SquareSet,
-  black: SquareSet
+  p1: SquareSet,
+  p2: SquareSet
 ): SquareSet {
   switch (piece.role) {
     case 'p-piece':
-      return pawnAttacks(piece.color, square);
+      return pawnAttacks(piece.playerIndex, square);
     case 'n-piece':
       return knightAttacks(square);
     case 'b-piece':
@@ -183,7 +183,7 @@ export function attacks(
     case 'k-piece':
       return kingAttacks(square);
     case 'l-piece':
-      return linesOfActionAttacks(piece.color, square, occupied, white, black);
+      return linesOfActionAttacks(piece.playerIndex, square, occupied, p1, p2);
     default:
       return SquareSet.empty();
   }

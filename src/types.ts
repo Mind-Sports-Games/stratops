@@ -15,15 +15,15 @@ export type SquareName = `${FileName}${RankName}`;
  */
 export type BySquare<T> = T[];
 
-export const COLORS = ['white', 'black'] as const;
+export const PLAYERINDEXES = ['p1', 'p2'] as const;
 
-export type Color = typeof COLORS[number];
+export type PlayerIndex = typeof PLAYERINDEXES[number];
 
 /**
- * Indexable by `white` and `black`.
+ * Indexable by `p1` and `p2`.
  */
-export type ByColor<T> = {
-  [color in Color]: T;
+export type ByPlayerIndex<T> = {
+  [playerIndex in PlayerIndex]: T;
 };
 
 //curretnly supported pieces, should change to use Role to accept all new peices.
@@ -81,7 +81,7 @@ export type ByCastlingSide<T> = {
 
 export interface Piece {
   role: Role;
-  color: Color;
+  playerIndex: PlayerIndex;
   promoted?: boolean;
 }
 
@@ -128,5 +128,5 @@ export const RULES = [
 export type Rules = typeof RULES[number];
 
 export interface Outcome {
-  winner: Color | undefined;
+  winner: PlayerIndex | undefined;
 }

@@ -1,11 +1,11 @@
-import { FILE_NAMES, RANK_NAMES, CastlingSide, Color, Square, Role, Move, isDrop, SquareName } from './types';
+import { FILE_NAMES, RANK_NAMES, CastlingSide, PlayerIndex, Square, Role, Move, isDrop, SquareName } from './types';
 
 export function defined<A>(v: A | undefined): v is A {
   return v !== undefined;
 }
 
-export function opposite(color: Color): Color {
-  return color === 'white' ? 'black' : 'white';
+export function opposite(playerIndex: PlayerIndex): PlayerIndex {
+  return playerIndex === 'p1' ? 'p2' : 'p1';
 }
 
 export function squareRank(square: Square): number {
@@ -92,8 +92,8 @@ export function makeUci(move: Move): string {
   return makeSquare(move.from) + makeSquare(move.to) + (move.promotion ? roleToChar(move.promotion) : '');
 }
 
-export function kingCastlesTo(color: Color, side: CastlingSide): Square {
-  return color === 'white' ? (side === 'a' ? 2 : 6) : side === 'a' ? 58 : 62;
+export function kingCastlesTo(playerIndex: PlayerIndex, side: CastlingSide): Square {
+  return playerIndex === 'p1' ? (side === 'a' ? 2 : 6) : side === 'a' ? 58 : 62;
 }
 
 export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
