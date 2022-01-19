@@ -1,6 +1,6 @@
 {
   "name": "chessops",
-  "version": "0.8.1-pstrat3.4",
+  "version": "0.8.1-pstrat3.7",
   "description": "Chess and chess variant rules and operations",
   "keywords": [
     "chess",
@@ -16,7 +16,8 @@
   "type": "commonjs",
   "sideEffects": false,
   "dependencies": {
-    "@badrap/result": "^0.2.8"
+    "@badrap/result": "^0.2.8",
+    "chessops": "^0.10.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
