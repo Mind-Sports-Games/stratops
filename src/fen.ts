@@ -299,7 +299,7 @@ export function makeRemainingChecks(checks: RemainingChecks): string {
 export function makeFen(setup: Setup, opts?: FenOpts): string {
   return [
     makeBoardFen(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
-    setup.turn == 'p1' ? 'w' : 'b',
+    setup.turn === 'p1' ? 'w' : 'b',
     makeCastlingFen(setup.board, setup.unmovedRooks, opts),
     defined(setup.epSquare) ? makeSquare(setup.epSquare) : '-',
     ...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks)] : []),
