@@ -115,14 +115,12 @@ export function parseRemainingChecks(part: string): Result<RemainingChecks, FenE
   if (parts.length === 3 && parts[0] === '') {
     const p1 = parseSmallUint(parts[1]);
     const p2 = parseSmallUint(parts[2]);
-    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5)
-      return Result.err(new FenError(InvalidFen.RemainingChecks));
+    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5) return Result.err(new FenError(InvalidFen.RemainingChecks));
     return Result.ok(new RemainingChecks(5 - p1, 5 - p2)); //Old notation counting down, not used in games, therefore using highest check mode 5
   } else if (parts.length === 2) {
     const p1 = parseSmallUint(parts[0]);
     const p2 = parseSmallUint(parts[1]);
-    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5)
-      return Result.err(new FenError(InvalidFen.RemainingChecks));
+    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5) return Result.err(new FenError(InvalidFen.RemainingChecks));
     return Result.ok(new RemainingChecks(p1, p2));
   } else return Result.err(new FenError(InvalidFen.RemainingChecks));
 }

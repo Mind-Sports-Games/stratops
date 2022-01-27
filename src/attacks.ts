@@ -162,13 +162,7 @@ export function linesOfActionAttacks(
  * Gets squares attacked or defended by a `piece` on `square`, given
  * `occupied` squares.
  */
-export function attacks(
-  piece: Piece,
-  square: Square,
-  occupied: SquareSet,
-  p1: SquareSet,
-  p2: SquareSet
-): SquareSet {
+export function attacks(piece: Piece, square: Square, occupied: SquareSet, p1: SquareSet, p2: SquareSet): SquareSet {
   switch (piece.role) {
     case 'p-piece':
       return pawnAttacks(piece.playerIndex, square);

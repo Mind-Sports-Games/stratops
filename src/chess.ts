@@ -611,7 +611,8 @@ export class Chess extends Position {
   }
 
   hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
-    if (this.board[playerIndex].intersect(this.board['p-piece'].union(this.board.rooksAndQueens())).nonEmpty()) return false;
+    if (this.board[playerIndex].intersect(this.board['p-piece'].union(this.board.rooksAndQueens())).nonEmpty())
+      return false;
     if (this.board[playerIndex].intersects(this.board['n-piece'])) {
       return (
         this.board[playerIndex].size() <= 2 &&
