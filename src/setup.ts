@@ -1,4 +1,4 @@
-import { Color, ROLES, Square } from './types';
+import { PlayerIndex, ROLES, Square } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 
@@ -64,9 +64,9 @@ export class MaterialSide {
     return m;
   }
 
-  static fromBoard(board: Board, color: Color): MaterialSide {
+  static fromBoard(board: Board, playerIndex: PlayerIndex): MaterialSide {
     const m = new MaterialSide();
-    for (const role of ROLES) m[role] = board.pieces(color, role).size();
+    for (const role of ROLES) m[role] = board.pieces(playerIndex, role).size();
     return m;
   }
 
@@ -124,34 +124,34 @@ export class MaterialSide {
 }
 
 export class Material {
-  constructor(public white: MaterialSide, public black: MaterialSide) {}
+  constructor(public p1: MaterialSide, public p2: MaterialSide) {}
 
   static empty(): Material {
     return new Material(MaterialSide.empty(), MaterialSide.empty());
   }
 
   static fromBoard(board: Board): Material {
-    return new Material(MaterialSide.fromBoard(board, 'white'), MaterialSide.fromBoard(board, 'black'));
+    return new Material(MaterialSide.fromBoard(board, 'p1'), MaterialSide.fromBoard(board, 'p2'));
   }
 
   clone(): Material {
-    return new Material(this.white.clone(), this.black.clone());
+    return new Material(this.p1.clone(), this.p2.clone());
   }
 
   equals(other: Material): boolean {
-    return this.white.equals(other.white) && this.black.equals(other.black);
+    return this.p1.equals(other.p1) && this.p2.equals(other.p2);
   }
 
   add(other: Material): Material {
-    return new Material(this.white.add(other.white), this.black.add(other.black));
+    return new Material(this.p1.add(other.p1), this.p2.add(other.p2));
   }
 
   count(): number {
-    return this.white.count() + this.black.count();
+    return this.p1.count() + this.p2.count();
   }
 
   isEmpty(): boolean {
-    return this.white.isEmpty() && this.black.isEmpty();
+    return this.p1.isEmpty() && this.p2.isEmpty();
   }
 
   nonEmpty(): boolean {
@@ -159,16 +159,16 @@ export class Material {
   }
 
   hasPawns(): boolean {
-    return this.white.hasPawns() || this.black.hasPawns();
+    return this.p1.hasPawns() || this.p2.hasPawns();
   }
 
   hasNonPawns(): boolean {
-    return this.white.hasNonPawns() || this.black.hasNonPawns();
+    return this.p1.hasNonPawns() || this.p2.hasNonPawns();
   }
 }
 
 export class RemainingChecks {
-  constructor(public white: number, public black: number) {}
+  constructor(public p1: number, public p2: number) {}
 
   static default(): RemainingChecks {
     return new RemainingChecks(3, 3);
@@ -179,18 +179,18 @@ export class RemainingChecks {
   }
 
   clone(): RemainingChecks {
-    return new RemainingChecks(this.white, this.black);
+    return new RemainingChecks(this.p1, this.p2);
   }
 
   equals(other: RemainingChecks): boolean {
-    return this.white === other.white && this.black === other.black;
+    return this.p1 === other.p1 && this.p2 === other.p2;
   }
 }
 
 export interface Setup {
   board: Board;
   pockets: Material | undefined;
-  turn: Color;
+  turn: PlayerIndex;
   unmovedRooks: SquareSet;
   epSquare: Square | undefined;
   remainingChecks: RemainingChecks | undefined;
@@ -202,7 +202,7 @@ export function defaultSetup(): Setup {
   return {
     board: Board.default(),
     pockets: undefined,
-    turn: 'white',
+    turn: 'p1',
     unmovedRooks: SquareSet.corners(),
     epSquare: undefined,
     remainingChecks: undefined,

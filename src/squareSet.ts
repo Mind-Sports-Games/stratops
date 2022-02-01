@@ -1,4 +1,4 @@
-import { Square, Color } from './types';
+import { Square, PlayerIndex } from './types';
 
 function popcnt32(n: number): number {
   n = n - ((n >>> 1) & 0x5555_5555);
@@ -56,8 +56,8 @@ export class SquareSet implements Iterable<Square> {
     return new SquareSet(0xff, 0xff00_0000);
   }
 
-  static backrank(color: Color): SquareSet {
-    return color === 'white' ? new SquareSet(0xff, 0) : new SquareSet(0, 0xff00_0000);
+  static backrank(playerIndex: PlayerIndex): SquareSet {
+    return playerIndex === 'p1' ? new SquareSet(0xff, 0) : new SquareSet(0, 0xff00_0000);
   }
 
   static lightSquares(): SquareSet {

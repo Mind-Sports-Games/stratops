@@ -1,4 +1,4 @@
-import { ROLES, COLORS } from './types';
+import { ROLES, PLAYERINDEXES } from './types';
 import { defined } from './util';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
@@ -36,7 +36,7 @@ export function transformBoard(board: Board, f: (s: SquareSet) => SquareSet): Bo
   const b = Board.empty();
   b.occupied = f(board.occupied);
   b.promoted = f(board.promoted);
-  for (const color of COLORS) b[color] = f(board[color]);
+  for (const playerIndex of PLAYERINDEXES) b[playerIndex] = f(board[playerIndex]);
   for (const role of ROLES) b[role] = f(board[role]);
   return b;
 }

@@ -1,15 +1,15 @@
-import { Square, Color, Role, Piece, COLORS, ROLES, ByRole, ByColor } from './types';
+import { Square, PlayerIndex, Role, Piece, PLAYERINDEXES, ROLES, ByRole, ByPlayerIndex } from './types';
 import { SquareSet } from './squareSet';
 
 /**
  * Piece positions on a board.
  *
  * Properties are sets of squares, like `board.occupied` for all occupied
- * squares, `board[color]` for all pieces of that color, and `board[role]`
+ * squares, `board[playerIndex]` for all pieces of that playerIndex, and `board[role]`
  * for all pieces of that role. When modifying the properties directly, take
  * care to keep them consistent.
  */
-export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByColor<SquareSet> {
+export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPlayerIndex<SquareSet> {
   /**
    * All occupied squares.
    */
@@ -20,8 +20,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
    */
   promoted: SquareSet;
 
-  white: SquareSet;
-  black: SquareSet;
+  p1: SquareSet;
+  p2: SquareSet;
   'a-piece': SquareSet;
   'b-piece': SquareSet;
   'c-piece': SquareSet;
@@ -87,8 +87,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     const board = new Board();
     board.occupied = new SquareSet(0xffff, 0);
     board.promoted = SquareSet.empty();
-    board.white = new SquareSet(0xf0f0, 0);
-    board.black = new SquareSet(0x0f0f, 0);
+    board.p1 = new SquareSet(0xf0f0, 0);
+    board.p2 = new SquareSet(0x0f0f, 0);
     board['p-piece'] = SquareSet.empty();
     board['n-piece'] = new SquareSet(0x1818, 0);
     board['b-piece'] = new SquareSet(0x2424, 0);
@@ -103,8 +103,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     const board = new Board();
     board.occupied = new SquareSet(0xffff_ffff, 0xffff_0066);
     board.promoted = SquareSet.empty();
-    board.white = new SquareSet(0xffff_ffff, 0x0000_0066);
-    board.black = new SquareSet(0, 0xffff_0000);
+    board.p1 = new SquareSet(0xffff_ffff, 0x0000_0066);
+    board.p2 = new SquareSet(0, 0xffff_0000);
     board['p-piece'] = new SquareSet(0xffff_ffff, 0x00ff_0066);
     board['n-piece'] = new SquareSet(0, 0x4200_0000);
     board['b-piece'] = new SquareSet(0, 0x2400_0000);
@@ -119,8 +119,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     const board = new Board();
     board.occupied = new SquareSet(0x8181_817e, 0x7e81_8181);
     board.promoted = SquareSet.empty();
-    board.white = new SquareSet(0x8181_8100, 0x0081_8181);
-    board.black = new SquareSet(0x007e, 0x7e00_0000);
+    board.p1 = new SquareSet(0x8181_8100, 0x0081_8181);
+    board.p2 = new SquareSet(0x007e, 0x7e00_0000);
     board['p-piece'] = new SquareSet(0, 0);
     board['n-piece'] = new SquareSet(0, 0);
     board['b-piece'] = new SquareSet(0, 0);
@@ -137,8 +137,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   reset(): void {
     this.occupied = new SquareSet(0xffff, 0xffff_0000);
     this.promoted = SquareSet.empty();
-    this.white = new SquareSet(0xffff, 0);
-    this.black = new SquareSet(0, 0xffff_0000);
+    this.p1 = new SquareSet(0xffff, 0);
+    this.p2 = new SquareSet(0, 0xffff_0000);
     this['p-piece'] = new SquareSet(0xff00, 0x00ff_0000);
     this['n-piece'] = new SquareSet(0x42, 0x4200_0000);
     this['b-piece'] = new SquareSet(0x24, 0x2400_0000);
@@ -157,7 +157,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   clear(): void {
     this.occupied = SquareSet.empty();
     this.promoted = SquareSet.empty();
-    for (const color of COLORS) this[color] = SquareSet.empty();
+    for (const playerIndex of PLAYERINDEXES) this[playerIndex] = SquareSet.empty();
     for (const role of ROLES) this[role] = SquareSet.empty();
   }
 
@@ -165,13 +165,13 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     const board = new Board();
     board.occupied = this.occupied;
     board.promoted = this.promoted;
-    for (const color of COLORS) board[color] = this[color];
+    for (const playerIndex of PLAYERINDEXES) board[playerIndex] = this[playerIndex];
     for (const role of ROLES) board[role] = this[role];
     return board;
   }
 
   equalsIgnorePromoted(other: Board): boolean {
-    if (!this.white.equals(other.white)) return false;
+    if (!this.p1.equals(other.p1)) return false;
     return ROLES.every(role => this[role].equals(other[role]));
   }
 
@@ -179,9 +179,9 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     return this.equalsIgnorePromoted(other) && this.promoted.equals(other.promoted);
   }
 
-  getColor(square: Square): Color | undefined {
-    if (this.white.has(square)) return 'white';
-    if (this.black.has(square)) return 'black';
+  getPlayerIndex(square: Square): PlayerIndex | undefined {
+    if (this.p1.has(square)) return 'p1';
+    if (this.p2.has(square)) return 'p2';
     return;
   }
 
@@ -193,11 +193,11 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   }
 
   get(square: Square): Piece | undefined {
-    const color = this.getColor(square);
-    if (!color) return;
+    const playerIndex = this.getPlayerIndex(square);
+    if (!playerIndex) return;
     const role = this.getRole(square)!;
     const promoted = this.promoted.has(square);
-    return { color, role, promoted };
+    return { playerIndex, role, promoted };
   }
 
   /**
@@ -207,7 +207,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     const piece = this.get(square);
     if (piece) {
       this.occupied = this.occupied.without(square);
-      this[piece.color] = this[piece.color].without(square);
+      this[piece.playerIndex] = this[piece.playerIndex].without(square);
       this[piece.role] = this[piece.role].without(square);
       if (piece.promoted) this.promoted = this.promoted.without(square);
     }
@@ -221,7 +221,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   set(square: Square, piece: Piece): Piece | undefined {
     const old = this.take(square);
     this.occupied = this.occupied.with(square);
-    this[piece.color] = this[piece.color].with(square);
+    this[piece.playerIndex] = this[piece.playerIndex].with(square);
     this[piece.role] = this[piece.role].with(square);
     if (piece.promoted) this.promoted = this.promoted.with(square);
     return old;
@@ -237,8 +237,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
     }
   }
 
-  pieces(color: Color, role: Role): SquareSet {
-    return this[color].intersect(this[role]);
+  pieces(playerIndex: PlayerIndex, role: Role): SquareSet {
+    return this[playerIndex].intersect(this[role]);
   }
 
   rooksAndQueens(): SquareSet {
@@ -250,9 +250,9 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByCo
   }
 
   /**
-   * Finds the unique unpromoted king of the given `color`, if any.
+   * Finds the unique unpromoted king of the given `playerIndex`, if any.
    */
-  kingOf(color: Color): Square | undefined {
-    return this['k-piece'].intersect(this[color]).diff(this.promoted).singleSquare();
+  kingOf(playerIndex: PlayerIndex): Square | undefined {
+    return this['k-piece'].intersect(this[playerIndex]).diff(this.promoted).singleSquare();
   }
 }

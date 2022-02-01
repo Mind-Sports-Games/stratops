@@ -56,15 +56,15 @@ test('castles from setup', () => {
 
   expect(castles.unmovedRooks).toEqual(SquareSet.corners());
 
-  expect(castles.rook.white.a).toBe(0);
-  expect(castles.rook.white.h).toBe(7);
-  expect(castles.rook.black.a).toBe(56);
-  expect(castles.rook.black.h).toBe(63);
+  expect(castles.rook.p1.a).toBe(0);
+  expect(castles.rook.p1.h).toBe(7);
+  expect(castles.rook.p2.a).toBe(56);
+  expect(castles.rook.p2.h).toBe(63);
 
-  expect(Array.from(castles.path.white.a)).toEqual([1, 2, 3]);
-  expect(Array.from(castles.path.white.h)).toEqual([5, 6]);
-  expect(Array.from(castles.path.black.a)).toEqual([57, 58, 59]);
-  expect(Array.from(castles.path.black.h)).toEqual([61, 62]);
+  expect(Array.from(castles.path.p1.a)).toEqual([1, 2, 3]);
+  expect(Array.from(castles.path.p1.h)).toEqual([5, 6]);
+  expect(Array.from(castles.path.p2.a)).toEqual([57, 58, 59]);
+  expect(Array.from(castles.path.p2.h)).toEqual([61, 62]);
 });
 
 test('play move', () => {
@@ -151,10 +151,10 @@ const insufficientMaterial: [string, boolean, boolean][] = [
   ['3b4/8/8/6b1/8/8/R7/K1k5 w - - 0 1', false, true],
 ];
 
-test.each(insufficientMaterial)('insufficient material: %s', (fen, white, black) => {
+test.each(insufficientMaterial)('insufficient material: %s', (fen, p1, p2) => {
   const pos = Chess.fromSetup(parseFen(fen).unwrap()).unwrap();
-  expect(pos.hasInsufficientMaterial('white')).toBe(white);
-  expect(pos.hasInsufficientMaterial('black')).toBe(black);
+  expect(pos.hasInsufficientMaterial('p1')).toBe(p1);
+  expect(pos.hasInsufficientMaterial('p2')).toBe(p2);
 });
 
 test('impossible checker alignment', () => {

@@ -67,7 +67,7 @@ export function makeSanVariation(pos: Position, variation: Move[]): string {
   const line = [];
   for (let i = 0; i < variation.length; i++) {
     if (i !== 0) line.push(' ');
-    if (pos.turn === 'white') line.push(pos.fullmoves, '. ');
+    if (pos.turn === 'p1') line.push(pos.fullmoves, '. ');
     else if (i === 0) line.push(pos.fullmoves, '... ');
     const san = makeSanWithoutSuffix(pos, variation[i]);
     pos.play(variation[i]);
@@ -126,7 +126,7 @@ export function parseSan(pos: Position, san: string): Move | undefined {
   const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile(squareFile(to)) : SquareSet.empty();
   candidates = candidates.intersect(
     pawnAdvance.union(
-      attacks({ color: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.white, pos.board.black)
+      attacks({ playerIndex: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.p1, pos.board.p2)
     )
   );
 
