@@ -49,7 +49,7 @@ export function scalachessCharPair(move: Move): string {
     );
 }
 
-export function lichessVariantRules(
+export function playstrategyVariantRules(
   variant:
     | 'standard'
     | 'chess960'
@@ -69,6 +69,7 @@ export function lichessVariantRules(
     | 'minishogi'
     | 'xiangqi'
     | 'minixiangqi'
+    | 'flipello'
 ): Rules {
   switch (variant) {
     case 'standard':

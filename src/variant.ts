@@ -808,6 +808,8 @@ export function defaultPosition(rules: Rules): Position {
       return Xiangqi.default();
     case 'minixiangqi':
       return MiniXiangqi.default();
+    case 'flipello':
+      return LinesOfAction.default();
   }
 }
 
@@ -845,5 +847,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Xiangqi.fromSetup(setup);
     case 'minixiangqi':
       return MiniXiangqi.fromSetup(setup);
+    case 'flipello':
+      return LinesOfAction.fromSetup(setup);
   }
 }
