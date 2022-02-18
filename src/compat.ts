@@ -49,7 +49,7 @@ export function scalachessCharPair(move: Move): string {
     );
 }
 
-export function playstrategyVariantRules(
+export function playstrategyRules(
   variant:
     | 'standard'
     | 'chess960'
@@ -92,5 +92,47 @@ export function playstrategyVariantRules(
       return 'scrambledeggs';
     default:
       return variant;
+  }
+}
+
+export function playstrategyVariants(
+  rules: Rules
+):
+  | 'standard'
+  | 'antichess'
+  | 'kingOfTheHill'
+  | 'threeCheck'
+  | 'fiveCheck'
+  | 'atomic'
+  | 'horde'
+  | 'racingKings'
+  | 'crazyhouse'
+  | 'noCastling'
+  | 'linesOfAction'
+  | 'scrambledEggs'
+  | 'shogi'
+  | 'minishogi'
+  | 'xiangqi'
+  | 'minixiangqi'
+  | 'flipello' {
+  switch (rules) {
+    case 'chess':
+      return 'standard';
+    case '3check':
+      return 'threeCheck';
+    case '5check':
+      return 'fiveCheck';
+    case 'kingofthehill':
+      return 'kingOfTheHill';
+    case 'racingkings':
+      return 'racingKings';
+    case 'nocastling':
+      return 'noCastling';
+    case 'linesofaction':
+      return 'linesOfAction';
+    case 'scrambledeggs':
+      return 'scrambledEggs';
+    default:
+      return rules;
   }
 }
