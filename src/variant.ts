@@ -797,6 +797,29 @@ export class Flipello extends Chess {
   }
 }
 
+export class Oware extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('oware');
+  }
+
+  static default(): Oware {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Oware, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Oware {
+    return super.clone() as Oware;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -833,6 +856,8 @@ export function defaultPosition(rules: Rules): Position {
       return MiniXiangqi.default();
     case 'flipello':
       return Flipello.default();
+    case 'oware':
+      return Oware.default();
   }
 }
 
@@ -872,5 +897,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return MiniXiangqi.fromSetup(setup);
     case 'flipello':
       return Flipello.fromSetup(setup);
+    case 'oware':
+      return Oware.fromSetup(setup);
   }
 }
