@@ -1,0 +1,548 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>util | chessops</title>
+	<meta name="description" content="Documentation for chessops">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">chessops</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">chessops</a>
+				</li>
+				<li>
+					<a href="util.html">util</a>
+				</li>
+			</ul>
+			<h1>Module util</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#chartorole" class="tsd-kind-icon">char<wbr>ToRole</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="util.html#defined" class="tsd-kind-icon">defined</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#kingcastlesto" class="tsd-kind-icon">king<wbr>Castles<wbr>To</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#makesquare" class="tsd-kind-icon">make<wbr>Square</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#makeuci" class="tsd-kind-icon">make<wbr>Uci</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#opposite" class="tsd-kind-icon">opposite</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#parsesquare" class="tsd-kind-icon">parse<wbr>Square</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#parseuci" class="tsd-kind-icon">parse<wbr>Uci</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#roletochar" class="tsd-kind-icon">role<wbr>ToChar</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#squarefile" class="tsd-kind-icon">square<wbr>File</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="util.html#squarerank" class="tsd-kind-icon">square<wbr>Rank</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="util.html#zip" class="tsd-kind-icon">zip</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="chartorole" class="tsd-anchor"></a>
+					<h3>char<wbr>ToRole</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">char<wbr>ToRole<span class="tsd-signature-symbol">(</span>ch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;p&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;n&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;b&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;r&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;q&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;k&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;l&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;P&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;N&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;B&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;R&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;Q&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;K&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;L&quot;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#role" class="tsd-signature-type" data-tsd-kind="Type alias">Role</a></li>
+						<li class="tsd-signature tsd-kind-icon">char<wbr>ToRole<span class="tsd-signature-symbol">(</span>ch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#role" class="tsd-signature-type" data-tsd-kind="Type alias">Role</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L24">src/util.ts:24</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ch: <span class="tsd-signature-type">&quot;p&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;n&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;b&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;r&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;q&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;k&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;l&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;P&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;N&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;B&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;R&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;Q&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;K&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;L&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#role" class="tsd-signature-type" data-tsd-kind="Type alias">Role</a></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L25">src/util.ts:25</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ch: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#role" class="tsd-signature-type" data-tsd-kind="Type alias">Role</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="defined" class="tsd-anchor"></a>
+					<h3>defined</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">defined&lt;A&gt;<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">v</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">A</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L3">src/util.ts:3</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>A</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>v: <span class="tsd-signature-type">A</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">v</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">A</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="kingcastlesto" class="tsd-anchor"></a>
+					<h3>king<wbr>Castles<wbr>To</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">king<wbr>Castles<wbr>To<span class="tsd-signature-symbol">(</span>playerIndex<span class="tsd-signature-symbol">: </span><a href="types.html#playerindex" class="tsd-signature-type" data-tsd-kind="Type alias">PlayerIndex</a>, side<span class="tsd-signature-symbol">: </span><a href="types.html#castlingside" class="tsd-signature-type" data-tsd-kind="Type alias">CastlingSide</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L95">src/util.ts:95</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>playerIndex: <a href="types.html#playerindex" class="tsd-signature-type" data-tsd-kind="Type alias">PlayerIndex</a></h5>
+								</li>
+								<li>
+									<h5>side: <a href="types.html#castlingside" class="tsd-signature-type" data-tsd-kind="Type alias">CastlingSide</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="makesquare" class="tsd-anchor"></a>
+					<h3>make<wbr>Square</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Square<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#squarename" class="tsd-signature-type" data-tsd-kind="Type alias">SquareName</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L64">src/util.ts:64</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#squarename" class="tsd-signature-type" data-tsd-kind="Type alias">SquareName</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="makeuci" class="tsd-anchor"></a>
+					<h3>make<wbr>Uci</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Uci<span class="tsd-signature-symbol">(</span>move<span class="tsd-signature-symbol">: </span><a href="types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L90">src/util.ts:90</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Converts a move to UCI notation, like <code>g1f3</code> for a normal move,
+									<code>a7a8q</code> for promotion to a queen, and <code>Q@f7</code> for a Crazyhouse drop.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>move: <a href="types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="opposite" class="tsd-anchor"></a>
+					<h3>opposite</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">opposite<span class="tsd-signature-symbol">(</span>playerIndex<span class="tsd-signature-symbol">: </span><a href="types.html#playerindex" class="tsd-signature-type" data-tsd-kind="Type alias">PlayerIndex</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#playerindex" class="tsd-signature-type" data-tsd-kind="Type alias">PlayerIndex</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L7">src/util.ts:7</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>playerIndex: <a href="types.html#playerindex" class="tsd-signature-type" data-tsd-kind="Type alias">PlayerIndex</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#playerindex" class="tsd-signature-type" data-tsd-kind="Type alias">PlayerIndex</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="parsesquare" class="tsd-anchor"></a>
+					<h3>parse<wbr>Square</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Square<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><a href="types.html#squarename" class="tsd-signature-type" data-tsd-kind="Type alias">SquareName</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></li>
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Square<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L54">src/util.ts:54</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <a href="types.html#squarename" class="tsd-signature-type" data-tsd-kind="Type alias">SquareName</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L55">src/util.ts:55</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="parseuci" class="tsd-anchor"></a>
+					<h3>parse<wbr>Uci</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Uci<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L68">src/util.ts:68</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="roletochar" class="tsd-anchor"></a>
+					<h3>role<wbr>ToChar</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">role<wbr>ToChar<span class="tsd-signature-symbol">(</span>role<span class="tsd-signature-symbol">: </span><a href="types.html#role" class="tsd-signature-type" data-tsd-kind="Type alias">Role</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L19">src/util.ts:19</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>role: <a href="types.html#role" class="tsd-signature-type" data-tsd-kind="Type alias">Role</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="squarefile" class="tsd-anchor"></a>
+					<h3>square<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">square<wbr>File<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L15">src/util.ts:15</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="squarerank" class="tsd-anchor"></a>
+					<h3>square<wbr>Rank</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">square<wbr>Rank<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L11">src/util.ts:11</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <a href="types.html#square" class="tsd-signature-type" data-tsd-kind="Type alias">Square</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="zip" class="tsd-anchor"></a>
+					<h3>zip</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">zip&lt;T&gt;<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span>, b<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/util.ts#L99">src/util.ts:99</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>a: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>b: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="attacks.html">attacks</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="board.html">board</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="chess.html">chess</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="compat.html">compat</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="debug.html">debug</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="fen.html">fen</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="hash.html">hash</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="san.html">san</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="setup.html">setup</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="squareset.html">square<wbr>Set</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="transform.html">transform</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="types.html">types</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="util.html">util</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="variant.html">variant</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#chartorole" class="tsd-kind-icon">char<wbr>ToRole</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="util.html#defined" class="tsd-kind-icon">defined</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#kingcastlesto" class="tsd-kind-icon">king<wbr>Castles<wbr>To</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#makesquare" class="tsd-kind-icon">make<wbr>Square</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#makeuci" class="tsd-kind-icon">make<wbr>Uci</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#opposite" class="tsd-kind-icon">opposite</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#parsesquare" class="tsd-kind-icon">parse<wbr>Square</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#parseuci" class="tsd-kind-icon">parse<wbr>Uci</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#roletochar" class="tsd-kind-icon">role<wbr>ToChar</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#squarefile" class="tsd-kind-icon">square<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="util.html#squarerank" class="tsd-kind-icon">square<wbr>Rank</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="util.html#zip" class="tsd-kind-icon">zip</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

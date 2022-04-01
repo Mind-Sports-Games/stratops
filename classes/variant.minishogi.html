@@ -1,0 +1,1187 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MiniShogi | chessops</title>
+	<meta name="description" content="Documentation for chessops">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">chessops</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">chessops</a>
+				</li>
+				<li>
+					<a href="../modules/variant.html">variant</a>
+				</li>
+				<li>
+					<a href="variant.minishogi.html">MiniShogi</a>
+				</li>
+			</ul>
+			<h1>Class MiniShogi</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<a href="chess.chess-1.html" class="tsd-signature-type" data-tsd-kind="Class">Chess</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">MiniShogi</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-private-protected">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="variant.minishogi.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-inherited">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#board" class="tsd-kind-icon">board</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#castles" class="tsd-kind-icon">castles</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#epsquare" class="tsd-kind-icon">ep<wbr>Square</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#fullmoves" class="tsd-kind-icon">fullmoves</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#halfmoves" class="tsd-kind-icon">halfmoves</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#pockets" class="tsd-kind-icon">pockets</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#remainingchecks" class="tsd-kind-icon">remaining<wbr>Checks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#rules" class="tsd-kind-icon">rules</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#turn" class="tsd-kind-icon">turn</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#alldests" class="tsd-kind-icon">all<wbr>Dests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#castlingside" class="tsd-kind-icon">castling<wbr>Side</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="variant.minishogi.html#clone" class="tsd-kind-icon">clone</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#ctx" class="tsd-kind-icon">ctx</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#dests" class="tsd-kind-icon">dests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#dropdests" class="tsd-kind-icon">drop<wbr>Dests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#equalsignoremoves" class="tsd-kind-icon">equals<wbr>Ignore<wbr>Moves</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#hasdests" class="tsd-kind-icon">has<wbr>Dests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="variant.minishogi.html#hasinsufficientmaterial" class="tsd-kind-icon">has<wbr>Insufficient<wbr>Material</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#ischeck" class="tsd-kind-icon">is<wbr>Check</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#ischeckmate" class="tsd-kind-icon">is<wbr>Checkmate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#isend" class="tsd-kind-icon">is<wbr>End</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#isinsufficientmaterial" class="tsd-kind-icon">is<wbr>Insufficient<wbr>Material</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#islegal" class="tsd-kind-icon">is<wbr>Legal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#isstalemate" class="tsd-kind-icon">is<wbr>Stalemate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#isvariantend" class="tsd-kind-icon">is<wbr>Variant<wbr>End</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="variant.minishogi.html#kingattackers" class="tsd-kind-icon">king<wbr>Attackers</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#normalizemove" class="tsd-kind-icon">normalize<wbr>Move</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#outcome" class="tsd-kind-icon">outcome</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#play" class="tsd-kind-icon">play</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="variant.minishogi.html#playcaptureat" class="tsd-kind-icon">play<wbr>Capture<wbr>At</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="variant.minishogi.html#pseudodests" class="tsd-kind-icon">pseudo<wbr>Dests</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#tosetup" class="tsd-kind-icon">to<wbr>Setup</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="variant.minishogi.html#validate" class="tsd-kind-icon">validate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="variant.minishogi.html#validatecheckers" class="tsd-kind-icon">validate<wbr>Checkers</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="variant.minishogi.html#variantoutcome" class="tsd-kind-icon">variant<wbr>Outcome</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static"><a href="variant.minishogi.html#default" class="tsd-kind-icon">default</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static"><a href="variant.minishogi.html#fromsetup" class="tsd-kind-icon">from<wbr>Setup</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Mini<wbr>Shogi<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#constructor">constructor</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/variant.ts#L710">src/variant.ts:710</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="board" class="tsd-anchor"></a>
+					<h3>board</h3>
+					<div class="tsd-signature tsd-kind-icon">board<span class="tsd-signature-symbol">:</span> <a href="board.board-1.html" class="tsd-signature-type" data-tsd-kind="Class">Board</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#board">board</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L163">src/chess.ts:163</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="castles" class="tsd-anchor"></a>
+					<h3>castles</h3>
+					<div class="tsd-signature tsd-kind-icon">castles<span class="tsd-signature-symbol">:</span> <a href="chess.castles.html" class="tsd-signature-type" data-tsd-kind="Class">Castles</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#castles">castles</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L166">src/chess.ts:166</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="epsquare" class="tsd-anchor"></a>
+					<h3>ep<wbr>Square</h3>
+					<div class="tsd-signature tsd-kind-icon">ep<wbr>Square<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#epsquare">epSquare</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L167">src/chess.ts:167</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="fullmoves" class="tsd-anchor"></a>
+					<h3>fullmoves</h3>
+					<div class="tsd-signature tsd-kind-icon">fullmoves<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#fullmoves">fullmoves</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L170">src/chess.ts:170</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="halfmoves" class="tsd-anchor"></a>
+					<h3>halfmoves</h3>
+					<div class="tsd-signature tsd-kind-icon">halfmoves<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#halfmoves">halfmoves</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L169">src/chess.ts:169</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="pockets" class="tsd-anchor"></a>
+					<h3>pockets</h3>
+					<div class="tsd-signature tsd-kind-icon">pockets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="setup.material.html" class="tsd-signature-type" data-tsd-kind="Class">Material</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#pockets">pockets</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L164">src/chess.ts:164</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="remainingchecks" class="tsd-anchor"></a>
+					<h3>remaining<wbr>Checks</h3>
+					<div class="tsd-signature tsd-kind-icon">remaining<wbr>Checks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="setup.remainingchecks.html" class="tsd-signature-type" data-tsd-kind="Class">RemainingChecks</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#remainingchecks">remainingChecks</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L168">src/chess.ts:168</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="rules" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> rules</h3>
+					<div class="tsd-signature tsd-kind-icon">rules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;chess&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;antichess&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;kingofthehill&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;3check&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;5check&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;atomic&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;horde&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;racingkings&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;crazyhouse&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;nocastling&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;scrambledeggs&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;linesofaction&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;shogi&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;minishogi&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;xiangqi&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;minixiangqi&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;flipello&quot;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#rules">rules</a></p>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="turn" class="tsd-anchor"></a>
+					<h3>turn</h3>
+					<div class="tsd-signature tsd-kind-icon">turn<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;p1&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;p2&quot;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#turn">turn</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L165">src/chess.ts:165</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="alldests" class="tsd-anchor"></a>
+					<h3>all<wbr>Dests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">all<wbr>Dests<span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#alldests">allDests</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L319">src/chess.ts:319</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="castlingside" class="tsd-anchor"></a>
+					<h3>castling<wbr>Side</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">castling<wbr>Side<span class="tsd-signature-symbol">(</span>move<span class="tsd-signature-symbol">: </span><a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;a&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;h&quot;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#castlingside">castlingSide</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L329">src/chess.ts:329</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>move: <a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;a&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;h&quot;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="clone" class="tsd-anchor"></a>
+					<h3>clone</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">clone<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#clone">clone</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/variant.ts#L723">src/variant.ts:723</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="ctx" class="tsd-anchor"></a>
+					<h3>ctx</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">ctx<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#ctx">ctx</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L198">src/chess.ts:198</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="dests" class="tsd-anchor"></a>
+					<h3>dests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">dests<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#dests">dests</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L550">src/chess.ts:550</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="dropdests" class="tsd-anchor"></a>
+					<h3>drop<wbr>Dests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">drop<wbr>Dests<span class="tsd-signature-symbol">(</span>_ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#dropdests">dropDests</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L188">src/chess.ts:188</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> _ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="equalsignoremoves" class="tsd-anchor"></a>
+					<h3>equals<wbr>Ignore<wbr>Moves</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">equals<wbr>Ignore<wbr>Moves<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><a href="chess.position.html" class="tsd-signature-type" data-tsd-kind="Class">Position</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#equalsignoremoves">equalsIgnoreMoves</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L237">src/chess.ts:237</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>other: <a href="chess.position.html" class="tsd-signature-type" data-tsd-kind="Class">Position</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="hasdests" class="tsd-anchor"></a>
+					<h3>has<wbr>Dests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Dests<span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#hasdests">hasDests</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L267">src/chess.ts:267</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="hasinsufficientmaterial" class="tsd-anchor"></a>
+					<h3>has<wbr>Insufficient<wbr>Material</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Insufficient<wbr>Material<span class="tsd-signature-symbol">(</span>_playerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;p1&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;p2&quot;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#hasinsufficientmaterial">hasInsufficientMaterial</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/variant.ts#L727">src/variant.ts:727</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>_playerIndex: <span class="tsd-signature-type">&quot;p1&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;p2&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="ischeck" class="tsd-anchor"></a>
+					<h3>is<wbr>Check</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Check<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#ischeck">isCheck</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L290">src/chess.ts:290</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="ischeckmate" class="tsd-anchor"></a>
+					<h3>is<wbr>Checkmate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Checkmate<span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#ischeckmate">isCheckmate</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L300">src/chess.ts:300</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="isend" class="tsd-anchor"></a>
+					<h3>is<wbr>End</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>End<span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#isend">isEnd</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L295">src/chess.ts:295</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="isinsufficientmaterial" class="tsd-anchor"></a>
+					<h3>is<wbr>Insufficient<wbr>Material</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Insufficient<wbr>Material<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#isinsufficientmaterial">isInsufficientMaterial</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L263">src/chess.ts:263</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="islegal" class="tsd-anchor"></a>
+					<h3>is<wbr>Legal</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Legal<span class="tsd-signature-symbol">(</span>move<span class="tsd-signature-symbol">: </span><a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a>, ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#islegal">isLegal</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L275">src/chess.ts:275</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>move: <a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="isstalemate" class="tsd-anchor"></a>
+					<h3>is<wbr>Stalemate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Stalemate<span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#isstalemate">isStalemate</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L305">src/chess.ts:305</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="isvariantend" class="tsd-anchor"></a>
+					<h3>is<wbr>Variant<wbr>End</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Variant<wbr>End<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#isvariantend">isVariantEnd</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L605">src/chess.ts:605</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="kingattackers" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> king<wbr>Attackers</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">king<wbr>Attackers<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, attacker<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;p1&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;p2&quot;</span>, occupied<span class="tsd-signature-symbol">: </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#kingattackers">kingAttackers</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L184">src/chess.ts:184</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>attacker: <span class="tsd-signature-type">&quot;p1&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;p2&quot;</span></h5>
+								</li>
+								<li>
+									<h5>occupied: <a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="normalizemove" class="tsd-anchor"></a>
+					<h3>normalize<wbr>Move</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">normalize<wbr>Move<span class="tsd-signature-symbol">(</span>move<span class="tsd-signature-symbol">: </span><a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#normalizemove">normalizeMove</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L337">src/chess.ts:337</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>move: <a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="outcome" class="tsd-anchor"></a>
+					<h3>outcome</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">outcome<span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.outcome.html" class="tsd-signature-type" data-tsd-kind="Interface">Outcome</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#outcome">outcome</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L310">src/chess.ts:310</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.outcome.html" class="tsd-signature-type" data-tsd-kind="Interface">Outcome</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="play" class="tsd-anchor"></a>
+					<h3>play</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">play<span class="tsd-signature-symbol">(</span>move<span class="tsd-signature-symbol">: </span><a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#play">play</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L347">src/chess.ts:347</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>move: <a href="../modules/types.html#move" class="tsd-signature-type" data-tsd-kind="Type alias">Move</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="playcaptureat" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> play<wbr>Capture<wbr>At</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">play<wbr>Capture<wbr>At<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, captured<span class="tsd-signature-symbol">: </span><a href="../interfaces/types.piece.html" class="tsd-signature-type" data-tsd-kind="Interface">Piece</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#playcaptureat">playCaptureAt</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L192">src/chess.ts:192</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>captured: <a href="../interfaces/types.piece.html" class="tsd-signature-type" data-tsd-kind="Interface">Piece</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="pseudodests" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> pseudo<wbr>Dests</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">pseudo<wbr>Dests<span class="tsd-signature-symbol">(</span>square<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#pseudodests">pseudoDests</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L522">src/chess.ts:522</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>square: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="squareset.squareset-1.html" class="tsd-signature-type" data-tsd-kind="Class">SquareSet</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="tosetup" class="tsd-anchor"></a>
+					<h3>to<wbr>Setup</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Setup<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/setup.setup-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Setup</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#tosetup">toSetup</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L250">src/chess.ts:250</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/setup.setup-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Setup</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="validate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> validate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><a href="chess.positionerror.html" class="tsd-signature-type" data-tsd-kind="Class">PositionError</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#validate">validate</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L446">src/chess.ts:446</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><a href="chess.positionerror.html" class="tsd-signature-type" data-tsd-kind="Class">PositionError</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="validatecheckers" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> validate<wbr>Checkers</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">validate<wbr>Checkers<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><a href="chess.positionerror.html" class="tsd-signature-type" data-tsd-kind="Class">PositionError</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#validatecheckers">validateCheckers</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L463">src/chess.ts:463</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><a href="chess.positionerror.html" class="tsd-signature-type" data-tsd-kind="Class">PositionError</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="variantoutcome" class="tsd-anchor"></a>
+					<h3>variant<wbr>Outcome</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">variant<wbr>Outcome<span class="tsd-signature-symbol">(</span>_ctx<span class="tsd-signature-symbol">?: </span><a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.outcome.html" class="tsd-signature-type" data-tsd-kind="Interface">Outcome</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#variantoutcome">variantOutcome</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/chess.ts#L609">src/chess.ts:609</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> _ctx: <a href="../interfaces/chess.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.outcome.html" class="tsd-signature-type" data-tsd-kind="Interface">Outcome</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
+					<a name="default" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> default</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#default">default</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/variant.ts#L715">src/variant.ts:715</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
+					<a name="fromsetup" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> from<wbr>Setup</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Setup<span class="tsd-signature-symbol">(</span>setup<span class="tsd-signature-symbol">: </span><a href="../interfaces/setup.setup-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Setup</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a><span class="tsd-signature-symbol">, </span><a href="chess.positionerror.html" class="tsd-signature-type" data-tsd-kind="Class">PositionError</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="chess.chess-1.html">Chess</a>.<a href="chess.chess-1.html#fromsetup">fromSetup</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Mind-Sports-Games/chessops/blob/21a4d03/src/variant.ts#L719">src/variant.ts:719</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>setup: <a href="../interfaces/setup.setup-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Setup</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Result</span><span class="tsd-signature-symbol">&lt;</span><a href="variant.minishogi.html" class="tsd-signature-type" data-tsd-kind="Class">MiniShogi</a><span class="tsd-signature-symbol">, </span><a href="chess.positionerror.html" class="tsd-signature-type" data-tsd-kind="Class">PositionError</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/attacks.html">attacks</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/board.html">board</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/chess.html">chess</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/compat.html">compat</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/debug.html">debug</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/fen.html">fen</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/hash.html">hash</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/san.html">san</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/setup.html">setup</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/squareset.html">square<wbr>Set</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/transform.html">transform</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/types.html">types</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/util.html">util</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/variant.html">variant</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="../modules/variant.html#castles" class="tsd-kind-icon">Castles</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="../modules/variant.html#chess" class="tsd-kind-icon">Chess</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="../modules/variant.html#context" class="tsd-kind-icon">Context</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="../modules/variant.html#illegalsetup" class="tsd-kind-icon">Illegal<wbr>Setup</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="../modules/variant.html#position" class="tsd-kind-icon">Position</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="../modules/variant.html#positionerror" class="tsd-kind-icon">Position<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.antichess.html" class="tsd-kind-icon">Antichess</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.atomic.html" class="tsd-kind-icon">Atomic</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.crazyhouse.html" class="tsd-kind-icon">Crazyhouse</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.fivecheck.html" class="tsd-kind-icon">Five<wbr>Check</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.flipello.html" class="tsd-kind-icon">Flipello</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.horde.html" class="tsd-kind-icon">Horde</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.kingofthehill.html" class="tsd-kind-icon">King<wbr>OfThe<wbr>Hill</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.linesofaction.html" class="tsd-kind-icon">Lines<wbr>OfAction</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.minishogi.html" class="tsd-kind-icon">Mini<wbr>Shogi</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+								<a href="variant.minishogi.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#board" class="tsd-kind-icon">board</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#castles" class="tsd-kind-icon">castles</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#epsquare" class="tsd-kind-icon">ep<wbr>Square</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#fullmoves" class="tsd-kind-icon">fullmoves</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#halfmoves" class="tsd-kind-icon">halfmoves</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#pockets" class="tsd-kind-icon">pockets</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#remainingchecks" class="tsd-kind-icon">remaining<wbr>Checks</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#rules" class="tsd-kind-icon">rules</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#turn" class="tsd-kind-icon">turn</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#alldests" class="tsd-kind-icon">all<wbr>Dests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#castlingside" class="tsd-kind-icon">castling<wbr>Side</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="variant.minishogi.html#clone" class="tsd-kind-icon">clone</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#ctx" class="tsd-kind-icon">ctx</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#dests" class="tsd-kind-icon">dests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#dropdests" class="tsd-kind-icon">drop<wbr>Dests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#equalsignoremoves" class="tsd-kind-icon">equals<wbr>Ignore<wbr>Moves</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#hasdests" class="tsd-kind-icon">has<wbr>Dests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="variant.minishogi.html#hasinsufficientmaterial" class="tsd-kind-icon">has<wbr>Insufficient<wbr>Material</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#ischeck" class="tsd-kind-icon">is<wbr>Check</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#ischeckmate" class="tsd-kind-icon">is<wbr>Checkmate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#isend" class="tsd-kind-icon">is<wbr>End</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#isinsufficientmaterial" class="tsd-kind-icon">is<wbr>Insufficient<wbr>Material</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#islegal" class="tsd-kind-icon">is<wbr>Legal</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#isstalemate" class="tsd-kind-icon">is<wbr>Stalemate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#isvariantend" class="tsd-kind-icon">is<wbr>Variant<wbr>End</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="variant.minishogi.html#kingattackers" class="tsd-kind-icon">king<wbr>Attackers</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#normalizemove" class="tsd-kind-icon">normalize<wbr>Move</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#outcome" class="tsd-kind-icon">outcome</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#play" class="tsd-kind-icon">play</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="variant.minishogi.html#playcaptureat" class="tsd-kind-icon">play<wbr>Capture<wbr>At</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="variant.minishogi.html#pseudodests" class="tsd-kind-icon">pseudo<wbr>Dests</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#tosetup" class="tsd-kind-icon">to<wbr>Setup</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="variant.minishogi.html#validate" class="tsd-kind-icon">validate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="variant.minishogi.html#validatecheckers" class="tsd-kind-icon">validate<wbr>Checkers</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="variant.minishogi.html#variantoutcome" class="tsd-kind-icon">variant<wbr>Outcome</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
+								<a href="variant.minishogi.html#default" class="tsd-kind-icon">default</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-static">
+								<a href="variant.minishogi.html#fromsetup" class="tsd-kind-icon">from<wbr>Setup</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.minixiangqi.html" class="tsd-kind-icon">Mini<wbr>Xiangqi</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.nocastling.html" class="tsd-kind-icon">No<wbr>Castling</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.scrambledeggs.html" class="tsd-kind-icon">Scrambled<wbr>Eggs</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.shogi.html" class="tsd-kind-icon">Shogi</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.threecheck.html" class="tsd-kind-icon">Three<wbr>Check</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="variant.xiangqi.html" class="tsd-kind-icon">Xiangqi</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/variant.html#defaultposition" class="tsd-kind-icon">default<wbr>Position</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/variant.html#setupposition" class="tsd-kind-icon">setup<wbr>Position</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
