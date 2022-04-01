@@ -123,6 +123,7 @@ export const RULES = [
   'minishogi',
   'xiangqi',
   'minixiangqi',
+  'flipello',
 ] as const;
 
 export type Rules = typeof RULES[number];

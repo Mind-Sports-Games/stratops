@@ -774,6 +774,29 @@ export class MiniXiangqi extends Chess {
   }
 }
 
+export class Flipello extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('flipello');
+  }
+
+  static default(): Flipello {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Flipello, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Flipello {
+    return super.clone() as Flipello;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -808,6 +831,8 @@ export function defaultPosition(rules: Rules): Position {
       return Xiangqi.default();
     case 'minixiangqi':
       return MiniXiangqi.default();
+    case 'flipello':
+      return Flipello.default();
   }
 }
 
@@ -845,5 +870,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Xiangqi.fromSetup(setup);
     case 'minixiangqi':
       return MiniXiangqi.fromSetup(setup);
+    case 'flipello':
+      return Flipello.fromSetup(setup);
   }
 }
