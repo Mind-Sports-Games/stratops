@@ -57,6 +57,32 @@ export const letters = [
   'x',
   'y',
   'z',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
 ] as const;
 export type Letter = typeof letters[number];
 export type Role = `${Letter}-piece` | `p${Letter}-piece`;
@@ -124,6 +150,7 @@ export const RULES = [
   'xiangqi',
   'minixiangqi',
   'flipello',
+  'oware',
 ] as const;
 
 export type Rules = typeof RULES[number];
