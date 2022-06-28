@@ -150,6 +150,7 @@ export const RULES = [
   'xiangqi',
   'minixiangqi',
   'flipello',
+  'flipello10',
   'oware',
 ] as const;
 
