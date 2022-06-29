@@ -70,6 +70,7 @@ export function playstrategyRules(
     | 'xiangqi'
     | 'minixiangqi'
     | 'flipello'
+    | 'flipello10'
     | 'oware'
 ): Rules {
   switch (variant) {
@@ -116,6 +117,7 @@ export function playstrategyVariants(
   | 'xiangqi'
   | 'minixiangqi'
   | 'flipello'
+  | 'flipello10'
   | 'oware' {
   switch (rules) {
     case 'chess':
