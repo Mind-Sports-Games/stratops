@@ -4,7 +4,7 @@ import { Chess } from '../src/chess';
 import { chessgroundDests, scalachessCharPair } from '../src/compat';
 
 test('chessground dests with Kh8', () => {
-  const setup = parseFen('r1bq1r2/3n2k1/p1p1pp2/3pP2P/8/PPNB2Q1/2P2P2/R3K3 b Q - 1 22').unwrap();
+  const setup = parseFen('chess')('r1bq1r2/3n2k1/p1p1pp2/3pP2P/8/PPNB2Q1/2P2P2/R3K3 b Q - 1 22').unwrap();
   const pos = Chess.fromSetup(setup).unwrap();
   const dests = chessgroundDests(pos);
   expect(dests.get('g7')).toContain('h8');
@@ -12,7 +12,7 @@ test('chessground dests with Kh8', () => {
 });
 
 test('chessground dests with chess960 castle', () => {
-  const setup = parseFen('rk2r3/pppbnppp/3p2n1/P2Pp3/4P2q/R5NP/1PP2PP1/1KNQRB2 b Kkq - 0 1').unwrap();
+  const setup = parseFen('chess')('rk2r3/pppbnppp/3p2n1/P2Pp3/4P2q/R5NP/1PP2PP1/1KNQRB2 b Kkq - 0 1').unwrap();
   const pos = Chess.fromSetup(setup).unwrap();
   expect(chessgroundDests(pos).get('b8')).toEqual(['a8', 'c8', 'e8']);
 });

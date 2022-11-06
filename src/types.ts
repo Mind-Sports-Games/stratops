@@ -1,14 +1,22 @@
-export const FILE_NAMES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
+export const FILE_NAMES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] as const; // TODO: what do we need right now?
 
 export type FileName = typeof FILE_NAMES[number];
 
-export const RANK_NAMES = ['1', '2', '3', '4', '5', '6', '7', '8'] as const;
+export const RANK_NAMES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const; // TODO: what do we need right now?
 
 export type RankName = typeof RANK_NAMES[number];
 
 export type Square = number;
 
 export type SquareName = `${FileName}${RankName}`;
+
+/**
+ * Board dimensions
+ */
+export type BoardDimensions = {
+  ranks: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+  files: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+};
 
 /**
  * Indexable by square indices.
@@ -27,7 +35,17 @@ export type ByPlayerIndex<T> = {
 };
 
 //curretnly supported pieces, should change to use Role to accept all new peices.
-export const ROLES = ['p-piece', 'n-piece', 'b-piece', 'r-piece', 'q-piece', 'k-piece', 'l-piece'] as const;
+export const ROLES = [
+  'p-piece',
+  'n-piece',
+  'b-piece',
+  'r-piece',
+  'q-piece',
+  'k-piece',
+  'l-piece',
+  'g-piece',
+  's-piece',
+] as const;
 //export type Role = typeof ROLES[number];
 
 export const letters = [

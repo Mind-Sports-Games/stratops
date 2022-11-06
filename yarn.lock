@@ -297,6 +297,11 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@badrap/result@^0.2":
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/@badrap/result/-/result-0.2.13.tgz#3c23f39f7e861cfa8ac3a65726ac17b1ee364927"
+  integrity sha512-Qvyzz0dmGY0h8pwvBFo1BznAKf5Y5NXIDiqhPALWtfU7oHbAToCtPu4FlYQ3uysskSWLx8GUiyhe0nv0nDd/7Q==
+
 "@badrap/result@^0.2.8":
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/@badrap/result/-/result-0.2.8.tgz#76b835c17c4c2d12575a4b205a7df3d14e3ad39c"
@@ -1117,6 +1122,13 @@ char-regex@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/char-regex/-/char-regex-1.0.2.tgz#d744358226217f981ed58f479b1d6bcc29545dcf"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
+
+chessops@^0.10.4:
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/chessops/-/chessops-0.10.5.tgz#5a066c57cf3d8a2554ba1a2b9a7aeb679c24569e"
+  integrity sha512-QLYSs4nPsg5FUT3uUnhpwxRV8zGLorIHqlkV+uuJp6+wqIo2S33O6AMQfXSrUDCNOaBMhmyUf83BUkEafgCoFA==
+  dependencies:
+    "@badrap/result" "^0.2"
 
 ci-info@^2.0.0:
   version "2.0.0"

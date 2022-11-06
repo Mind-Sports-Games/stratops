@@ -1,9 +1,9 @@
 import { Result } from '@badrap/result';
-import { Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES } from './types';
+import { Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES, Rules } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 import { Setup, MaterialSide, Material, RemainingChecks } from './setup';
-import { defined, squareFile, parseSquare, makeSquare, roleToChar, charToRole } from './util';
+import { defined, squareFile, parseSquare, makeSquare, roleToChar, charToRole, boardForRules } from './util';
 
 export const INITIAL_BOARD_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 export const INITIAL_EPD = INITIAL_BOARD_FEN + ' w KQkq -';
@@ -24,7 +24,7 @@ export enum InvalidFen {
   Fullmoves = 'ERR_FULLMOVES',
 }
 
-export class FenError extends Error {}
+export class FenError extends Error { }
 
 function nthIndexOf(haystack: string, needle: string, n: number): number {
   let index = haystack.indexOf(needle);
@@ -44,21 +44,22 @@ function charToPiece(ch: string): Piece | undefined {
   return role && { role, playerIndex: ch.toLowerCase() === ch ? 'p2' : 'p1' };
 }
 
-export function parseBoardFen(boardPart: string): Result<Board, FenError> {
+export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board, FenError> => {
   const board = Board.empty();
-  let rank = 7;
+  const { ranks, files } = boardForRules(rules);
+  let rank = ranks - 1;
   let file = 0;
   for (let i = 0; i < boardPart.length; i++) {
     const c = boardPart[i];
-    if (c === '/' && file === 8) {
+    if (c === '/' && file === files) {
       file = 0;
       rank--;
     } else {
       const step = parseInt(c, 10);
       if (step > 0) file += step;
       else {
-        if (file >= 8 || rank < 0) return Result.err(new FenError(InvalidFen.Board));
-        const square = file + rank * 8;
+        if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
+        const square = file + rank * files;
         const piece = charToPiece(c);
         if (!piece) return Result.err(new FenError(InvalidFen.Board));
         if (boardPart[i + 1] === '~') {
@@ -70,7 +71,7 @@ export function parseBoardFen(boardPart: string): Result<Board, FenError> {
       }
     }
   }
-  if (rank !== 0 || file !== 8) return Result.err(new FenError(InvalidFen.Board));
+  if (rank !== 0 || file !== files) return Result.err(new FenError(InvalidFen.Board));
   return Result.ok(board);
 }
 
@@ -125,7 +126,7 @@ export function parseRemainingChecks(part: string): Result<RemainingChecks, FenE
   } else return Result.err(new FenError(InvalidFen.RemainingChecks));
 }
 
-export function parseFen(fen: string): Result<Setup, FenError> {
+export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const parts = fen.split(' ');
   const boardPart = parts.shift()!;
 
@@ -135,13 +136,13 @@ export function parseFen(fen: string): Result<Setup, FenError> {
   if (boardPart.endsWith(']')) {
     const pocketStart = boardPart.indexOf('[');
     if (pocketStart === -1) return Result.err(new FenError(InvalidFen.Fen));
-    board = parseBoardFen(boardPart.substr(0, pocketStart));
+    board = parseBoardFen(rules)(boardPart.substr(0, pocketStart));
     pockets = parsePockets(boardPart.substr(pocketStart + 1, boardPart.length - 1 - pocketStart - 1));
   } else {
     const pocketStart = nthIndexOf(boardPart, '/', 7);
-    if (pocketStart === -1) board = parseBoardFen(boardPart);
+    if (pocketStart === -1) board = parseBoardFen(rules)(boardPart);
     else {
-      board = parseBoardFen(boardPart.substr(0, pocketStart));
+      board = parseBoardFen(rules)(boardPart.substr(0, pocketStart));
       pockets = parsePockets(boardPart.substr(pocketStart + 1));
     }
   }
@@ -232,12 +233,13 @@ export function makePiece(piece: Piece, opts?: FenOpts): string {
   return r;
 }
 
-export function makeBoardFen(board: Board, opts?: FenOpts): string {
+export const makeBoardFen = (rules: Rules) => (board: Board, opts?: FenOpts): string => {
+  const { ranks, files } = boardForRules(rules);
   let fen = '';
   let empty = 0;
-  for (let rank = 7; rank >= 0; rank--) {
-    for (let file = 0; file < 8; file++) {
-      const square = file + rank * 8;
+  for (let rank: number = ranks - 1; rank >= 0; rank--) {
+    for (let file = 0; file < files; file++) {
+      const square = file + rank * files;
       const piece = board.get(square);
       if (!piece) empty++;
       else {
@@ -248,7 +250,7 @@ export function makeBoardFen(board: Board, opts?: FenOpts): string {
         fen += makePiece(piece, opts);
       }
 
-      if (file === 7) {
+      if (file === files - 1) {
         if (empty > 0) {
           fen += empty;
           empty = 0;
@@ -294,9 +296,9 @@ export function makeRemainingChecks(checks: RemainingChecks): string {
   return `${checks.p1}+${checks.p2}`;
 }
 
-export function makeFen(setup: Setup, opts?: FenOpts): string {
+export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string => {
   return [
-    makeBoardFen(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
+    makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
     setup.turn === 'p1' ? 'w' : 'b',
     makeCastlingFen(setup.board, setup.unmovedRooks, opts),
     defined(setup.epSquare) ? makeSquare(setup.epSquare) : '-',

@@ -1,4 +1,16 @@
-import { FILE_NAMES, RANK_NAMES, CastlingSide, PlayerIndex, Square, Role, Move, isDrop, SquareName } from './types';
+import {
+  FILE_NAMES,
+  RANK_NAMES,
+  CastlingSide,
+  PlayerIndex,
+  Square,
+  Role,
+  Move,
+  isDrop,
+  SquareName,
+  Rules,
+  BoardDimensions,
+} from './types';
 
 export function defined<A>(v: A | undefined): v is A {
   return v !== undefined;
@@ -46,6 +58,12 @@ export function charToRole(ch: string): Role | undefined {
     case 'L':
     case 'l':
       return 'l-piece';
+    case 'S':
+    case 's':
+      return 's-piece';
+    case 'G':
+    case 'g':
+      return 'g-piece';
     default:
       return;
   }
@@ -99,3 +117,37 @@ export function kingCastlesTo(playerIndex: PlayerIndex, side: CastlingSide): Squ
 export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
   return a.map((k, i) => [k, b[i]]);
 }
+
+export const boardForRules = (rules: Rules): BoardDimensions => {
+  switch (rules) {
+    case 'chess':
+    case 'antichess':
+    case 'atomic':
+    case 'horde':
+    case 'racingkings':
+    case 'kingofthehill':
+    case '3check':
+    case '5check':
+    case 'crazyhouse':
+    case 'nocastling':
+    case 'linesofaction':
+    case 'scrambledeggs':
+      return { ranks: 8, files: 8 };
+    case 'shogi':
+      return { ranks: 9, files: 9 };
+    case 'minishogi':
+      return { ranks: 5, files: 5 };
+    case 'xiangqi':
+      return { ranks: 5, files: 5 };
+    case 'minixiangqi':
+      return { ranks: 10, files: 9 };
+    case 'flipello':
+      return { ranks: 8, files: 8 };
+    case 'flipello10':
+      return { ranks: 10, files: 10 };
+    case 'oware':
+      return { ranks: 2, files: 6 };
+    default:
+      return { ranks: 8, files: 8 }; // Is this a reasonable default?
+  }
+};
