@@ -1,8 +1,8 @@
-export const FILE_NAMES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] as const; // TODO: what do we need right now?
+export const FILE_NAMES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] as const;
 
 export type FileName = typeof FILE_NAMES[number];
 
-export const RANK_NAMES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const; // TODO: what do we need right now?
+export const RANK_NAMES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const;
 
 export type RankName = typeof RANK_NAMES[number];
 
@@ -14,8 +14,8 @@ export type SquareName = `${FileName}${RankName}`;
  * Board dimensions
  */
 export type BoardDimensions = {
-  ranks: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
-  files: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+  ranks: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  files: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 };
 
 /**

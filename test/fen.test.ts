@@ -7,7 +7,9 @@ test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.default())).toEqual(INITIAL_BOARD_FEN);
   expect(makeBoardFen('chess')(Board.empty())).toEqual(EMPTY_BOARD_FEN);
   expect(makeBoardFen('chess')(Board.racingKings())).toEqual('8/8/8/8/8/8/krbnNBRK/qrbnNBRQ');
-  expect(makeBoardFen('chess')(Board.horde())).toEqual('rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP');
+  expect(makeBoardFen('chess')(Board.horde())).toEqual(
+    'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP'
+  );
 });
 
 test('make initial fen', () => {
@@ -50,15 +52,14 @@ test.each([
   expect(makeFen('chess')(setup, { promoted: true })).toEqual(fen);
 });
 
-test.each([
-  'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1'
-])('parse and make shogi fen', fen => {
-  const setup = parseFen('shogi')(fen).unwrap();
-  expect(makeFen('shogi')(setup, { promoted: true })).toEqual(fen);
-});
-test.each([
-  '1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 w - - 0 1'
-])('parse and make lines of action fen', fen => {
+test.each(['lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1'])(
+  'parse and make shogi fen',
+  fen => {
+    const setup = parseFen('shogi')(fen).unwrap();
+    expect(makeFen('shogi')(setup, { promoted: true })).toEqual(fen);
+  }
+);
+test.each(['1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 w - - 0 1'])('parse and make lines of action fen', fen => {
   const setup = parseFen('linesofaction')(fen).unwrap();
   expect(makeFen('linesofaction')(setup, { promoted: true })).toEqual(fen);
 });
