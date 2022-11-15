@@ -54,7 +54,7 @@ test('castles from setup', () => {
   const setup = parseFen('chess')(INITIAL_FEN).unwrap();
   const castles = Castles.fromSetup(setup);
 
-  expect(castles.unmovedRooks).toEqual(SquareSet.corners());
+  expect(castles.unmovedRooks).toEqual(SquareSet.corners64());
 
   expect(castles.rook.p1.a).toBe(0);
   expect(castles.rook.p1.h).toBe(7);

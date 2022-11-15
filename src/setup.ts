@@ -255,7 +255,7 @@ export function defaultSetup(): Setup {
     board: Board.default(),
     pockets: undefined,
     turn: 'p1',
-    unmovedRooks: SquareSet.corners(),
+    unmovedRooks: SquareSet.corners64(),
     epSquare: undefined,
     remainingChecks: undefined,
     halfmoves: 0,

@@ -6,12 +6,12 @@ import { PlayerIndex, Square } from '../src/types';
 
 test('rook attacks', () => {
   const d6 = 43;
-  expect(rookAttacks(d6, new SquareSet(0x2826f5b9, 0x3f7f2880))).toEqual(new SquareSet(0x8000000, 0x83708));
-  expect(rookAttacks(d6, SquareSet.empty())).toEqual(SquareSet.fromFile(3).xor(SquareSet.fromRank(5)));
+  expect(rookAttacks(d6, new SquareSet([0x2826f5b9, 0x3f7f2880, 0, 0]))).toEqual(new SquareSet([0x8000000, 0x83708, 0, 0]));
+  expect(rookAttacks(d6, SquareSet.empty())).toEqual(SquareSet.fromFile64(3).xor(SquareSet.fromRank64(5)));
 });
 
 test('ray', () => {
-  expect(ray(0, 8)).toEqual(SquareSet.fromFile(0));
+  expect(ray(0, 8)).toEqual(SquareSet.fromFile64(0));
 });
 
 test('between', () => {

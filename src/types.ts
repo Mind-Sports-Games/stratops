@@ -177,3 +177,11 @@ export type Rules = typeof RULES[number];
 export interface Outcome {
   winner: PlayerIndex | undefined;
 }
+
+// From: https://stackoverflow.com/questions/41139763/how-to-declare-a-fixed-length-array-in-typescript
+export type Tuple<
+  T,
+  N extends number,
+  R extends readonly T[] = [],
+> = R['length'] extends N ? R : Tuple<T, N, readonly [T, ...R]>;
+

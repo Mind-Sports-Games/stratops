@@ -62,7 +62,7 @@ export function perft(pos: Position, depth: number, log = false): number {
     for (const [from, to] of pos.allDests(ctx)) {
       nodes += to.size();
       if (pos.board['p-piece'].has(from)) {
-        const backrank = SquareSet.backrank(opposite(pos.turn));
+        const backrank = SquareSet.backrank64(opposite(pos.turn));
         nodes += to.intersect(backrank).size() * (promotionRoles.length - 1);
       }
     }
@@ -88,7 +88,7 @@ export function perft(pos: Position, depth: number, log = false): number {
     if (pos.pockets) {
       for (const role of ROLES) {
         if (pos.pockets[pos.turn][role] > 0) {
-          for (const to of role === 'p-piece' ? dropDests.diff(SquareSet.backranks()) : dropDests) {
+          for (const to of role === 'p-piece' ? dropDests.diff64(SquareSet.backranks64()) : dropDests) {
             const child = pos.clone();
             const move = { role, to };
             child.play(move);

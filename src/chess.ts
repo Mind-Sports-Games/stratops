@@ -65,14 +65,14 @@ export class Castles {
 
   static default(): Castles {
     const castles = new Castles();
-    castles.unmovedRooks = SquareSet.corners();
+    castles.unmovedRooks = SquareSet.corners64();
     castles.rook = {
       p1: { a: 0, h: 7 },
       p2: { a: 56, h: 63 },
     };
     castles.path = {
-      p1: { a: new SquareSet(0xe, 0), h: new SquareSet(0x60, 0) },
-      p2: { a: new SquareSet(0, 0x0e000000), h: new SquareSet(0, 0x60000000) },
+      p1: { a: new SquareSet([0xe, 0, 0, 0]), h: new SquareSet([0x60, 0, 0, 0]) },
+      p2: { a: new SquareSet([0, 0x0e000000, 0, 0]), h: new SquareSet([0, 0x60000000, 0, 0]) },
     };
     return castles;
   }
@@ -121,7 +121,7 @@ export class Castles {
     const castles = Castles.empty();
     const rooks = setup.unmovedRooks.intersect(setup.board['r-piece']);
     for (const playerIndex of PLAYERINDEXES) {
-      const backrank = SquareSet.backrank(playerIndex);
+      const backrank = SquareSet.backrank64(playerIndex);
       const king = setup.board.kingOf(playerIndex);
       if (!defined(king) || !backrank.has(king)) continue;
       const side = rooks.intersect(setup.board[playerIndex]).intersect(backrank);
@@ -145,7 +145,7 @@ export class Castles {
   }
 
   discardSide(playerIndex: PlayerIndex): void {
-    this.unmovedRooks = this.unmovedRooks.diff(SquareSet.backrank(playerIndex));
+    this.unmovedRooks = this.unmovedRooks.diff64(SquareSet.backrank64(playerIndex));
     this.rook[playerIndex].a = undefined;
     this.rook[playerIndex].h = undefined;
   }
@@ -275,12 +275,12 @@ export abstract class Position {
   isLegal(move: Move, ctx?: Context): boolean {
     if (isDrop(move)) {
       if (!this.pockets || this.pockets[this.turn][move.role] <= 0) return false;
-      if (move.role === 'p-piece' && SquareSet.backranks().has(move.to)) return false;
+      if (move.role === 'p-piece' && SquareSet.backranks64().has(move.to)) return false;
       return this.dropDests(ctx).has(move.to);
     } else {
       if (move.promotion === 'p-piece') return false;
       if (move.promotion === 'k-piece' && this.rules !== 'antichess') return false;
-      if (!!move.promotion !== (this.board['p-piece'].has(move.from) && SquareSet.backranks().has(move.to)))
+      if (!!move.promotion !== (this.board['p-piece'].has(move.from) && SquareSet.backranks64().has(move.to)))
         return false;
       const dests = this.dests(move.from, ctx);
       return dests.has(move.to) || dests.has(this.normalizeMove(move).to);
@@ -454,7 +454,7 @@ export class Chess extends Position {
     if (this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty())
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
 
-    if (SquareSet.backranks().intersects(this.board['p-piece']))
+    if (SquareSet.backranks64().intersects(this.board['p-piece']))
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
 
     return this.validateCheckers();
@@ -541,7 +541,7 @@ export class Chess extends Position {
       }
       return pseudo;
     } else {
-      pseudo = pseudo.diff(this.board[this.turn]);
+      pseudo = pseudo.diff64(this.board[this.turn]);
     }
     if (square === ctx.king) return pseudo.union(this.castlingDest('a', ctx)).union(this.castlingDest('h', ctx));
     else return pseudo;
@@ -578,7 +578,7 @@ export class Chess extends Position {
     else if (piece.role === 'q-piece') pseudo = queenAttacks(square, this.board.occupied);
     else pseudo = kingAttacks(square);
 
-    pseudo = pseudo.diff(this.board[this.turn]);
+    pseudo = pseudo.diff64(this.board[this.turn]);
 
     if (defined(ctx.king)) {
       if (piece.role === 'k-piece') {
@@ -616,13 +616,13 @@ export class Chess extends Position {
     if (this.board[playerIndex].intersects(this.board['n-piece'])) {
       return (
         this.board[playerIndex].size() <= 2 &&
-        this.board[opposite(playerIndex)].diff(this.board['k-piece']).diff(this.board['q-piece']).isEmpty()
+        this.board[opposite(playerIndex)].diff64(this.board['k-piece']).diff64(this.board['q-piece']).isEmpty()
       );
     }
     if (this.board[playerIndex].intersects(this.board['b-piece'])) {
       const samePlayerIndex =
-        !this.board['b-piece'].intersects(SquareSet.darkSquares()) ||
-        !this.board['b-piece'].intersects(SquareSet.lightSquares());
+        !this.board['b-piece'].intersects(SquareSet.darkSquares64()) ||
+        !this.board['b-piece'].intersects(SquareSet.lightSquares64());
       return samePlayerIndex && this.board['p-piece'].isEmpty() && this.board['n-piece'].isEmpty();
     }
     return true;

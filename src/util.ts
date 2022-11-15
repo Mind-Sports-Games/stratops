@@ -118,7 +118,7 @@ export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
   return a.map((k, i) => [k, b[i]]);
 }
 
-export const boardForRules = (rules: Rules): BoardDimensions => {
+export const dimensionsForRules = (rules: Rules): BoardDimensions => {
   switch (rules) {
     case 'chess':
     case 'antichess':

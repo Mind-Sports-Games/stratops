@@ -1,11 +1,11 @@
-import { parseFen, makeFen, makeBoardFen, INITIAL_FEN, INITIAL_BOARD_FEN, EMPTY_BOARD_FEN, FenError } from '../src/fen';
+import { parseFen, makeFen, makeBoardFen, INITIAL_FEN, INITIAL_BOARD_FEN, EMPTY_BOARD_FEN } from '../src/fen';
 import { SquareSet } from '../src/squareSet';
 import { Board } from '../src/board';
 import { defaultSetup } from '../src/setup';
 
 test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.default())).toEqual(INITIAL_BOARD_FEN);
-  expect(makeBoardFen('chess')(Board.empty())).toEqual(EMPTY_BOARD_FEN);
+  expect(makeBoardFen('chess')(Board.empty('chess'))).toEqual(EMPTY_BOARD_FEN);
   expect(makeBoardFen('chess')(Board.racingKings())).toEqual('8/8/8/8/8/8/krbnNBRK/qrbnNBRQ');
   expect(makeBoardFen('chess')(Board.horde())).toEqual(
     'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP'
@@ -21,7 +21,7 @@ test('parse initial fen', () => {
   expect(setup.board).toEqual(Board.default());
   expect(setup.pockets).toBeUndefined();
   expect(setup.turn).toEqual('p1');
-  expect(setup.unmovedRooks).toEqual(SquareSet.corners());
+  expect(setup.unmovedRooks).toEqual(SquareSet.corners64());
   expect(setup.epSquare).toBeUndefined();
   expect(setup.remainingChecks).toBeUndefined();
   expect(setup.halfmoves).toEqual(0);

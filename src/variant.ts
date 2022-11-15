@@ -66,9 +66,9 @@ export class Crazyhouse extends Chess {
       .complement()
       .intersect(
         this.pockets?.[this.turn].hasNonPawns()
-          ? SquareSet.full()
+          ? SquareSet.full64()
           : this.pockets?.[this.turn].hasPawns()
-          ? SquareSet.backranks().complement()
+          ? SquareSet.backranks64().complement()
           : SquareSet.empty()
       );
 
@@ -107,7 +107,7 @@ export class Atomic extends Chess {
     if (this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty()) {
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
     }
-    if (SquareSet.backranks().intersects(this.board['p-piece'])) {
+    if (SquareSet.backranks64().intersects(this.board['p-piece'])) {
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
     }
     return Result.ok(undefined);
@@ -123,7 +123,7 @@ export class Atomic extends Chess {
   protected playCaptureAt(square: Square, captured: Piece): void {
     super.playCaptureAt(square, captured);
     this.board.take(square);
-    for (const explode of kingAttacks(square).intersect(this.board.occupied).diff(this.board['p-piece'])) {
+    for (const explode of kingAttacks(square).intersect(this.board.occupied).diff64(this.board['p-piece'])) {
       const piece = this.board.take(explode);
       if (piece && piece.role === 'r-piece') this.castles.discardRook(explode);
       if (piece && piece.role === 'k-piece') this.castles.discardSide(piece.playerIndex);
@@ -136,18 +136,18 @@ export class Atomic extends Chess {
     if (this.board.pieces(opposite(playerIndex), 'k-piece').isEmpty()) return false;
 
     // Bare king cannot mate.
-    if (this.board[playerIndex].diff(this.board['k-piece']).isEmpty()) return true;
+    if (this.board[playerIndex].diff64(this.board['k-piece']).isEmpty()) return true;
 
     // As long as the enemy king is not alone, there is always a chance their
     // own pieces explode next to it.
-    if (this.board[opposite(playerIndex)].diff(this.board['k-piece']).nonEmpty()) {
+    if (this.board[opposite(playerIndex)].diff64(this.board['k-piece']).nonEmpty()) {
       // Unless there are only bishops that cannot explode each other.
       if (this.board.occupied.equals(this.board['b-piece'].union(this.board['k-piece']))) {
-        if (!this.board['b-piece'].intersect(this.board.p1).intersects(SquareSet.darkSquares())) {
-          return !this.board['b-piece'].intersect(this.board.p2).intersects(SquareSet.lightSquares());
+        if (!this.board['b-piece'].intersect(this.board.p1).intersects(SquareSet.darkSquares64())) {
+          return !this.board['b-piece'].intersect(this.board.p2).intersects(SquareSet.lightSquares64());
         }
-        if (!this.board['b-piece'].intersect(this.board.p1).intersects(SquareSet.lightSquares())) {
-          return !this.board['b-piece'].intersect(this.board.p2).intersects(SquareSet.darkSquares());
+        if (!this.board['b-piece'].intersect(this.board.p1).intersects(SquareSet.lightSquares64())) {
+          return !this.board['b-piece'].intersect(this.board.p2).intersects(SquareSet.darkSquares64());
         }
       }
       return false;
@@ -221,7 +221,7 @@ export class Antichess extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    if (SquareSet.backranks().intersects(this.board['p-piece']))
+    if (SquareSet.backranks64().intersects(this.board['p-piece']))
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
     return Result.ok(undefined);
   }
@@ -251,10 +251,10 @@ export class Antichess extends Chess {
 
   hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
     if (this.board.occupied.equals(this.board['b-piece'])) {
-      const weSomeOnLight = this.board[playerIndex].intersects(SquareSet.lightSquares());
-      const weSomeOnDark = this.board[playerIndex].intersects(SquareSet.darkSquares());
-      const theyAllOnDark = this.board[opposite(playerIndex)].isDisjoint(SquareSet.lightSquares());
-      const theyAllOnLight = this.board[opposite(playerIndex)].isDisjoint(SquareSet.darkSquares());
+      const weSomeOnLight = this.board[playerIndex].intersects(SquareSet.lightSquares64());
+      const weSomeOnDark = this.board[playerIndex].intersects(SquareSet.darkSquares64());
+      const theyAllOnDark = this.board[opposite(playerIndex)].isDisjoint(SquareSet.lightSquares64());
+      const theyAllOnLight = this.board[opposite(playerIndex)].isDisjoint(SquareSet.darkSquares64());
       return (weSomeOnLight && theyAllOnDark) || (weSomeOnDark && theyAllOnLight);
     }
     return false;
@@ -295,12 +295,12 @@ export class KingOfTheHill extends Chess {
   }
 
   isVariantEnd(): boolean {
-    return this.board['k-piece'].intersects(SquareSet.center());
+    return this.board['k-piece'].intersects(SquareSet.center64());
   }
 
   variantOutcome(_ctx?: Context): Outcome | undefined {
     for (const playerIndex of PLAYERINDEXES) {
-      if (this.board.pieces(playerIndex, 'k-piece').intersects(SquareSet.center())) return { winner: playerIndex };
+      if (this.board.pieces(playerIndex, 'k-piece').intersects(SquareSet.center64())) return { winner: playerIndex };
     }
     return;
   }
@@ -444,7 +444,7 @@ class RacingKings extends Chess {
   }
 
   isVariantEnd(): boolean {
-    const goal = SquareSet.fromRank(7);
+    const goal = SquareSet.fromRank64(7);
     const inGoal = this.board['k-piece'].intersect(goal);
     if (inGoal.isEmpty()) return false;
     if (this.turn === 'p1' || inGoal.intersects(this.board.p2)) return true;
@@ -453,7 +453,7 @@ class RacingKings extends Chess {
     const p2King = this.board.kingOf('p2');
     if (defined(p2King)) {
       const occ = this.board.occupied.without(p2King);
-      for (const target of kingAttacks(p2King).intersect(goal).diff(this.board.p2)) {
+      for (const target of kingAttacks(p2King).intersect(goal).diff64(this.board.p2)) {
         if (this.kingAttackers(target, 'p1', occ).isEmpty()) return false;
       }
     }
@@ -462,7 +462,7 @@ class RacingKings extends Chess {
 
   variantOutcome(ctx?: Context): Outcome | undefined {
     if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
-    const goal = SquareSet.fromRank(7);
+    const goal = SquareSet.fromRank64(7);
     const p2InGoal = this.board.pieces('p2', 'k-piece').intersects(goal);
     const p1InGoal = this.board.pieces('p1', 'k-piece').intersects(goal);
     if (p2InGoal && !p1InGoal) return { winner: 'p2' };
@@ -497,14 +497,14 @@ export class Horde extends Chess {
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
     if (!this.board['k-piece'].isSingleSquare()) return Result.err(new PositionError(IllegalSetup.Kings));
-    if (!this.board['k-piece'].diff(this.board.promoted).isSingleSquare())
+    if (!this.board['k-piece'].diff64(this.board.promoted).isSingleSquare())
       return Result.err(new PositionError(IllegalSetup.Kings));
 
     const otherKing = this.board.kingOf(opposite(this.turn));
     if (defined(otherKing) && this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty())
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
     for (const playerIndex of PLAYERINDEXES) {
-      if (this.board.pieces(playerIndex, 'p-piece').intersects(SquareSet.backrank(opposite(playerIndex)))) {
+      if (this.board.pieces(playerIndex, 'p-piece').intersects(SquareSet.backrank64(opposite(playerIndex)))) {
         return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
       }
     }
@@ -601,7 +601,7 @@ export class LinesOfAction extends Chess {
     let next = pieces.first();
     while (next) {
       connected = connected.with(next);
-      next = kingAttacks(next).intersect(pieces).diff(connected).first();
+      next = kingAttacks(next).intersect(pieces).diff64(connected).first();
     }
     return connected.size() > 0 && connected.size() === pieces.size();
   }
@@ -666,7 +666,7 @@ export class ScrambledEggs extends Chess {
     let next = pieces.first();
     while (next) {
       connected = connected.with(next);
-      next = kingAttacks(next).intersect(pieces).diff(connected).first();
+      next = kingAttacks(next).intersect(pieces).diff64(connected).first();
     }
     return connected.size() > 0 && connected.size() === pieces.size();
   }

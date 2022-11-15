@@ -9,9 +9,9 @@ export function flipVertical(s: SquareSet): SquareSet {
 }
 
 export function flipHorizontal(s: SquareSet): SquareSet {
-  const k1 = new SquareSet(0x55555555, 0x55555555);
-  const k2 = new SquareSet(0x33333333, 0x33333333);
-  const k4 = new SquareSet(0x0f0f0f0f, 0x0f0f0f0f);
+  const k1 = new SquareSet([0x55555555, 0x55555555, 0, 0]);
+  const k2 = new SquareSet([0x33333333, 0x33333333, 0, 0]);
+  const k4 = new SquareSet([0x0f0f0f0f, 0x0f0f0f0f, 0, 0]);
   s = s.shr64(1).intersect(k1).union(s.intersect(k1).shl64(1));
   s = s.shr64(2).intersect(k2).union(s.intersect(k2).shl64(2));
   s = s.shr64(4).intersect(k4).union(s.intersect(k4).shl64(4));
@@ -19,11 +19,11 @@ export function flipHorizontal(s: SquareSet): SquareSet {
 }
 
 export function flipDiagonal(s: SquareSet): SquareSet {
-  let t = s.xor(s.shl64(28)).intersect(new SquareSet(0, 0x0f0f0f0f));
+  let t = s.xor(s.shl64(28)).intersect(new SquareSet([0, 0x0f0f0f0f, 0, 0]));
   s = s.xor(t.xor(t.shr64(28)));
-  t = s.xor(s.shl64(14)).intersect(new SquareSet(0x33330000, 0x33330000));
+  t = s.xor(s.shl64(14)).intersect(new SquareSet([0x33330000, 0x33330000, 0, 0]));
   s = s.xor(t.xor(t.shr64(14)));
-  t = s.xor(s.shl64(7)).intersect(new SquareSet(0x55005500, 0x55005500));
+  t = s.xor(s.shl64(7)).intersect(new SquareSet([0x55005500, 0x55005500, 0, 0]));
   s = s.xor(t.xor(t.shr64(7)));
   return s;
 }
@@ -33,7 +33,7 @@ export function rotate180(s: SquareSet): SquareSet {
 }
 
 export function transformBoard(board: Board, f: (s: SquareSet) => SquareSet): Board {
-  const b = Board.empty();
+  const b = Board.empty(board.rules);
   b.occupied = f(board.occupied);
   b.promoted = f(board.promoted);
   for (const playerIndex of PLAYERINDEXES) b[playerIndex] = f(board[playerIndex]);

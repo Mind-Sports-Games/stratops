@@ -66,17 +66,17 @@ export function pawnAttacks(playerIndex: PlayerIndex, square: Square): SquareSet
   return PAWN_ATTACKS[playerIndex][square];
 }
 
-const FILE_RANGE = tabulate(sq => SquareSet.fromFile(squareFile(sq)).without(sq));
-const RANK_RANGE = tabulate(sq => SquareSet.fromRank(squareRank(sq)).without(sq));
+const FILE_RANGE = tabulate(sq => SquareSet.fromFile64(squareFile(sq)).without(sq));
+const RANK_RANGE = tabulate(sq => SquareSet.fromRank64(squareRank(sq)).without(sq));
 
 const DIAG_RANGE = tabulate(sq => {
-  const diag = new SquareSet(0x0804_0201, 0x8040_2010);
+  const diag = new SquareSet([0x0804_0201, 0x8040_2010, 0, 0]);
   const shift = 8 * (squareRank(sq) - squareFile(sq));
   return (shift >= 0 ? diag.shl64(shift) : diag.shr64(-shift)).without(sq);
 });
 
 const ANTI_DIAG_RANGE = tabulate(sq => {
-  const diag = new SquareSet(0x1020_4080, 0x0102_0408);
+  const diag = new SquareSet([0x1020_4080, 0x0102_0408, 0, 0]);
   const shift = 8 * (squareRank(sq) + squareFile(sq) - 7);
   return (shift >= 0 ? diag.shl64(shift) : diag.shr64(-shift)).without(sq);
 });
@@ -155,7 +155,7 @@ export function linesOfActionAttacks(
     .filter(isValid);
   const destsByPieceCount = possibleTargets.reduce((range, dest) => range.with(dest), SquareSet.empty());
   const nonBlockedSquares = bishopAttacks(square, theirs).xor(rookAttacks(square, theirs));
-  return nonBlockedSquares.intersect(destsByPieceCount).diff(ours);
+  return nonBlockedSquares.intersect(destsByPieceCount).diff64(ours);
 }
 
 /**
@@ -202,6 +202,6 @@ export function ray(a: Square, b: Square): SquareSet {
  */
 export function between(a: Square, b: Square): SquareSet {
   return ray(a, b)
-    .intersect(SquareSet.full().shl64(a).xor(SquareSet.full().shl64(b)))
+    .intersect(SquareSet.full64().shl64(a).xor(SquareSet.full64().shl64(b)))
     .withoutFirst();
 }

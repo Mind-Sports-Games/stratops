@@ -3,7 +3,7 @@ import { Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES, Rules } f
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 import { Setup, MaterialSide, Material, RemainingChecks } from './setup';
-import { defined, squareFile, parseSquare, makeSquare, roleToChar, charToRole, boardForRules } from './util';
+import { defined, squareFile, parseSquare, makeSquare, roleToChar, charToRole, dimensionsForRules } from './util';
 
 export const INITIAL_BOARD_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 export const INITIAL_EPD = INITIAL_BOARD_FEN + ' w KQkq -';
@@ -47,8 +47,8 @@ function charToPiece(ch: string): Piece | undefined {
 export const parseBoardFen =
   (rules: Rules) =>
     (boardPart: string): Result<Board, FenError> => {
-      const board = Board.empty();
-      const { ranks, files } = boardForRules(rules);
+      const board = Board.empty(rules);
+      const { ranks, files } = dimensionsForRules(rules);
       let rank = ranks - 1;
       let file = 0;
       for (let i = 0; i < boardPart.length; i++) {
@@ -97,7 +97,7 @@ export function parseCastlingFen(board: Board, castlingPart: string): Result<Squ
   for (const c of castlingPart) {
     const lower = c.toLowerCase();
     const playerIndex = c === lower ? 'p2' : 'p1';
-    const backrank = SquareSet.backrank(playerIndex).intersect(board[playerIndex]);
+    const backrank = SquareSet.backrank64(playerIndex).intersect(board[playerIndex]);
     let candidates: Iterable<Square>;
     if (lower === 'q') candidates = backrank;
     else if (lower === 'k') candidates = backrank.reversed();
@@ -240,7 +240,7 @@ export function makePiece(piece: Piece, opts?: FenOpts): string {
 export const makeBoardFen =
   (rules: Rules) =>
     (board: Board, opts?: FenOpts): string => {
-      const { ranks, files } = boardForRules(rules);
+      const { ranks, files } = dimensionsForRules(rules);
       let fen = '';
       let empty = 0;
       for (let rank: number = ranks - 1; rank >= 0; rank--) {
@@ -280,7 +280,7 @@ export function makeCastlingFen(board: Board, unmovedRooks: SquareSet, opts?: Fe
   const shredder = opts?.shredder;
   let fen = '';
   for (const playerIndex of PLAYERINDEXES) {
-    const backrank = SquareSet.backrank(playerIndex);
+    const backrank = SquareSet.backrank64(playerIndex);
     const king = board.kingOf(playerIndex);
     if (!defined(king) || !backrank.has(king)) continue;
     const candidates = board.pieces(playerIndex, 'r-piece').intersect(backrank);
