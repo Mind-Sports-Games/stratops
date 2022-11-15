@@ -37,7 +37,7 @@ const variantPerfts: [Rules, string, string, number, number, number][] = [
   ['antichess', 'a-pawn-vs-c-pawn', '8/2p5/8/8/8/8/P7/8 w - -', 2, 4, 4],
 ];
 
-test.each(variantPerfts)('variant perft: %s (%s): %s', (rules, name, fen, d1, d2, d3) => {
+test.each(variantPerfts)('variant perft: %s (%s): %s', (rules, _, fen, d1, d2, d3) => {
   const pos = setupPosition(rules, parseFen('chess')(fen).unwrap()).unwrap();
   expect(perft(pos, 1, false)).toBe(d1);
   if (d2) expect(perft(pos, 2, false)).toBe(d2);

@@ -516,3 +516,17 @@ export class SquareSet implements Iterable<Square> {
   }
 }
 
+export const bbpp = (name: string, ss: SquareSet): SquareSet => {
+  console.log(`${name}: lo: ${ss.bitParts[0]} hi: ${ss.bitParts[1]}`);
+  return ss;
+}
+
+export const bbpp128 = (name: string, ss: SquareSet): SquareSet => {
+  console.log(`${name}: 0: ${ss.bitParts[0]} 1: ${ss.bitParts[1]} 2: ${ss.bitParts[2]} 3: ${ss.bitParts[3]}`);
+  return ss;
+}
+
+export const pp = <T>(name: string, t: T): T => {
+  console.log(`${name}: ${t}`);
+  return t;
+}
