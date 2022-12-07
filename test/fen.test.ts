@@ -52,7 +52,9 @@ test.each([
   expect(makeFen('chess')(setup, { promoted: true })).toEqual(fen);
 });
 
-test.each(['lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1'])(
+test.each([
+  'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1'
+])(
   'parse and make shogi fen',
   fen => {
     const setup = parseFen('shogi')(fen).unwrap();

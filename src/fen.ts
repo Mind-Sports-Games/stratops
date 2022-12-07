@@ -78,7 +78,8 @@ export const parseBoardFen =
     };
 
 export function parsePockets(pocketPart: string): Result<Material, FenError> {
-  if (pocketPart.length > 64) return Result.err(new FenError(InvalidFen.Pockets));
+  // TODO: What would the limit need to be for us right now?
+  if (pocketPart.length > 64*4) return Result.err(new FenError(InvalidFen.Pockets));
   const pockets = Material.empty();
   for (const c of pocketPart) {
     const piece = charToPiece(c);
