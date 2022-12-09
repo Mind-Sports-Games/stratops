@@ -1,46 +1,10 @@
-# chessops
+# stratops
 
-[![Test](https://github.com/niklasf/chessops/workflows/Test/badge.svg)](https://github.com/niklasf/chessops/actions)
-[![npm](https://img.shields.io/npm/v/chessops)](https://www.npmjs.com/package/chessops)
+[![Test](https://github.com/Mind-Sports-Games/stratops/workflows/Test/badge.svg)](https://github.com/Mind-Sports-Games/stratops/actions)
 
-Chess and chess variant rules and operations in TypeScript.
+Strategy games and strategy game variant rules and operations in TypeScript.
 
-## Documentation
-
-[View TypeDoc](https://niklasf.github.io/chessops/)
-
-## Features
-
-- [Read and write FEN](https://niklasf.github.io/chessops/modules/fen.html)
-- Vocabulary (Square, SquareSet, PlayerIndex, Role, Piece, Board, Castles, Setup,
-  Position)
-- [Variant rules](https://niklasf.github.io/chessops/modules/variant.html): Standard chess, Crazyhouse, King of the Hill, Three-check,
-  Antichess, Atomic, Horde, Racing Kings
-  - Move making
-  - Legal move and drop move generation
-  - Game end and outcome
-  - Insufficient material
-  - Setup validation
-- Supports Chess960
-- [Attacks and rays](https://niklasf.github.io/chessops/modules/attacks.html) using hyperbola quintessence
-- Read and write UCI move notation
-- [Read and write SAN](https://niklasf.github.io/chessops/modules/san.html)
-- [Position hashing](https://niklasf.github.io/chessops/modules/hash.html)
-- [Transformations](https://niklasf.github.io/chessops/modules/transform.html): Mirroring and rotating
-- [Compatibility](https://niklasf.github.io/chessops/modules/compat.html): [chessground](https://github.com/ornicar/chessground) and [scalachess](https://github.com/ornicar/scalachess)
-
-[File an issue](https://github.com/niklasf/chessops/issues/new) to request more.
-
-## Example
-
-```javascript
-import { parseFen } from 'chessops/fen';
-import { Chess } from 'chessops/chess';
-
-const setup = parseFen('r1bqkbnr/ppp2Qpp/2np4/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4').unwrap();
-const pos = Chess.fromSetup(setup).unwrap();
-console.assert(pos.isCheckmate());
-```
+based on chessops: https://github.com/niklasf/chessops/
 
 ## License
 

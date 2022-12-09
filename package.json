@@ -1,6 +1,6 @@
 {
-  "name": "chessops",
-  "version": "0.8.1-pstrat3.14",
+  "name": "stratops",
+  "version": "0.8.1-pstrat3.15",
   "description": "Chess and chess variant rules and operations",
   "keywords": [
     "chess",
@@ -10,14 +10,13 @@
     "uci",
     "typescript"
   ],
-  "repository": "https://github.com/Mind-Sports-Games/chessops",
+  "repository": "https://github.com/Mind-Sports-Games/stratops",
   "author": "playstrategy.org",
   "license": "GPL-3.0-or-later",
   "type": "commonjs",
   "sideEffects": false,
   "dependencies": {
     "@badrap/result": "^0.2.8",
-    "chessops": "^0.10.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
