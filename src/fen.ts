@@ -168,7 +168,7 @@ export const parseFen =
       let turn: PlayerIndex;
       const turnPart = parts.shift();
       if (!defined(turnPart) || (turnPart === 'w' || turnPart.toLowerCase() === 's')) turn = 'p1';
-      else if (turnPart === 'b' || turnPart.toLowerCase() == 'N') turn = 'p2';
+      else if (turnPart === 'b' || turnPart.toLowerCase() === 'n') turn = 'p2';
       else return Result.err(new FenError(InvalidFen.Turn));
 
       return board.chain(board => {
