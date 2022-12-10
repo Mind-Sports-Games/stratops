@@ -248,6 +248,8 @@ export interface Setup {
   remainingChecks: RemainingChecks | undefined;
   halfmoves: number;
   fullmoves: number;
+  northScore?: number;
+  southScore?: number;
 }
 
 export function defaultSetup(): Setup {

@@ -22,6 +22,7 @@ export enum InvalidFen {
   RemainingChecks = 'ERR_REMAINING_CHECKS',
   Halfmoves = 'ERR_HALFMOVES',
   Fullmoves = 'ERR_FULLMOVES',
+  MancalaScore = 'ERR_MANCALA_SCORE',
 }
 
 export class FenError extends Error { }
@@ -79,7 +80,7 @@ export const parseBoardFen =
 
 export function parsePockets(pocketPart: string): Result<Material, FenError> {
   // TODO: What would the limit need to be for us right now?
-  if (pocketPart.length > 64*4) return Result.err(new FenError(InvalidFen.Pockets));
+  if (pocketPart.length > 64 * 4) return Result.err(new FenError(InvalidFen.Pockets));
   const pockets = Material.empty();
   for (const c of pocketPart) {
     const piece = charToPiece(c);
@@ -152,11 +153,22 @@ export const parseFen =
         }
       }
 
+      let northScore: number | undefined;
+      let southScore: number | undefined;
+      // Oware scores?
+      if (rules === 'oware') {
+        const southScoreText = parts.shift();
+        const northScoreText = parts.shift();
+        if (!northScoreText || !southScoreText) return Result.err(new FenError(InvalidFen.MancalaScore));
+        southScore = parseSmallUint(southScoreText);
+        northScore = parseSmallUint(northScoreText);
+      }
+
       // Turn
       let turn: PlayerIndex;
       const turnPart = parts.shift();
-      if (!defined(turnPart) || turnPart === 'w') turn = 'p1';
-      else if (turnPart === 'b') turn = 'p2';
+      if (!defined(turnPart) || (turnPart === 'w' || turnPart.toLowerCase() === 's')) turn = 'p1';
+      else if (turnPart === 'b' || turnPart.toLowerCase() == 'N') turn = 'p2';
       else return Result.err(new FenError(InvalidFen.Turn));
 
       return board.chain(board => {
@@ -209,6 +221,8 @@ export const parseFen =
                 epSquare,
                 halfmoves,
                 fullmoves: Math.max(1, fullmoves),
+                southScore,
+                northScore
               };
             })
           )
@@ -302,12 +316,20 @@ export function makeCastlingFen(board: Board, unmovedRooks: SquareSet, opts?: Fe
 export function makeRemainingChecks(checks: RemainingChecks): string {
   return `${checks.p1}+${checks.p2}`;
 }
+export function mancalaScore(northScore: number | undefined, southScore: number | undefined) {
+  if (!northScore) northScore = 0;
+  if (!southScore) southScore = 0;
+  return `${southScore} ${northScore}`
+}
 
-export const makeFen =
-  (rules: Rules) =>
-    (setup: Setup, opts?: FenOpts): string => {
-      return [
-        makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
+export const makeFen = (rules: Rules) =>
+  (setup: Setup, opts?: FenOpts): string => {
+    return [
+      makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
+      ...(rules === 'oware' ? [
+        mancalaScore(setup.northScore, setup.southScore),
+        setup.turn === 'p1' ? 'S' : 'N',
+      ] : [
         setup.turn === 'p1' ? 'w' : 'b',
         makeCastlingFen(setup.board, setup.unmovedRooks, opts),
         defined(setup.epSquare) ? makeSquare(setup.epSquare) : '-',
@@ -315,5 +337,6 @@ export const makeFen =
         ...(opts?.epd
           ? []
           : [Math.max(0, Math.min(setup.halfmoves, 9999)), Math.max(1, Math.min(setup.fullmoves, 9999))]),
-      ].join(' ');
-    };
+      ])
+    ].join(' ');
+  };

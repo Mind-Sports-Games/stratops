@@ -191,5 +191,5 @@ test('parse crazyhouse', () => {
     'Qdd1#',
   ];
   for (const san of line) pos.play(parseSan(pos, san)!);
-  expect(makeFen('chess')(pos.toSetup())).toBe('r4rk1/ppp1nppp/6b1/8/2B1pP2/4Pq2/PPP4P/R1BqK3[PPNNNBRp] w - - 1 25');
+  expect(makeFen('crazyhouse')(pos.toSetup())).toBe('r4rk1/ppp1nppp/6b1/8/2B1pP2/4Pq2/PPP4P/R1BqK3[BNNNPPRp] w - - 1 25');
 });

@@ -137,6 +137,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
 
   static racingKings(): Board {
     const board = new Board('racingkings');
+    board.reset();
     board.occupied = new SquareSet([0xffff, 0, 0, 0]);
     board.promoted = SquareSet.empty();
     board.p1 = new SquareSet([0xf0f0, 0, 0, 0]);
@@ -153,6 +154,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
 
   static horde(): Board {
     const board = new Board('horde');
+    board.reset();
     board.occupied = new SquareSet([0xffff_ffff, 0xffff_0066, 0, 0]);
     board.promoted = SquareSet.empty();
     board.p1 = new SquareSet([0xffff_ffff, 0x0000_0066, 0, 0]);
@@ -169,6 +171,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
 
   static linesOfAction(): Board {
     const board = new Board('linesofaction');
+    board.reset();
     board.occupied = new SquareSet([0x8181_817e, 0x7e81_8181, 0, 0]);
     board.promoted = SquareSet.empty();
     board.p1 = new SquareSet([0x8181_8100, 0x0081_8181, 0, 0]);
@@ -187,6 +190,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
    * Resets all pieces to the default starting position for standard chess.
    */
   reset(): void {
+    for (const role of ROLES) this[role] = SquareSet.empty();
     this.occupied = new SquareSet([0xffff, 0xffff_0000, 0, 0]);
     this.promoted = SquareSet.empty();
     this.p1 = new SquareSet([0xffff, 0, 0, 0]);
@@ -202,6 +206,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
 
   static empty(rules: Rules): Board {
     const board = new Board(rules);
+    board.reset();
     board.clear();
     return board;
   }

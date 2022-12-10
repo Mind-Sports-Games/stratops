@@ -65,3 +65,7 @@ test.each(['1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 w - - 0 1'])('parse and ma
   const setup = parseFen('linesofaction')(fen).unwrap();
   expect(makeFen('linesofaction')(setup, { promoted: true })).toEqual(fen);
 });
+test.each(['DDDDDD/DDDDDD 0 0 S'])('parse and make oware fen', fen => {
+  const setup = parseFen('oware')(fen).unwrap();
+  expect(makeFen('oware')(setup, { promoted: true })).toEqual(fen);
+});
