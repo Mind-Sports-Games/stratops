@@ -56,4 +56,3 @@ test('more than one', () => {
   expect(new SquareSet([0, 3, 0, 0]).moreThanOne()).toBe(true);
   expect(new SquareSet([0, -1, 0, 0]).moreThanOne()).toBe(true);
 });
-

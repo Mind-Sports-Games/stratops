@@ -314,5 +314,4 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
   }
 }
 
-export class BoardNxN extends Board {
-}
+export class BoardNxN extends Board {}

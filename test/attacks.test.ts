@@ -6,7 +6,9 @@ import { PlayerIndex, Square } from '../src/types';
 
 test('rook attacks', () => {
   const d6 = 43;
-  expect(rookAttacks(d6, new SquareSet([0x2826f5b9, 0x3f7f2880, 0, 0]))).toEqual(new SquareSet([0x8000000, 0x83708, 0, 0]));
+  expect(rookAttacks(d6, new SquareSet([0x2826f5b9, 0x3f7f2880, 0, 0]))).toEqual(
+    new SquareSet([0x8000000, 0x83708, 0, 0])
+  );
   expect(rookAttacks(d6, SquareSet.empty())).toEqual(SquareSet.fromFile64(3).xor(SquareSet.fromRank64(5)));
 });
 

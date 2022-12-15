@@ -12,25 +12,12 @@ export function fxhash32(word: number, state = 0): number {
 }
 
 export function fxhash128(bitParts: Tuple<number, 4>, state: number): number {
-  return fxhash32(
-    bitParts[0],
-    fxhash32(
-      bitParts[1],
-      fxhash32(
-        bitParts[2],
-        fxhash32(
-          bitParts[3],
-          state
-        )
-      )
-    )
-  );
+  return fxhash32(bitParts[0], fxhash32(bitParts[1], fxhash32(bitParts[2], fxhash32(bitParts[3], state))));
 }
 
 export function hashBoard(board: Board, state = 0): number {
   state = fxhash128(board.p1.bitParts, state);
-  for (const role of ROLES)
-    state = fxhash128(board[role].bitParts, state)
+  for (const role of ROLES) state = fxhash128(board[role].bitParts, state);
   return state;
 }
 
