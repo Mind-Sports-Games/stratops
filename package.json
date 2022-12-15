@@ -1,7 +1,7 @@
 {
   "name": "stratops",
-  "version": "0.8.1-pstrat3.15",
-  "description": "Chess and chess variant rules and operations",
+  "version": "0.8.1-pstrat3.16",
+  "description": "Strategy game rules and operations",
   "keywords": [
     "chess",
     "playstrategy",
