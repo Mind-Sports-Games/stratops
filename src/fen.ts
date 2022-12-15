@@ -316,7 +316,7 @@ export function makeCastlingFen(board: Board, unmovedRooks: SquareSet, opts?: Fe
 export function makeRemainingChecks(checks: RemainingChecks): string {
   return `${checks.p1}+${checks.p2}`;
 }
-export function mancalaScore(northScore: number | undefined, southScore: number | undefined) {
+export function mancalaScore(northScore: number | undefined, southScore: number | undefined): string {
   if (!northScore) northScore = 0;
   if (!southScore) southScore = 0;
   return `${southScore} ${northScore}`

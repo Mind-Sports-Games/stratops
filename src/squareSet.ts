@@ -26,7 +26,7 @@ enum BitPartTarget {
   Gte32,
   Gt0,
   Default,
-};
+}
 
 type BitPartTargetHandler<R> = {
   [BitPartTarget.Gte128]: (x: number) => R,

@@ -11,7 +11,7 @@ export function fxhash32(word: number, state = 0): number {
   return Math.imul(rol32(state, 5) ^ word, 0x9e3779b9);
 }
 
-export function fxhash128(bitParts: Tuple<number, 4>, state: number) {
+export function fxhash128(bitParts: Tuple<number, 4>, state: number): number {
   return fxhash32(
     bitParts[0],
     fxhash32(
