@@ -1,14 +1,22 @@
-export const FILE_NAMES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
+export const FILE_NAMES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] as const;
 
 export type FileName = typeof FILE_NAMES[number];
 
-export const RANK_NAMES = ['1', '2', '3', '4', '5', '6', '7', '8'] as const;
+export const RANK_NAMES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const;
 
 export type RankName = typeof RANK_NAMES[number];
 
 export type Square = number;
 
 export type SquareName = `${FileName}${RankName}`;
+
+/**
+ * Board dimensions
+ */
+export type BoardDimensions = {
+  ranks: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  files: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+};
 
 /**
  * Indexable by square indices.
@@ -26,8 +34,61 @@ export type ByPlayerIndex<T> = {
   [playerIndex in PlayerIndex]: T;
 };
 
-//curretnly supported pieces, should change to use Role to accept all new peices.
-export const ROLES = ['p-piece', 'n-piece', 'b-piece', 'r-piece', 'q-piece', 'k-piece', 'l-piece'] as const;
+//currently supported pieces, should change to use Role to accept all new peices.
+export const ROLES = [
+  'a-piece',
+  'b-piece',
+  'c-piece',
+  'd-piece',
+  'e-piece',
+  'f-piece',
+  'g-piece',
+  'h-piece',
+  'i-piece',
+  'j-piece',
+  'k-piece',
+  'l-piece',
+  'm-piece',
+  'n-piece',
+  'o-piece',
+  'p-piece',
+  'q-piece',
+  'r-piece',
+  's-piece',
+  't-piece',
+  'u-piece',
+  'v-piece',
+  'w-piece',
+  'x-piece',
+  'y-piece',
+  'z-piece',
+  'A-piece',
+  'B-piece',
+  'C-piece',
+  'D-piece',
+  'E-piece',
+  'F-piece',
+  'G-piece',
+  'H-piece',
+  'I-piece',
+  'J-piece',
+  'K-piece',
+  'L-piece',
+  'M-piece',
+  'N-piece',
+  'O-piece',
+  'P-piece',
+  'Q-piece',
+  'R-piece',
+  'S-piece',
+  'T-piece',
+  'U-piece',
+  'V-piece',
+  'W-piece',
+  'X-piece',
+  'Y-piece',
+  'Z-piece',
+] as const;
 //export type Role = typeof ROLES[number];
 
 export const letters = [
@@ -159,3 +220,8 @@ export type Rules = typeof RULES[number];
 export interface Outcome {
   winner: PlayerIndex | undefined;
 }
+
+// From: https://stackoverflow.com/questions/41139763/how-to-declare-a-fixed-length-array-in-typescript
+export type Tuple<T, N extends number, R extends readonly T[] = []> = R['length'] extends N
+  ? R
+  : Tuple<T, N, readonly [T, ...R]>;

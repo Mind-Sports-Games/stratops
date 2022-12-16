@@ -1,4 +1,16 @@
-import { FILE_NAMES, RANK_NAMES, CastlingSide, PlayerIndex, Square, Role, Move, isDrop, SquareName } from './types';
+import {
+  FILE_NAMES,
+  RANK_NAMES,
+  CastlingSide,
+  PlayerIndex,
+  Square,
+  Role,
+  Move,
+  isDrop,
+  SquareName,
+  Rules,
+  BoardDimensions,
+} from './types';
 
 export function defined<A>(v: A | undefined): v is A {
   return v !== undefined;
@@ -21,34 +33,120 @@ export function roleToChar(role: Role): string {
   return letterPart.length > 1 ? letterPart.replace('p', '+') : letterPart;
 }
 
-export function charToRole(ch: 'p' | 'n' | 'b' | 'r' | 'q' | 'k' | 'l' | 'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'L'): Role;
+type ValidRoleCharacter =
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h'
+  | 'i'
+  | 'j'
+  | 'k'
+  | 'l'
+  | 'm'
+  | 'n'
+  | 'o'
+  | 'p'
+  | 'q'
+  | 'r'
+  | 's'
+  | 't'
+  | 'u'
+  | 'v'
+  | 'w'
+  | 'x'
+  | 'y'
+  | 'z'
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z';
+
+const charToRoleMap: Record<ValidRoleCharacter, Role> = {
+  a: 'a-piece',
+  b: 'b-piece',
+  c: 'c-piece',
+  d: 'd-piece',
+  e: 'e-piece',
+  f: 'f-piece',
+  g: 'g-piece',
+  h: 'h-piece',
+  i: 'i-piece',
+  j: 'j-piece',
+  k: 'k-piece',
+  l: 'l-piece',
+  m: 'm-piece',
+  n: 'n-piece',
+  o: 'o-piece',
+  p: 'p-piece',
+  q: 'q-piece',
+  r: 'r-piece',
+  s: 's-piece',
+  t: 't-piece',
+  u: 'u-piece',
+  v: 'v-piece',
+  w: 'w-piece',
+  x: 'x-piece',
+  y: 'y-piece',
+  z: 'z-piece',
+  A: 'a-piece',
+  B: 'b-piece',
+  C: 'c-piece',
+  D: 'd-piece',
+  E: 'e-piece',
+  F: 'f-piece',
+  G: 'g-piece',
+  H: 'h-piece',
+  I: 'i-piece',
+  J: 'j-piece',
+  K: 'k-piece',
+  L: 'l-piece',
+  M: 'm-piece',
+  N: 'n-piece',
+  O: 'o-piece',
+  P: 'p-piece',
+  Q: 'q-piece',
+  R: 'r-piece',
+  S: 's-piece',
+  T: 't-piece',
+  U: 'u-piece',
+  V: 'v-piece',
+  W: 'w-piece',
+  X: 'x-piece',
+  Y: 'y-piece',
+  Z: 'z-piece',
+};
+
+export function charToRole(ch: ValidRoleCharacter): Role;
 export function charToRole(ch: string): Role | undefined;
 export function charToRole(ch: string): Role | undefined {
-  switch (ch) {
-    case 'P':
-    case 'p':
-      return 'p-piece';
-    case 'N':
-    case 'n':
-      return 'n-piece';
-    case 'B':
-    case 'b':
-      return 'b-piece';
-    case 'R':
-    case 'r':
-      return 'r-piece';
-    case 'Q':
-    case 'q':
-      return 'q-piece';
-    case 'K':
-    case 'k':
-      return 'k-piece';
-    case 'L':
-    case 'l':
-      return 'l-piece';
-    default:
-      return;
-  }
+  const role = charToRoleMap[ch as ValidRoleCharacter];
+  return role;
 }
 
 export function parseSquare(str: SquareName): Square;
@@ -99,3 +197,37 @@ export function kingCastlesTo(playerIndex: PlayerIndex, side: CastlingSide): Squ
 export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
   return a.map((k, i) => [k, b[i]]);
 }
+
+export const dimensionsForRules = (rules: Rules): BoardDimensions => {
+  switch (rules) {
+    case 'chess':
+    case 'antichess':
+    case 'atomic':
+    case 'horde':
+    case 'racingkings':
+    case 'kingofthehill':
+    case '3check':
+    case '5check':
+    case 'crazyhouse':
+    case 'nocastling':
+    case 'linesofaction':
+    case 'scrambledeggs':
+      return { ranks: 8, files: 8 };
+    case 'shogi':
+      return { ranks: 9, files: 9 };
+    case 'minishogi':
+      return { ranks: 5, files: 5 };
+    case 'xiangqi':
+      return { ranks: 5, files: 5 };
+    case 'minixiangqi':
+      return { ranks: 10, files: 9 };
+    case 'flipello':
+      return { ranks: 8, files: 8 };
+    case 'flipello10':
+      return { ranks: 10, files: 10 };
+    case 'oware':
+      return { ranks: 2, files: 6 };
+    default:
+      return { ranks: 8, files: 8 }; // Is this a reasonable default?
+  }
+};

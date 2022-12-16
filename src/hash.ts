@@ -1,4 +1,4 @@
-import { PLAYERINDEXES, ROLES } from './types';
+import { PLAYERINDEXES, ROLES, Tuple } from './types';
 import { defined } from './util';
 import { Board } from './board';
 import { Setup, MaterialSide, Material, RemainingChecks } from './setup';
@@ -11,9 +11,13 @@ export function fxhash32(word: number, state = 0): number {
   return Math.imul(rol32(state, 5) ^ word, 0x9e3779b9);
 }
 
+export function fxhash128(bitParts: Tuple<number, 4>, state: number): number {
+  return fxhash32(bitParts[0], fxhash32(bitParts[1], fxhash32(bitParts[2], fxhash32(bitParts[3], state))));
+}
+
 export function hashBoard(board: Board, state = 0): number {
-  state = fxhash32(board.p1.lo, fxhash32(board.p1.hi, state));
-  for (const role of ROLES) state = fxhash32(board[role].lo, fxhash32(board[role].hi, state));
+  state = fxhash128(board.p1.bitParts, state);
+  for (const role of ROLES) state = fxhash128(board[role].bitParts, state);
   return state;
 }
 
@@ -35,7 +39,7 @@ export function hashSetup(setup: Setup, state = 0): number {
   state = hashBoard(setup.board, state);
   if (setup.pockets) state = hashMaterial(setup.pockets, state);
   if (setup.turn === 'p1') state = fxhash32(1, state);
-  state = fxhash32(setup.unmovedRooks.lo, fxhash32(setup.unmovedRooks.hi, state));
+  state = fxhash128(setup.unmovedRooks.bitParts, state);
   if (defined(setup.epSquare)) state = fxhash32(setup.epSquare, state);
   if (setup.remainingChecks) state = hashRemainingChecks(setup.remainingChecks, state);
   return state;

@@ -37,8 +37,8 @@ function makeSanWithoutSuffix(pos: Position, move: Move): string {
           }
           if (others.nonEmpty()) {
             let row = false;
-            let column = others.intersects(SquareSet.fromRank(squareRank(move.from)));
-            if (others.intersects(SquareSet.fromFile(squareFile(move.from)))) row = true;
+            let column = others.intersects(SquareSet.fromRank64(squareRank(move.from)));
+            if (others.intersects(SquareSet.fromFile64(squareFile(move.from)))) row = true;
             else column = true;
             if (column) san += FILE_NAMES[squareFile(move.from)];
             if (row) san += RANK_NAMES[squareRank(move.from)];
@@ -115,15 +115,15 @@ export function parseSan(pos: Position, san: string): Move | undefined {
   const to = parseSquare(match[4])!;
 
   const promotion = charToRole(match[5]);
-  if (!!promotion !== (role === 'p-piece' && SquareSet.backranks().has(to))) return;
+  if (!!promotion !== (role === 'p-piece' && SquareSet.backranks64().has(to))) return;
   if (promotion === 'k-piece' && pos.rules !== 'antichess') return;
 
   let candidates = pos.board.pieces(pos.turn, role);
-  if (match[2]) candidates = candidates.intersect(SquareSet.fromFile(match[2].charCodeAt(0) - 'a'.charCodeAt(0)));
-  if (match[3]) candidates = candidates.intersect(SquareSet.fromRank(match[3].charCodeAt(0) - '1'.charCodeAt(0)));
+  if (match[2]) candidates = candidates.intersect(SquareSet.fromFile64(match[2].charCodeAt(0) - 'a'.charCodeAt(0)));
+  if (match[3]) candidates = candidates.intersect(SquareSet.fromRank64(match[3].charCodeAt(0) - '1'.charCodeAt(0)));
 
   // Optimization: Reduce set of candidates
-  const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile(squareFile(to)) : SquareSet.empty();
+  const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile64(squareFile(to)) : SquareSet.empty();
   candidates = candidates.intersect(
     pawnAdvance.union(
       attacks({ playerIndex: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.p1, pos.board.p2)

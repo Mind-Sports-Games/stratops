@@ -1,4 +1,4 @@
-import { Square, PlayerIndex, Role, Piece, PLAYERINDEXES, ROLES, ByRole, ByPlayerIndex } from './types';
+import { Square, PlayerIndex, Role, Rules, Piece, PLAYERINDEXES, ROLES, ByRole, ByPlayerIndex } from './types';
 import { SquareSet } from './squareSet';
 
 /**
@@ -127,58 +127,61 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
   'pY-piece': SquareSet;
   'pZ-piece': SquareSet;
 
-  private constructor() {}
+  protected constructor(public rules: Rules) {}
 
   static default(): Board {
-    const board = new Board();
+    const board = new Board('chess');
     board.reset();
     return board;
   }
 
   static racingKings(): Board {
-    const board = new Board();
-    board.occupied = new SquareSet(0xffff, 0);
+    const board = new Board('racingkings');
+    board.reset();
+    board.occupied = new SquareSet([0xffff, 0, 0, 0]);
     board.promoted = SquareSet.empty();
-    board.p1 = new SquareSet(0xf0f0, 0);
-    board.p2 = new SquareSet(0x0f0f, 0);
+    board.p1 = new SquareSet([0xf0f0, 0, 0, 0]);
+    board.p2 = new SquareSet([0x0f0f, 0, 0, 0]);
     board['p-piece'] = SquareSet.empty();
-    board['n-piece'] = new SquareSet(0x1818, 0);
-    board['b-piece'] = new SquareSet(0x2424, 0);
-    board['r-piece'] = new SquareSet(0x4242, 0);
-    board['q-piece'] = new SquareSet(0x0081, 0);
-    board['k-piece'] = new SquareSet(0x8100, 0);
-    board['l-piece'] = new SquareSet(0, 0);
+    board['n-piece'] = new SquareSet([0x1818, 0, 0, 0]);
+    board['b-piece'] = new SquareSet([0x2424, 0, 0, 0]);
+    board['r-piece'] = new SquareSet([0x4242, 0, 0, 0]);
+    board['q-piece'] = new SquareSet([0x0081, 0, 0, 0]);
+    board['k-piece'] = new SquareSet([0x8100, 0, 0, 0]);
+    board['l-piece'] = new SquareSet([0, 0, 0, 0]);
     return board;
   }
 
   static horde(): Board {
-    const board = new Board();
-    board.occupied = new SquareSet(0xffff_ffff, 0xffff_0066);
+    const board = new Board('horde');
+    board.reset();
+    board.occupied = new SquareSet([0xffff_ffff, 0xffff_0066, 0, 0]);
     board.promoted = SquareSet.empty();
-    board.p1 = new SquareSet(0xffff_ffff, 0x0000_0066);
-    board.p2 = new SquareSet(0, 0xffff_0000);
-    board['p-piece'] = new SquareSet(0xffff_ffff, 0x00ff_0066);
-    board['n-piece'] = new SquareSet(0, 0x4200_0000);
-    board['b-piece'] = new SquareSet(0, 0x2400_0000);
-    board['r-piece'] = new SquareSet(0, 0x8100_0000);
-    board['q-piece'] = new SquareSet(0, 0x0800_0000);
-    board['k-piece'] = new SquareSet(0, 0x1000_0000);
-    board['l-piece'] = new SquareSet(0, 0);
+    board.p1 = new SquareSet([0xffff_ffff, 0x0000_0066, 0, 0]);
+    board.p2 = new SquareSet([0, 0xffff_0000, 0, 0]);
+    board['p-piece'] = new SquareSet([0xffff_ffff, 0x00ff_0066, 0, 0]);
+    board['n-piece'] = new SquareSet([0, 0x4200_0000, 0, 0]);
+    board['b-piece'] = new SquareSet([0, 0x2400_0000, 0, 0]);
+    board['r-piece'] = new SquareSet([0, 0x8100_0000, 0, 0]);
+    board['q-piece'] = new SquareSet([0, 0x0800_0000, 0, 0]);
+    board['k-piece'] = new SquareSet([0, 0x1000_0000, 0, 0]);
+    board['l-piece'] = new SquareSet([0, 0, 0, 0]);
     return board;
   }
 
   static linesOfAction(): Board {
-    const board = new Board();
-    board.occupied = new SquareSet(0x8181_817e, 0x7e81_8181);
+    const board = new Board('linesofaction');
+    board.reset();
+    board.occupied = new SquareSet([0x8181_817e, 0x7e81_8181, 0, 0]);
     board.promoted = SquareSet.empty();
-    board.p1 = new SquareSet(0x8181_8100, 0x0081_8181);
-    board.p2 = new SquareSet(0x007e, 0x7e00_0000);
-    board['p-piece'] = new SquareSet(0, 0);
-    board['n-piece'] = new SquareSet(0, 0);
-    board['b-piece'] = new SquareSet(0, 0);
-    board['r-piece'] = new SquareSet(0, 0);
-    board['q-piece'] = new SquareSet(0, 0);
-    board['k-piece'] = new SquareSet(0, 0);
+    board.p1 = new SquareSet([0x8181_8100, 0x0081_8181, 0, 0]);
+    board.p2 = new SquareSet([0x007e, 0x7e00_0000, 0, 0]);
+    board['p-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['n-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['b-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['r-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['q-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['k-piece'] = new SquareSet([0, 0, 0, 0]);
     board['l-piece'] = board.occupied;
     return board;
   }
@@ -187,21 +190,23 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
    * Resets all pieces to the default starting position for standard chess.
    */
   reset(): void {
-    this.occupied = new SquareSet(0xffff, 0xffff_0000);
+    for (const role of ROLES) this[role] = SquareSet.empty();
+    this.occupied = new SquareSet([0xffff, 0xffff_0000, 0, 0]);
     this.promoted = SquareSet.empty();
-    this.p1 = new SquareSet(0xffff, 0);
-    this.p2 = new SquareSet(0, 0xffff_0000);
-    this['p-piece'] = new SquareSet(0xff00, 0x00ff_0000);
-    this['n-piece'] = new SquareSet(0x42, 0x4200_0000);
-    this['b-piece'] = new SquareSet(0x24, 0x2400_0000);
-    this['r-piece'] = new SquareSet(0x81, 0x8100_0000);
-    this['q-piece'] = new SquareSet(0x8, 0x0800_0000);
-    this['k-piece'] = new SquareSet(0x10, 0x1000_0000);
-    this['l-piece'] = new SquareSet(0, 0);
+    this.p1 = new SquareSet([0xffff, 0, 0, 0]);
+    this.p2 = new SquareSet([0, 0xffff_0000, 0, 0]);
+    this['p-piece'] = new SquareSet([0xff00, 0x00ff_0000, 0, 0]);
+    this['n-piece'] = new SquareSet([0x42, 0x4200_0000, 0, 0]);
+    this['b-piece'] = new SquareSet([0x24, 0x2400_0000, 0, 0]);
+    this['r-piece'] = new SquareSet([0x81, 0x8100_0000, 0, 0]);
+    this['q-piece'] = new SquareSet([0x8, 0x0800_0000, 0, 0]);
+    this['k-piece'] = new SquareSet([0x10, 0x1000_0000, 0, 0]);
+    this['l-piece'] = new SquareSet([0, 0, 0, 0]);
   }
 
-  static empty(): Board {
-    const board = new Board();
+  static empty(rules: Rules): Board {
+    const board = new Board(rules);
+    board.reset();
     board.clear();
     return board;
   }
@@ -214,7 +219,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
   }
 
   clone(): Board {
-    const board = new Board();
+    const board = new Board(this.rules);
     board.occupied = this.occupied;
     board.promoted = this.promoted;
     for (const playerIndex of PLAYERINDEXES) board[playerIndex] = this[playerIndex];
@@ -305,6 +310,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
    * Finds the unique unpromoted king of the given `playerIndex`, if any.
    */
   kingOf(playerIndex: PlayerIndex): Square | undefined {
-    return this['k-piece'].intersect(this[playerIndex]).diff(this.promoted).singleSquare();
+    return this['k-piece'].intersect(this[playerIndex]).diff64(this.promoted).singleSquare();
   }
 }
+
+export class BoardNxN extends Board {}
