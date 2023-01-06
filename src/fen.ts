@@ -96,7 +96,7 @@ export const parseBoardFen =
             file += +f;
           }
         }
-        if (file === files) {
+        if (rank !== 0 && file === files) {
           file = 0;
           rank--;
         }
@@ -286,6 +286,13 @@ export function makePiece(piece: Piece, opts?: FenOpts): string {
   return r;
 }
 
+export function makeCFPiece(piece: Piece, endOfRank: boolean): string {
+  //mancala specific code here
+  const roleLetter = piece.role.charAt(0);
+  const count = piece.role.split('-')[0].substring(1);
+  return count + roleLetter.toUpperCase() + (endOfRank ? '' : ',');
+}
+
 export const makeBoardFen =
   (rules: Rules) =>
   (board: Board, opts?: FenOpts): string => {
@@ -302,7 +309,7 @@ export const makeBoardFen =
             fen += empty;
             empty = 0;
           }
-          fen += makePiece(piece, opts);
+          fen += COMMA_FEN_RULES.includes(rules) ? makeCFPiece(piece, file == files - 1) : makePiece(piece, opts);
         }
 
         if (file === files - 1) {
@@ -362,7 +369,11 @@ export const makeFen =
     return [
       makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
       ...(rules === 'oware'
-        ? [mancalaScore(setup.northScore, setup.southScore), setup.turn === 'p1' ? 'S' : 'N']
+        ? [
+            mancalaScore(setup.northScore, setup.southScore),
+            setup.turn === 'p1' ? 'S' : 'N',
+            Math.max(1, Math.min(setup.fullmoves, 9999)),
+          ]
         : [
             setup.turn === 'p1' ? 'w' : 'b',
             makeCastlingFen(setup.board, setup.unmovedRooks, opts),
