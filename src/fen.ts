@@ -309,7 +309,7 @@ export const makeBoardFen =
             fen += empty;
             empty = 0;
           }
-          fen += COMMA_FEN_RULES.includes(rules) ? makeCFPiece(piece, file == files - 1) : makePiece(piece, opts);
+          fen += COMMA_FEN_RULES.includes(rules) ? makeCFPiece(piece, file === files - 1) : makePiece(piece, opts);
         }
 
         if (file === files - 1) {
