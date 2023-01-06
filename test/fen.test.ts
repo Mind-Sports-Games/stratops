@@ -68,3 +68,7 @@ test.each(['4S,4S,4S,4S,4S,4S/4S,4S,4S,4S,4S,4S 0 0 S 1'])('parse and make oware
   expect(makeFen('oware')(setup, { promoted: true })).toEqual(fen);
   expect(setup.fullmoves).toEqual(1);
 });
+test.each(['11S,5/2,23S,3 11 3 S 50'])('parse and make oware fen', fen => {
+  const setup = parseFen('oware')(fen).unwrap();
+  expect(makeFen('oware')(setup, { promoted: true })).toEqual(fen);
+});

@@ -307,6 +307,7 @@ export const makeBoardFen =
         else {
           if (empty > 0) {
             fen += empty;
+            fen += COMMA_FEN_RULES.includes(rules) && file !== files - 1 ? ',' : '';
             empty = 0;
           }
           fen += COMMA_FEN_RULES.includes(rules) ? makeCFPiece(piece, file === files - 1) : makePiece(piece, opts);
