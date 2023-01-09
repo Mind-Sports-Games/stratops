@@ -11,6 +11,7 @@ export const INITIAL_FEN = INITIAL_EPD + ' 0 1';
 export const EMPTY_BOARD_FEN = '8/8/8/8/8/8/8/8';
 export const EMPTY_EPD = EMPTY_BOARD_FEN + ' w - -';
 export const EMPTY_FEN = EMPTY_EPD + ' 0 1';
+export const COMMA_FEN_RULES = ['oware'];
 
 export enum InvalidFen {
   Fen = 'ERR_FEN',
@@ -52,25 +53,52 @@ export const parseBoardFen =
     const { ranks, files } = dimensionsForRules(rules);
     let rank = ranks - 1;
     let file = 0;
-    for (let i = 0; i < boardPart.length; i++) {
-      const c = boardPart[i];
-      if (c === '/' && file === files) {
-        file = 0;
-        rank--;
-      } else {
-        const step = parseInt(c, 10);
-        if (step > 0) file += step;
-        else {
-          if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
-          const square = file + rank * files;
-          const piece = charToPiece(c);
-          if (!piece) return Result.err(new FenError(InvalidFen.Board));
-          if (boardPart[i + 1] === '~') {
-            piece.promoted = true;
-            i++;
+    if (!COMMA_FEN_RULES.includes(rules)) {
+      for (let i = 0; i < boardPart.length; i++) {
+        const c = boardPart[i];
+        if (c === '/' && file === files) {
+          file = 0;
+          rank--;
+        } else {
+          const step = parseInt(c, 10);
+          if (step > 0) file += step;
+          else {
+            if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
+            const square = file + rank * files;
+            const piece = charToPiece(c);
+            if (!piece) return Result.err(new FenError(InvalidFen.Board));
+            if (boardPart[i + 1] === '~') {
+              piece.promoted = true;
+              i++;
+            }
+            board.set(square, piece);
+            file++;
           }
-          board.set(square, piece);
-          file++;
+        }
+      }
+    } else {
+      for (const r of boardPart.split(' ')[0].split('/')) {
+        for (const f of r.split(',')) {
+          if (isNaN(+f)) {
+            if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
+            const square = file + rank * files;
+            //some mancala specific code in here
+            const count = f.slice(0, -1);
+            const role = f.substring(f.length - 1).toLowerCase();
+            const playerIndex = rank === 1 ? 'p1' : 'p2';
+            const piece = {
+              role: `${role}${count}-piece`,
+              playerIndex: playerIndex,
+            } as Piece;
+            board.set(square, piece);
+            file++;
+          } else {
+            file += +f;
+          }
+        }
+        if (rank !== 0 && file === files) {
+          file = 0;
+          rank--;
         }
       }
     }
@@ -172,6 +200,12 @@ export const parseFen =
     else return Result.err(new FenError(InvalidFen.Turn));
 
     return board.chain(board => {
+      let owareFullMoves: number | undefined;
+      if (rules === 'oware') {
+        const owareFullMovesPart = parts.shift();
+        owareFullMoves = defined(owareFullMovesPart) ? parseSmallUint(owareFullMovesPart) : 1;
+      }
+
       // Castling
       const castlingPart = parts.shift();
       const unmovedRooks = defined(castlingPart) ? parseCastlingFen(board, castlingPart) : Result.ok(SquareSet.empty());
@@ -195,7 +229,7 @@ export const parseFen =
       if (!defined(halfmoves)) return Result.err(new FenError(InvalidFen.Halfmoves));
 
       const fullmovesPart = parts.shift();
-      const fullmoves = defined(fullmovesPart) ? parseSmallUint(fullmovesPart) : 1;
+      const fullmoves = rules === 'oware' ? owareFullMoves : defined(fullmovesPart) ? parseSmallUint(fullmovesPart) : 1;
       if (!defined(fullmoves)) return Result.err(new FenError(InvalidFen.Fullmoves));
 
       const remainingChecksPart = parts.shift();
@@ -252,6 +286,13 @@ export function makePiece(piece: Piece, opts?: FenOpts): string {
   return r;
 }
 
+export function makeCFPiece(piece: Piece, endOfRank: boolean): string {
+  //mancala specific code here
+  const roleLetter = piece.role.charAt(0);
+  const count = piece.role.split('-')[0].substring(1);
+  return count + roleLetter.toUpperCase() + (endOfRank ? '' : ',');
+}
+
 export const makeBoardFen =
   (rules: Rules) =>
   (board: Board, opts?: FenOpts): string => {
@@ -266,9 +307,10 @@ export const makeBoardFen =
         else {
           if (empty > 0) {
             fen += empty;
+            fen += COMMA_FEN_RULES.includes(rules) && file !== files - 1 ? ',' : '';
             empty = 0;
           }
-          fen += makePiece(piece, opts);
+          fen += COMMA_FEN_RULES.includes(rules) ? makeCFPiece(piece, file === files - 1) : makePiece(piece, opts);
         }
 
         if (file === files - 1) {
@@ -328,7 +370,11 @@ export const makeFen =
     return [
       makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
       ...(rules === 'oware'
-        ? [mancalaScore(setup.northScore, setup.southScore), setup.turn === 'p1' ? 'S' : 'N']
+        ? [
+            mancalaScore(setup.northScore, setup.southScore),
+            setup.turn === 'p1' ? 'S' : 'N',
+            Math.max(1, Math.min(setup.fullmoves, 9999)),
+          ]
         : [
             setup.turn === 'p1' ? 'w' : 'b',
             makeCastlingFen(setup.board, setup.unmovedRooks, opts),
