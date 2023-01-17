@@ -262,6 +262,7 @@ export const RULES = [
   'flipello',
   'flipello10',
   'oware',
+  'togyzkumalak',
 ] as const;
 
 export type Rules = typeof RULES[number];

@@ -72,6 +72,7 @@ export function playstrategyRules(
     | 'flipello'
     | 'flipello10'
     | 'oware'
+    | 'togyzkumalak'
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -118,7 +119,8 @@ export function playstrategyVariants(
   | 'minixiangqi'
   | 'flipello'
   | 'flipello10'
-  | 'oware' {
+  | 'oware'
+  | 'togyzkumalak' {
   switch (rules) {
     case 'chess':
       return 'standard';
