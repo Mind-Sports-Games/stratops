@@ -229,7 +229,12 @@ export const parseFen =
       if (!defined(halfmoves)) return Result.err(new FenError(InvalidFen.Halfmoves));
 
       const fullmovesPart = parts.shift();
-      const fullmoves = (rules === 'oware' || rules === 'togyzkumalak') ? mancalaFullMoves : defined(fullmovesPart) ? parseSmallUint(fullmovesPart) : 1;
+      const fullmoves =
+        rules === 'oware' || rules === 'togyzkumalak'
+          ? mancalaFullMoves
+          : defined(fullmovesPart)
+          ? parseSmallUint(fullmovesPart)
+          : 1;
       if (!defined(fullmoves)) return Result.err(new FenError(InvalidFen.Fullmoves));
 
       const remainingChecksPart = parts.shift();
