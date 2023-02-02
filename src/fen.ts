@@ -11,7 +11,7 @@ export const INITIAL_FEN = INITIAL_EPD + ' 0 1';
 export const EMPTY_BOARD_FEN = '8/8/8/8/8/8/8/8';
 export const EMPTY_EPD = EMPTY_BOARD_FEN + ' w - -';
 export const EMPTY_FEN = EMPTY_EPD + ' 0 1';
-export const COMMA_FEN_RULES = ['oware'];
+export const COMMA_FEN_RULES = ['oware', 'togyzkumalak'];
 
 export enum InvalidFen {
   Fen = 'ERR_FEN',
@@ -184,7 +184,7 @@ export const parseFen =
     let northScore: number | undefined;
     let southScore: number | undefined;
     // Oware scores?
-    if (rules === 'oware') {
+    if (rules === 'oware' || rules === 'togyzkumalak') {
       const southScoreText = parts.shift();
       const northScoreText = parts.shift();
       if (!northScoreText || !southScoreText) return Result.err(new FenError(InvalidFen.MancalaScore));
@@ -200,10 +200,10 @@ export const parseFen =
     else return Result.err(new FenError(InvalidFen.Turn));
 
     return board.chain(board => {
-      let owareFullMoves: number | undefined;
-      if (rules === 'oware') {
-        const owareFullMovesPart = parts.shift();
-        owareFullMoves = defined(owareFullMovesPart) ? parseSmallUint(owareFullMovesPart) : 1;
+      let mancalaFullMoves: number | undefined;
+      if (rules === 'oware' || rules === 'togyzkumalak') {
+        const mancalaFullMovesPart = parts.shift();
+        mancalaFullMoves = defined(mancalaFullMovesPart) ? parseSmallUint(mancalaFullMovesPart) : 1;
       }
 
       // Castling
@@ -229,7 +229,12 @@ export const parseFen =
       if (!defined(halfmoves)) return Result.err(new FenError(InvalidFen.Halfmoves));
 
       const fullmovesPart = parts.shift();
-      const fullmoves = rules === 'oware' ? owareFullMoves : defined(fullmovesPart) ? parseSmallUint(fullmovesPart) : 1;
+      const fullmoves =
+        rules === 'oware' || rules === 'togyzkumalak'
+          ? mancalaFullMoves
+          : defined(fullmovesPart)
+          ? parseSmallUint(fullmovesPart)
+          : 1;
       if (!defined(fullmoves)) return Result.err(new FenError(InvalidFen.Fullmoves));
 
       const remainingChecksPart = parts.shift();
@@ -369,7 +374,7 @@ export const makeFen =
   (setup: Setup, opts?: FenOpts): string => {
     return [
       makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
-      ...(rules === 'oware'
+      ...(rules === 'oware' || rules === 'togyzkumalak'
         ? [
             mancalaScore(setup.northScore, setup.southScore),
             setup.turn === 'p1' ? 'S' : 'N',

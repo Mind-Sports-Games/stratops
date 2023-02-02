@@ -72,3 +72,12 @@ test.each(['11S,5/2,23S,3 11 3 S 50'])('parse and make oware fen', fen => {
   const setup = parseFen('oware')(fen).unwrap();
   expect(makeFen('oware')(setup, { promoted: true })).toEqual(fen);
 });
+
+test.each(['9S,9S,9S,9S,9S,9S,9S,9S,9S/9S,9S,9S,9S,9S,9S,9S,9S,9S 0 0 S 1'])('parse and make togyzkumalak fen', fen => {
+  const setup = parseFen('togyzkumalak')(fen).unwrap();
+  expect(makeFen('togyzkumalak')(setup, { promoted: true })).toEqual(fen);
+});
+test.each(['2,T,24S,2S,9S,3S,9S,9S/2S,11S,2S,T,2,9S,9S,4S 30 39 S 16'])('parse and make togyzkumalak fen', fen => {
+  const setup = parseFen('togyzkumalak')(fen).unwrap();
+  expect(makeFen('togyzkumalak')(setup, { promoted: true })).toEqual(fen);
+});

@@ -227,6 +227,8 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
       return { ranks: 10, files: 10 };
     case 'oware':
       return { ranks: 2, files: 6 };
+    case 'togyzkumalak':
+      return { ranks: 2, files: 9 };
     default:
       return { ranks: 8, files: 8 }; // Is this a reasonable default?
   }

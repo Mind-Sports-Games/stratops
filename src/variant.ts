@@ -843,6 +843,29 @@ export class Oware extends Chess {
   }
 }
 
+export class Togyzkumalak extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('togyzkumalak');
+  }
+
+  static default(): Togyzkumalak {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Togyzkumalak, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Togyzkumalak {
+    return super.clone() as Togyzkumalak;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -883,6 +906,8 @@ export function defaultPosition(rules: Rules): Position {
       return Flipello10.default();
     case 'oware':
       return Oware.default();
+    case 'togyzkumalak':
+      return Togyzkumalak.default();
   }
 }
 
@@ -926,5 +951,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Flipello10.fromSetup(setup);
     case 'oware':
       return Oware.fromSetup(setup);
+    case 'togyzkumalak':
+      return Togyzkumalak.fromSetup(setup);
   }
 }
