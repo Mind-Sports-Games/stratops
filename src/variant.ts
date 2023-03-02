@@ -820,6 +820,29 @@ export class Flipello10 extends Chess {
   }
 }
 
+export class Amazons extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('amazons');
+  }
+
+  static default(): Amazons {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Amazons, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Amazons {
+    return super.clone() as Amazons;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export class Oware extends Chess {
   //TODO - move into own class and have variant family
   protected constructor() {
@@ -904,6 +927,8 @@ export function defaultPosition(rules: Rules): Position {
       return Flipello.default();
     case 'flipello10':
       return Flipello10.default();
+    case 'amazons':
+      return Amazons.default();
     case 'oware':
       return Oware.default();
     case 'togyzkumalak':
@@ -949,6 +974,8 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Flipello.fromSetup(setup);
     case 'flipello10':
       return Flipello10.fromSetup(setup);
+    case 'amazons':
+      return Amazons.fromSetup(setup);
     case 'oware':
       return Oware.fromSetup(setup);
     case 'togyzkumalak':

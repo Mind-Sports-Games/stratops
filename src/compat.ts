@@ -71,6 +71,7 @@ export function playstrategyRules(
     | 'minixiangqi'
     | 'flipello'
     | 'flipello10'
+    | 'amazons'
     | 'oware'
     | 'togyzkumalak'
 ): Rules {
@@ -119,6 +120,7 @@ export function playstrategyVariants(
   | 'minixiangqi'
   | 'flipello'
   | 'flipello10'
+  | 'amazons'
   | 'oware'
   | 'togyzkumalak' {
   switch (rules) {
