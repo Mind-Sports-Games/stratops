@@ -81,3 +81,9 @@ test.each(['2,T,24S,2S,9S,3S,9S,9S/2S,11S,2S,T,2,9S,9S,4S 30 39 S 16'])('parse a
   const setup = parseFen('togyzkumalak')(fen).unwrap();
   expect(makeFen('togyzkumalak')(setup, { promoted: true })).toEqual(fen);
 });
+test.each([
+  '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1',
+])('parse and make amazons fen', fen => {
+  const setup = parseFen('amazons')(fen).unwrap();
+  expect(makeFen('amazons')(setup, { promoted: true })).toEqual(fen);
+});
