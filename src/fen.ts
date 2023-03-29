@@ -54,15 +54,34 @@ export const parseBoardFen =
     let rank = ranks - 1;
     let file = 0;
     if (!COMMA_FEN_RULES.includes(rules)) {
+      let skipNext = false;
       for (let i = 0; i < boardPart.length; i++) {
+        if (skipNext) {
+          skipNext = false;
+          continue;
+        }
         const c = boardPart[i];
         if (c === '/' && file === files) {
           file = 0;
           rank--;
         } else {
           const step = parseInt(c, 10);
-          if (step > 0) file += step;
-          else {
+          if (step > 0) {
+            // with amazons, we now have fens where two digits must
+            // be parsed in a row. We'll use a look ahead here.
+            let stepped = false;
+            if (files > 9 && i < boardPart.length + 1 && parseInt(boardPart[i + 1]) >= 0) {
+              const twoCharStep = parseInt(c + boardPart[i + 1]);
+              if (twoCharStep > 0) {
+                file += twoCharStep;
+                stepped = true;
+                skipNext = true;
+              }
+            }
+            if (!stepped) {
+              file += step;
+            }
+          } else {
             if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
             const square = file + rank * files;
             const piece = charToPiece(c);
