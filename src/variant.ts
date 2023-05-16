@@ -889,6 +889,75 @@ export class Togyzkumalak extends Chess {
   }
 }
 
+export class Go9x9 extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('go9x9');
+  }
+
+  static default(): Go9x9 {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Go9x9, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Go9x9 {
+    return super.clone() as Go9x9;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
+export class Go13x13 extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('go13x13');
+  }
+
+  static default(): Go13x13 {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Go13x13, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Go13x13 {
+    return super.clone() as Go13x13;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
+export class Go19x19 extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('go19x19');
+  }
+
+  static default(): Go19x19 {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Go19x19, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Go19x19 {
+    return super.clone() as Go19x19;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -933,6 +1002,12 @@ export function defaultPosition(rules: Rules): Position {
       return Oware.default();
     case 'togyzkumalak':
       return Togyzkumalak.default();
+    case 'go9x9':
+      return Go9x9.default();
+    case 'go13x13':
+      return Go13x13.default();
+    case 'go19x19':
+      return Go19x19.default();
   }
 }
 
@@ -980,5 +1055,11 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Oware.fromSetup(setup);
     case 'togyzkumalak':
       return Togyzkumalak.fromSetup(setup);
+    case 'go9x9':
+      return Go9x9.fromSetup(setup);
+    case 'go13x13':
+      return Go13x13.fromSetup(setup);
+    case 'go19x19':
+      return Go19x19.fromSetup(setup);
   }
 }
