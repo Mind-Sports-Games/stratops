@@ -1,15 +1,15 @@
 // TODO: SAN isn't really great for other games, should we bother implementing it?
-import { FILE_NAMES, RANK_NAMES, isDrop, Move, CastlingSide } from './types';
+import { FILE_NAMES, RANK_NAMES, isDrop, Move, CastlingSide, Rules } from './types';
 import { charToRole, defined, roleToChar, parseSquare, makeSquare, squareFile, squareRank, opposite } from './util';
 import { SquareSet } from './squareSet';
 import { Position } from './chess';
 import { attacks, kingAttacks, queenAttacks, rookAttacks, bishopAttacks, knightAttacks } from './attacks';
 
-function makeSanWithoutSuffix(pos: Position, move: Move): string {
+const makeSanWithoutSuffix = (rules: Rules) => (pos: Position, move: Move): string => {
   let san = '';
   if (isDrop(move)) {
     if (move.role !== 'p-piece') san = roleToChar(move.role).toUpperCase();
-    san += '@' + makeSquare(move.to);
+    san += '@' + makeSquare(rules)(move.to);
   } else {
     const role = pos.board.getRole(move.from);
     if (!role) return '--';
@@ -17,7 +17,7 @@ function makeSanWithoutSuffix(pos: Position, move: Move): string {
       san = move.to > move.from ? 'O-O' : 'O-O-O';
     } else {
       const capture =
-        pos.board.occupied.has(move.to) || (role === 'p-piece' && squareFile(move.from) !== squareFile(move.to));
+        pos.board.occupied.has(move.to) || (role === 'p-piece' && squareFile(rules)(move.from) !== squareFile(rules)(move.to));
       if (role !== 'p-piece') {
         san = roleToChar(role).toUpperCase();
 
@@ -37,39 +37,39 @@ function makeSanWithoutSuffix(pos: Position, move: Move): string {
           }
           if (others.nonEmpty()) {
             let row = false;
-            let column = others.intersects(SquareSet.fromRank64(squareRank(move.from)));
-            if (others.intersects(SquareSet.fromFile64(squareFile(move.from)))) row = true;
+            let column = others.intersects(SquareSet.fromRank64(squareRank(rules)(move.from)));
+            if (others.intersects(SquareSet.fromFile64(squareFile(rules)(move.from)))) row = true;
             else column = true;
-            if (column) san += FILE_NAMES[squareFile(move.from)];
-            if (row) san += RANK_NAMES[squareRank(move.from)];
+            if (column) san += FILE_NAMES[squareFile(rules)(move.from)];
+            if (row) san += RANK_NAMES[squareRank(rules)(move.from)];
           }
         }
-      } else if (capture) san = FILE_NAMES[squareFile(move.from)];
+      } else if (capture) san = FILE_NAMES[squareFile(rules)(move.from)];
 
       if (capture) san += 'x';
-      san += makeSquare(move.to);
+      san += makeSquare(rules)(move.to);
       if (move.promotion) san += '=' + roleToChar(move.promotion).toUpperCase();
     }
   }
   return san;
 }
 
-export function makeSanAndPlay(pos: Position, move: Move): string {
-  const san = makeSanWithoutSuffix(pos, move);
+export const makeSanAndPlay = (rules: Rules) => (pos: Position, move: Move): string => {
+  const san = makeSanWithoutSuffix(rules)(pos, move);
   pos.play(move);
   if (pos.outcome()?.winner) return san + '#';
   if (pos.isCheck()) return san + '+';
   return san;
 }
 
-export function makeSanVariation(pos: Position, variation: Move[]): string {
+export const makeSanVariation = (rules: Rules) => (pos: Position, variation: Move[]): string => {
   pos = pos.clone();
   const line = [];
   for (let i = 0; i < variation.length; i++) {
     if (i !== 0) line.push(' ');
     if (pos.turn === 'p1') line.push(pos.fullmoves, '. ');
     else if (i === 0) line.push(pos.fullmoves, '... ');
-    const san = makeSanWithoutSuffix(pos, variation[i]);
+    const san = makeSanWithoutSuffix(rules)(pos, variation[i]);
     pos.play(variation[i]);
     line.push(san);
     if (san === '--') return line.join('');
@@ -79,11 +79,11 @@ export function makeSanVariation(pos: Position, variation: Move[]): string {
   return line.join('');
 }
 
-export function makeSan(pos: Position, move: Move): string {
-  return makeSanAndPlay(pos.clone(), move);
+export const makeSan = (rules: Rules) => (pos: Position, move: Move): string => {
+  return makeSanAndPlay(rules)(pos.clone(), move);
 }
 
-export function parseSan(pos: Position, san: string): Move | undefined {
+export const parseSan = (rules: Rules) => (pos: Position, san: string): Move | undefined => {
   const ctx = pos.ctx();
 
   // Castling
@@ -107,12 +107,12 @@ export function parseSan(pos: Position, san: string): Move | undefined {
     if (!match) return;
     const move = {
       role: charToRole(match[1]) || 'p-piece',
-      to: parseSquare(match[2])!,
+      to: parseSquare(rules)(match[2])!,
     };
     return pos.isLegal(move, ctx) ? move : undefined;
   }
   const role = charToRole(match[1]) || 'p-piece';
-  const to = parseSquare(match[4])!;
+  const to = parseSquare(rules)(match[4])!;
 
   const promotion = charToRole(match[5]);
   if (!!promotion !== (role === 'p-piece' && SquareSet.backranks64().has(to))) return;
@@ -123,7 +123,7 @@ export function parseSan(pos: Position, san: string): Move | undefined {
   if (match[3]) candidates = candidates.intersect(SquareSet.fromRank64(match[3].charCodeAt(0) - '1'.charCodeAt(0)));
 
   // Optimization: Reduce set of candidates
-  const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile64(squareFile(to)) : SquareSet.empty();
+  const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile64(squareFile(rules)(to)) : SquareSet.empty();
   candidates = candidates.intersect(
     pawnAdvance.union(
       attacks({ playerIndex: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.p1, pos.board.p2)

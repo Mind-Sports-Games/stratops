@@ -1,4 +1,4 @@
-import { PlayerIndex, ROLES, Square } from './types';
+import { PlayerIndex, ROLES, Square, Move } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 
@@ -104,7 +104,7 @@ export class MaterialSide {
   's47-piece': number;
   's48-piece': number;
 
-  private constructor() {}
+  private constructor() { }
 
   static empty(): MaterialSide {
     const m = new MaterialSide();
@@ -172,7 +172,7 @@ export class MaterialSide {
 }
 
 export class Material {
-  constructor(public p1: MaterialSide, public p2: MaterialSide) {}
+  constructor(public p1: MaterialSide, public p2: MaterialSide) { }
 
   static empty(): Material {
     return new Material(MaterialSide.empty(), MaterialSide.empty());
@@ -216,7 +216,7 @@ export class Material {
 }
 
 export class RemainingChecks {
-  constructor(public p1: number, public p2: number) {}
+  constructor(public p1: number, public p2: number) { }
 
   static default(): RemainingChecks {
     return new RemainingChecks(3, 3);
@@ -246,6 +246,7 @@ export interface Setup {
   fullmoves: number;
   northScore?: number;
   southScore?: number;
+  lastMove?: Move;
 }
 
 export function defaultSetup(): Setup {
@@ -258,5 +259,6 @@ export function defaultSetup(): Setup {
     remainingChecks: undefined,
     halfmoves: 0,
     fullmoves: 1,
+    lastMove: undefined
   };
 }

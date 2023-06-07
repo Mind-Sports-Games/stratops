@@ -1,4 +1,4 @@
-import { Square, Piece, Role, ROLES } from './types';
+import { Square, Piece, Role, ROLES, Rules } from './types';
 import { opposite, squareRank, makeSquare, makeUci } from './util';
 import { makePiece } from './fen';
 import { SquareSet } from './squareSet';
@@ -35,19 +35,19 @@ export function board(board: Board): string {
   return r.join('');
 }
 
-export function square(sq: Square): string {
-  return makeSquare(sq);
+export const square = (rules: Rules) => (sq: Square): string => {
+  return makeSquare(rules)(sq);
 }
 
-export function dests(dests: Map<Square, SquareSet>): string {
+export const dests = (rules: Rules) => (dests: Map<Square, SquareSet>): string => {
   const lines = [];
   for (const [from, to] of dests) {
-    lines.push(`${makeSquare(from)}: ${Array.from(to, square).join(' ')}`);
+    lines.push(`${makeSquare(rules)(from)}: ${Array.from(to, square(rules)).join(' ')}`);
   }
   return lines.join('\n');
 }
 
-export function perft(pos: Position, depth: number, log = false): number {
+export const perft = (rules: Rules) => (pos: Position, depth: number, log = false): number => {
   if (depth < 1) return 1;
 
   const promotionRoles: Role[] = ['q-piece', 'n-piece', 'r-piece', 'b-piece'];
@@ -71,7 +71,7 @@ export function perft(pos: Position, depth: number, log = false): number {
     let nodes = 0;
     for (const [from, dests] of pos.allDests(ctx)) {
       const promotions: Array<Role | undefined> =
-        squareRank(from) === (pos.turn === 'p1' ? 6 : 1) && pos.board['p-piece'].has(from)
+        squareRank(rules)(from) === (pos.turn === 'p1' ? 6 : 1) && pos.board['p-piece'].has(from)
           ? promotionRoles
           : [undefined];
       for (const to of dests) {
@@ -79,8 +79,8 @@ export function perft(pos: Position, depth: number, log = false): number {
           const child = pos.clone();
           const move = { from, to, promotion };
           child.play(move);
-          const children = perft(child, depth - 1, false);
-          if (log) console.log(makeUci(move), children);
+          const children = perft(rules)(child, depth - 1, false);
+          if (log) console.log(makeUci(rules)(move), children);
           nodes += children;
         }
       }
@@ -92,8 +92,8 @@ export function perft(pos: Position, depth: number, log = false): number {
             const child = pos.clone();
             const move = { role, to };
             child.play(move);
-            const children = perft(child, depth - 1, false);
-            if (log) console.log(makeUci(move), children);
+            const children = perft(rules)(child, depth - 1, false);
+            if (log) console.log(makeUci(rules)(move), children);
             nodes += children;
           }
         }

@@ -39,21 +39,21 @@ type BitPartTargetHandler<R> = {
 
 const bitPartMap =
   (shift: number) =>
-  <R>(handlers: BitPartTargetHandler<R>) => {
-    if (shift >= 128) {
-      return handlers[BitPartTarget.Gte128](shift);
-    } else if (shift >= 96) {
-      return handlers[BitPartTarget.Gte96](shift);
-    } else if (shift >= 64) {
-      return handlers[BitPartTarget.Gte64](shift);
-    } else if (shift >= 32) {
-      return handlers[BitPartTarget.Gte32](shift);
-    } else if (shift > 0) {
-      return handlers[BitPartTarget.Gt0](shift);
-    } else {
-      return handlers[BitPartTarget.Default]();
-    }
-  };
+    <R>(handlers: BitPartTargetHandler<R>) => {
+      if (shift >= 128) {
+        return handlers[BitPartTarget.Gte128](shift);
+      } else if (shift >= 96) {
+        return handlers[BitPartTarget.Gte96](shift);
+      } else if (shift >= 64) {
+        return handlers[BitPartTarget.Gte64](shift);
+      } else if (shift >= 32) {
+        return handlers[BitPartTarget.Gte32](shift);
+      } else if (shift > 0) {
+        return handlers[BitPartTarget.Gt0](shift);
+      } else {
+        return handlers[BitPartTarget.Default]();
+      }
+    };
 
 type CopyParams = {
   [0]?: (x: number) => number;
@@ -66,7 +66,7 @@ type CopyParams = {
 // with 8-bit bytes, and 32-bit numbers.
 export class SquareSet implements Iterable<Square> {
   // bitParts is stored as lowest, low, high, highest
-  constructor(public bitParts: Tuple<number, 4>) {}
+  constructor(public bitParts: Tuple<number, 4>) { }
 
   static fromSquare(square: Square): SquareSet {
     return bitPartMap(square)({

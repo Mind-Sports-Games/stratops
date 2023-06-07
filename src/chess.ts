@@ -39,7 +39,7 @@ export enum IllegalSetup {
   Variant = 'ERR_VARIANT',
 }
 
-export class PositionError extends Error {}
+export class PositionError extends Error { }
 
 function attacksTo(square: Square, attacker: PlayerIndex, board: Board, occupied: SquareSet): SquareSet {
   return board[attacker].intersect(
@@ -61,7 +61,7 @@ export class Castles {
   rook: ByPlayerIndex<ByCastlingSide<Square | undefined>>;
   path: ByPlayerIndex<ByCastlingSide<SquareSet>>;
 
-  private constructor() {}
+  private constructor() { }
 
   static default(): Castles {
     const castles = new Castles();
@@ -169,7 +169,7 @@ export abstract class Position {
   halfmoves: number;
   fullmoves: number;
 
-  protected constructor(readonly rules: Rules) {}
+  protected constructor(readonly rules: Rules) { }
 
   // When subclassing:
   // - static default()
@@ -483,7 +483,7 @@ export class Chess extends Position {
     if (!defined(square)) return;
     const epRank = this.turn === 'p1' ? 5 : 2;
     const forward = this.turn === 'p1' ? 8 : -8;
-    if (squareRank(square) !== epRank) return;
+    if (squareRank('chess')(square) !== epRank) return;
     if (this.board.occupied.has(square + forward)) return;
     const pawn = square - forward;
     if (!this.board['p-piece'].has(pawn) || !this.board[opposite(this.turn)].has(pawn)) return;

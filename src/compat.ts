@@ -1,4 +1,6 @@
 import { Rules, SquareName, Move, isDrop } from './types';
+import { parseFen, makeFen } from './fen'
+import { setupPosition } from './variant'
 import { makeSquare, squareFile } from './util';
 import { Position } from './chess';
 
@@ -6,13 +8,13 @@ export interface ChessgroundDestsOpts {
   chess960?: boolean;
 }
 
-export function chessgroundDests(pos: Position, opts?: ChessgroundDestsOpts): Map<SquareName, SquareName[]> {
+export const chessgroundDests = (rules: Rules) => (pos: Position, opts?: ChessgroundDestsOpts): Map<SquareName, SquareName[]> => {
   const result = new Map();
   const ctx = pos.ctx();
   for (const [from, squares] of pos.allDests(ctx)) {
     if (squares.nonEmpty()) {
-      const d = Array.from(squares, makeSquare);
-      if (!opts?.chess960 && from === ctx.king && squareFile(from) === 4) {
+      const d = Array.from(squares, makeSquare(rules));
+      if (!opts?.chess960 && from === ctx.king && squareFile(rules)(from) === 4) {
         // Chessground needs both types of castling dests and filters based on
         // a rookCastles setting.
         if (squares.has(0)) d.push('c1');
@@ -20,17 +22,17 @@ export function chessgroundDests(pos: Position, opts?: ChessgroundDestsOpts): Ma
         if (squares.has(7)) d.push('g1');
         else if (squares.has(63)) d.push('g8');
       }
-      result.set(makeSquare(from), d);
+      result.set(makeSquare(rules)(from), d);
     }
   }
   return result;
 }
 
-export function chessgroundMove(move: Move): SquareName[] {
-  return isDrop(move) ? [makeSquare(move.to)] : [makeSquare(move.from), makeSquare(move.to)];
+export const chessgroundMove = (rules: Rules) => (move: Move): SquareName[] => {
+  return isDrop(move) ? [makeSquare(rules)(move.to)] : [makeSquare(rules)(move.from), makeSquare(rules)(move.to)];
 }
 
-export function scalachessCharPair(move: Move): string {
+export const scalachessCharPair = (rules: Rules) => (move: Move): string => {
   // TODO: Update this once we have it in scala chess.
   if (isDrop(move))
     return String.fromCharCode(
@@ -42,9 +44,9 @@ export function scalachessCharPair(move: Move): string {
       35 + move.from,
       move.promotion
         ? 35 +
-            64 +
-            8 * ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'k-piece'].indexOf(move.promotion) +
-            squareFile(move.to)
+        64 +
+        8 * ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'k-piece'].indexOf(move.promotion) +
+        squareFile(rules)(move.to)
         : 35 + move.to
     );
 }
@@ -151,4 +153,11 @@ export function playstrategyVariants(
     default:
       return rules;
   }
+}
+
+export const amazonsChessGroundFen = (fen: string): string => {
+  // TODO: remove the unwraps
+  const setup = parseFen('amazons')(fen).unwrap();
+  const game = setupPosition('amazons', setup).unwrap();
+  return makeFen('amazons')(game.toSetup(), { promoted: true });
 }
