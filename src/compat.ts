@@ -74,6 +74,9 @@ export function playstrategyRules(
     | 'amazons'
     | 'oware'
     | 'togyzkumalak'
+    | 'go9x9'
+    | 'go13x13'
+    | 'go19x19'
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -122,7 +125,10 @@ export function playstrategyVariants(
   | 'flipello10'
   | 'amazons'
   | 'oware'
-  | 'togyzkumalak' {
+  | 'togyzkumalak'
+  | 'go9x9'
+  | 'go13x13'
+  | 'go19x19' {
   switch (rules) {
     case 'chess':
       return 'standard';
