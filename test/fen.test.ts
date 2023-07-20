@@ -111,3 +111,9 @@ test.each([
   const chessGroundFen = `3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q5Q b - - 1 1`;
   expect(amazonsChessGroundFen(fen)).toEqual(chessGroundFen);
 });
+test.each([
+  "8/8/8/3pP3/3Pp3/8/8/8[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp] w 0 1"
+])('parse and make flipello fen', fen => {
+  const setup = parseFen('flipello')(fen).unwrap();
+  expect(makeFen('flipello')(setup, { promoted: true })).toEqual(fen);
+});

@@ -228,15 +228,18 @@ export const parseFen =
         }
 
         // Castling
-        const castlingPart = parts.shift();
+        let castlingPart: string | undefined;
+        if (rules !== 'flipello') castlingPart = parts.shift();
         const unmovedRooks = defined(castlingPart) ? parseCastlingFen(board, castlingPart) : Result.ok(SquareSet.empty());
 
         // En passant square
-        const epPart = parts.shift();
         let epSquare: Square | undefined;
-        if (defined(epPart) && epPart !== '-') {
-          epSquare = parseSquare(rules)(epPart);
-          if (!defined(epSquare)) return Result.err(new FenError(InvalidFen.EpSquare));
+        if (rules !== 'flipello') {
+          const epPart = parts.shift();
+          if (defined(epPart) && epPart !== '-') {
+            epSquare = parseSquare(rules)(epPart);
+            if (!defined(epSquare)) return Result.err(new FenError(InvalidFen.EpSquare));
+          }
         }
 
         // Halfmoves or remaining checks
@@ -399,26 +402,41 @@ export function mancalaScore(northScore: number | undefined, southScore: number 
 
 export const makeLastMove = (rules: Rules) => (move: Move) => `½${makeUci(rules)(move)}`;
 
+const owareMancalaFenParts =
+  (setup: Setup): string[] => [
+    mancalaScore(setup.northScore, setup.southScore),
+    setup.turn === 'p1' ? 'S' : 'N',
+    `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
+  ]
+
+const flipelloFenParts =
+  (setup: Setup, opts?: FenOpts): string[] => [
+    setup.turn === 'p1' ? 'w' : 'b',
+    ...(opts?.epd
+      ? []
+      : [`${Math.max(0, Math.min(setup.halfmoves, 9999))}`, `${Math.max(1, Math.min(setup.fullmoves, 9999))}`]),
+  ]
+const chessVariantFenParts =
+  (rules: Rules) =>
+    (setup: Setup, opts?: FenOpts): string[] => [
+      setup.turn === 'p1' ? 'w' : 'b',
+      makeCastlingFen(rules)(setup.board, setup.unmovedRooks, opts),
+      defined(setup.epSquare) ? makeSquare(rules)(setup.epSquare) : '-',
+      ...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks)] : []),
+      ...(opts?.epd
+        ? []
+        : [`${Math.max(0, Math.min(setup.halfmoves, 9999))}`, `${Math.max(1, Math.min(setup.fullmoves, 9999))}`]),
+    ]
+
 export const makeFen =
   (rules: Rules) =>
     (setup: Setup, opts?: FenOpts): string => {
       return [
         makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
         ...(rules === 'oware' || rules === 'togyzkumalak'
-          ? [
-            mancalaScore(setup.northScore, setup.southScore),
-            setup.turn === 'p1' ? 'S' : 'N',
-            Math.max(1, Math.min(setup.fullmoves, 9999)),
-          ]
-          : [
-            setup.turn === 'p1' ? 'w' : 'b',
-            makeCastlingFen(rules)(setup.board, setup.unmovedRooks, opts),
-            defined(setup.epSquare) ? makeSquare(rules)(setup.epSquare) : '-',
-            ...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks)] : []),
-            ...(opts?.epd
-              ? []
-              : [Math.max(0, Math.min(setup.halfmoves, 9999)), Math.max(1, Math.min(setup.fullmoves, 9999))]),
-          ]),
+          ? owareMancalaFenParts(setup)
+          : rules === 'flipello' ? flipelloFenParts(setup, opts)
+            : chessVariantFenParts(rules)(setup, opts)),
         ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : [])
       ].join(' ');
     };
