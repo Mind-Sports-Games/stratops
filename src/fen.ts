@@ -228,18 +228,15 @@ export const parseFen =
         }
 
         // Castling
-        let castlingPart: string | undefined;
-        if (rules !== 'flipello') castlingPart = parts.shift();
+        let castlingPart = parts.shift();
         const unmovedRooks = defined(castlingPart) ? parseCastlingFen(board, castlingPart) : Result.ok(SquareSet.empty());
 
         // En passant square
         let epSquare: Square | undefined;
-        if (rules !== 'flipello') {
-          const epPart = parts.shift();
-          if (defined(epPart) && epPart !== '-') {
-            epSquare = parseSquare(rules)(epPart);
-            if (!defined(epSquare)) return Result.err(new FenError(InvalidFen.EpSquare));
-          }
+        const epPart = parts.shift();
+        if (defined(epPart) && epPart !== '-') {
+          epSquare = parseSquare(rules)(epPart);
+          if (!defined(epSquare)) return Result.err(new FenError(InvalidFen.EpSquare));
         }
 
         // Halfmoves or remaining checks
@@ -409,13 +406,6 @@ const owareMancalaFenParts =
     `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
   ]
 
-const flipelloFenParts =
-  (setup: Setup, opts?: FenOpts): string[] => [
-    setup.turn === 'p1' ? 'w' : 'b',
-    ...(opts?.epd
-      ? []
-      : [`${Math.max(0, Math.min(setup.halfmoves, 9999))}`, `${Math.max(1, Math.min(setup.fullmoves, 9999))}`]),
-  ]
 const chessVariantFenParts =
   (rules: Rules) =>
     (setup: Setup, opts?: FenOpts): string[] => [
@@ -435,8 +425,7 @@ export const makeFen =
         makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(setup.pockets)}]` : ''),
         ...(rules === 'oware' || rules === 'togyzkumalak'
           ? owareMancalaFenParts(setup)
-          : rules === 'flipello' ? flipelloFenParts(setup, opts)
-            : chessVariantFenParts(rules)(setup, opts)),
+          : chessVariantFenParts(rules)(setup, opts)),
         ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : [])
       ].join(' ');
     };
