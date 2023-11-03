@@ -165,6 +165,23 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     return board;
   }
 
+  static monster(): Board {
+    const board = new Board('monster');
+    board.reset();
+    board.occupied = new SquareSet([0x3c10, 0xffff_0000, 0, 0]);
+    board.promoted = SquareSet.empty();
+    board.p1 = new SquareSet([0x3c10, 0, 0, 0]);
+    board.p2 = new SquareSet([0, 0xffff_0000, 0, 0]);
+    board['p-piece'] = new SquareSet([0x3c00, 0x00ff_0000, 0, 0]);
+    board['n-piece'] = new SquareSet([0, 0x4200_0000, 0, 0]);
+    board['b-piece'] = new SquareSet([0, 0x2400_0000, 0, 0]);
+    board['r-piece'] = new SquareSet([0, 0x8100_0000, 0, 0]);
+    board['q-piece'] = new SquareSet([0, 0x0800_0000, 0, 0]);
+    board['k-piece'] = new SquareSet([0x10, 0x1000_0000, 0, 0]);
+    board['l-piece'] = new SquareSet([0, 0, 0, 0]);
+    return board;
+  }
+
   static linesOfAction(): Board {
     const board = new Board('linesofaction');
     board.reset();

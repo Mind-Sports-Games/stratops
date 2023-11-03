@@ -293,6 +293,7 @@ export const RULES = [
   'racingkings',
   'crazyhouse',
   'nocastling',
+  'monster',
   'scrambledeggs',
   'linesofaction',
   'shogi',

@@ -554,6 +554,41 @@ export class NoCastling extends Chess {
   }
 }
 
+export class Monster extends Chess {
+  protected constructor() {
+    super('monster');
+  }
+
+  static default(): Monster {
+    const pos = new this();
+    pos.board = Board.monster();
+    pos.pockets = undefined;
+    pos.turn = 'p1';
+    pos.castles = Castles.default();
+    pos.castles.discardSide('p1');
+    pos.epSquare = undefined;
+    pos.remainingChecks = undefined;
+    pos.halfmoves = 0;
+    pos.fullmoves = 1;
+    return pos;
+  }
+
+  static fromSetup(setup: Setup): Result<Monster, PositionError> {
+    return super.fromSetup(setup) as Result<Monster, PositionError>;
+  }
+
+  protected validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+    // TODO: maybe do some more validation of the position
+    return Result.ok(undefined);
+  }
+
+  clone(): Monster {
+    return super.clone() as Monster;
+  }
+
+}
+
 export class LinesOfAction extends Chess {
   protected constructor() {
     super('linesofaction');
@@ -980,6 +1015,8 @@ export function defaultPosition(rules: Rules): Position {
       return Crazyhouse.default();
     case 'nocastling':
       return NoCastling.default();
+    case 'monster':
+      return Monster.default();
     case 'linesofaction':
       return LinesOfAction.default();
     case 'scrambledeggs':
@@ -1033,6 +1070,8 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Crazyhouse.fromSetup(setup);
     case 'nocastling':
       return NoCastling.fromSetup(setup);
+    case 'monster':
+      return Monster.fromSetup(setup);
     case 'linesofaction':
       return LinesOfAction.fromSetup(setup);
     case 'scrambledeggs':
