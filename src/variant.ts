@@ -586,7 +586,6 @@ export class Monster extends Chess {
   clone(): Monster {
     return super.clone() as Monster;
   }
-
 }
 
 export class LinesOfAction extends Chess {

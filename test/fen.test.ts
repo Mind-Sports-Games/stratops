@@ -10,9 +10,7 @@ test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.horde())).toEqual(
     'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP'
   );
-  expect(makeBoardFen('chess')(Board.monster())).toEqual(
-    'rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3'
-  );
+  expect(makeBoardFen('chess')(Board.monster())).toEqual('rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3');
 });
 
 test('make initial fen', () => {
