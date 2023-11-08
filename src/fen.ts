@@ -188,13 +188,14 @@ export const parseFen =
       // Board and pockets
       let board,
         pockets = Result.ok<Material | undefined, FenError>(undefined);
+      const { ranks, } = dimensionsForRules(rules);
       if (boardPart.endsWith(']')) {
         const pocketStart = boardPart.indexOf('[');
         if (pocketStart === -1) return Result.err(new FenError(InvalidFen.Fen));
         board = parseBoardFen(rules)(boardPart.substr(0, pocketStart));
         pockets = parsePockets(boardPart.substr(pocketStart + 1, boardPart.length - 1 - pocketStart - 1));
       } else {
-        const pocketStart = nthIndexOf(boardPart, '/', 7);
+        const pocketStart = nthIndexOf(boardPart, '/', ranks - 1);
         if (pocketStart === -1) board = parseBoardFen(rules)(boardPart);
         else {
           board = parseBoardFen(rules)(boardPart.substr(0, pocketStart));
