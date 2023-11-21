@@ -992,6 +992,29 @@ export class Go19x19 extends Chess {
   }
 }
 
+export class Backgammon extends Chess {
+  //TODO - move into own class and have variant family
+  protected constructor() {
+    super('backgammon');
+  }
+
+  static default(): Backgammon {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Backgammon, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Backgammon {
+    return super.clone() as Backgammon;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -1044,6 +1067,8 @@ export function defaultPosition(rules: Rules): Position {
       return Go13x13.default();
     case 'go19x19':
       return Go19x19.default();
+    case 'backgammon':
+      return Backgammon.default();
   }
 }
 
@@ -1099,5 +1124,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Go13x13.fromSetup(setup);
     case 'go19x19':
       return Go19x19.fromSetup(setup);
+    case 'backgammon':
+      return Backgammon.fromSetup(setup);
   }
 }

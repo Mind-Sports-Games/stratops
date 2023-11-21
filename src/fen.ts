@@ -11,7 +11,8 @@ export const INITIAL_FEN = INITIAL_EPD + ' 0 1';
 export const EMPTY_BOARD_FEN = '8/8/8/8/8/8/8/8';
 export const EMPTY_EPD = EMPTY_BOARD_FEN + ' w - -';
 export const EMPTY_FEN = EMPTY_EPD + ' 0 1';
-export const COMMA_FEN_RULES = ['oware', 'togyzkumalak'];
+export const COMMA_FEN_RULES = ['oware', 'togyzkumalak', 'backgammon'];
+export const MANCALA_FEN_VARIANT = ['oware', 'togyzkumalak'];
 
 export enum InvalidFen {
   Fen = 'ERR_FEN',
@@ -101,10 +102,15 @@ export const parseBoardFen =
           if (isNaN(+f)) {
             if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
             const square = file + rank * files;
-            //some mancala specific code in here
             const count = f.slice(0, -1);
             const role = f.substring(f.length - 1).toLowerCase();
-            const playerIndex = rank === 1 ? 'p1' : 'p2';
+            const playerIndex = MANCALA_FEN_VARIANT.includes(rules)
+              ? rank === 1
+                ? 'p1'
+                : 'p2'
+              : f.substring(f.length - 1) === role
+              ? 'p2'
+              : 'p1';
             const piece = {
               role: `${role}${count}-piece`,
               playerIndex: playerIndex,
@@ -310,12 +316,18 @@ export function makePiece(piece: Piece, opts?: FenOpts): string {
   return r;
 }
 
-export function makeCFPiece(piece: Piece, endOfRank: boolean): string {
-  //mancala specific code here
-  const roleLetter = piece.role.charAt(0);
-  const count = piece.role.split('-')[0].substring(1);
-  return count + roleLetter.toUpperCase() + (endOfRank ? '' : ',');
-}
+export const makeCFPiece =
+  (rules: Rules) =>
+  (piece: Piece, endOfRank: boolean): string => {
+    const letter = piece.role.charAt(0);
+    const roleLetter = MANCALA_FEN_VARIANT.includes(rules)
+      ? letter.toUpperCase()
+      : piece.playerIndex === 'p1'
+      ? letter.toUpperCase()
+      : letter;
+    const count = piece.role.split('-')[0].substring(1);
+    return count + roleLetter + (endOfRank ? '' : ',');
+  };
 
 export const makeBoardFen =
   (rules: Rules) =>
@@ -331,10 +343,12 @@ export const makeBoardFen =
         else {
           if (empty > 0) {
             fen += empty;
-            fen += COMMA_FEN_RULES.includes(rules) && file !== files - 1 ? ',' : '';
+            fen += COMMA_FEN_RULES.includes(rules) ? ',' : '';
             empty = 0;
           }
-          fen += COMMA_FEN_RULES.includes(rules) ? makeCFPiece(piece, file === files - 1) : makePiece(piece, opts);
+          fen += COMMA_FEN_RULES.includes(rules)
+            ? makeCFPiece(rules)(piece, file === files - 1)
+            : makePiece(piece, opts);
         }
 
         if (file === files - 1) {

@@ -77,7 +77,10 @@ test.each(['11S,5/2,23S,3 11 3 S 50'])('parse and make oware fen', fen => {
   const setup = parseFen('oware')(fen).unwrap();
   expect(makeFen('oware')(setup, { promoted: true })).toEqual(fen);
 });
-
+test.each(['5,11S/2,S,2,23S 11 3 S 50'])('parse and make oware fen', fen => {
+  const setup = parseFen('oware')(fen).unwrap();
+  expect(makeFen('oware')(setup, { promoted: true })).toEqual(fen);
+});
 test.each(['9S,9S,9S,9S,9S,9S,9S,9S,9S/9S,9S,9S,9S,9S,9S,9S,9S,9S 0 0 S 1'])('parse and make togyzkumalak fen', fen => {
   const setup = parseFen('togyzkumalak')(fen).unwrap();
   expect(makeFen('togyzkumalak')(setup, { promoted: true })).toEqual(fen);
@@ -91,4 +94,14 @@ test.each([
 ])('parse and make amazons fen', fen => {
   const setup = parseFen('amazons')(fen).unwrap();
   expect(makeFen('amazons')(setup, { promoted: true })).toEqual(fen);
+});
+//todo finalise structure of backgammon fen
+test.each(['5S,3,3s,1,5s,4,2S/5s,3,3S,1,5S,4,2s[] w - - 0 1'])('parse and make backgammon fen', fen => {
+  const setup = parseFen('backgammon')(fen).unwrap();
+  expect(makeFen('backgammon')(setup, { promoted: true })).toEqual(fen);
+  expect(setup.fullmoves).toEqual(1);
+});
+test.each(['6,2s,2s,2s,2s,2s,2s/6,5S,5[SSSSS] w - - 0 25'])('parse and make backgammon fen', fen => {
+  const setup = parseFen('backgammon')(fen).unwrap();
+  expect(makeFen('backgammon')(setup, { promoted: true })).toEqual(fen);
 });

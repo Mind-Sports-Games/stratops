@@ -308,6 +308,7 @@ export const RULES = [
   'go9x9',
   'go13x13',
   'go19x19',
+  'backgammon',
 ] as const;
 
 export type Rules = typeof RULES[number];
