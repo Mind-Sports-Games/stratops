@@ -10,6 +10,7 @@ test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.horde())).toEqual(
     'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP'
   );
+  expect(makeBoardFen('chess')(Board.monster())).toEqual('rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3');
 });
 
 test('make initial fen', () => {
@@ -52,6 +53,10 @@ test.each([
   expect(makeFen('chess')(setup, { promoted: true })).toEqual(fen);
 });
 
+test.each(['rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3 w kq - 0 1'])('parse and make monster chess fen', fen => {
+  const setup = parseFen('monster')(fen).unwrap();
+  expect(makeFen('monster')(setup, { promoted: true })).toEqual(fen);
+});
 test.each(['lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1'])(
   'parse and make shogi fen',
   fen => {
