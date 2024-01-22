@@ -144,7 +144,7 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     board['r-piece'] = new SquareSet([0x4242, 0, 0, 0]);
     board['q-piece'] = new SquareSet([0x0081, 0, 0, 0]);
     board['k-piece'] = new SquareSet([0x8100, 0, 0, 0]);
-    board['l-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['l-piece'] = SquareSet.empty();
     return board;
   }
 
@@ -161,7 +161,33 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     board['r-piece'] = new SquareSet([0, 0x8100_0000, 0, 0]);
     board['q-piece'] = new SquareSet([0, 0x0800_0000, 0, 0]);
     board['k-piece'] = new SquareSet([0, 0x1000_0000, 0, 0]);
-    board['l-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['l-piece'] = SquareSet.empty();
+    return board;
+  }
+
+  static shogi(): Board {
+    // TODO: this is not the starting position, fix it.
+    const board = new Board('shogi');
+    board.reset();
+    board.occupied = new SquareSet([0xffff_ffff, 0xffff_0066, 0, 0]);
+    board.promoted = SquareSet.empty();
+    board.p1 = new SquareSet([0xffff_ffff, 0x0000_0066, 0, 0]);
+    board.p2 = new SquareSet([0, 0xffff_0000, 0, 0]);
+    board['p-piece'] = new SquareSet([0xffff_ffff, 0x00ff_0066, 0, 0]);
+    board['n-piece'] = new SquareSet([0, 0x4200_0000, 0, 0]);
+    board['b-piece'] = new SquareSet([0, 0x2400_0000, 0, 0]);
+    board['r-piece'] = new SquareSet([0, 0x8100_0000, 0, 0]);
+    board['s-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['q-piece'] = new SquareSet([0, 0x0800_0000, 0, 0]);
+    board['k-piece'] = new SquareSet([0, 0x1000_0000, 0, 0]);
+    board['l-piece'] = SquareSet.empty();
+    board['g-piece'] = SquareSet.empty();
+    board['pp-piece'] = SquareSet.empty();
+    board['pl-piece'] = SquareSet.empty();
+    board['pn-piece'] = SquareSet.empty();
+    board['ps-piece'] = SquareSet.empty();
+    board['pb-piece'] = SquareSet.empty();
+    board['pr-piece'] = SquareSet.empty();
     return board;
   }
 
@@ -217,9 +243,40 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     this['l-piece'] = new SquareSet([0, 0, 0, 0]);
   }
 
+  /**
+   * Resets all pieces to the default starting position for shogi
+   * TODO: this is not the starting position, fix it.
+   */
+  resetShogi(): void {
+    for (const role of ROLES) this[role] = SquareSet.empty();
+    this.occupied = SquareSet.empty();
+    this.promoted = SquareSet.empty();
+    this.p1 = SquareSet.empty();
+    this.p2 = SquareSet.empty();
+    this['p-piece'] = SquareSet.empty();
+    this['n-piece'] = SquareSet.empty();
+    this['b-piece'] = SquareSet.empty();
+    this['r-piece'] = SquareSet.empty();
+    this['q-piece'] = SquareSet.empty();
+    this['k-piece'] = SquareSet.empty();
+    this['l-piece'] = SquareSet.empty();
+    this['l-piece'] = SquareSet.empty();
+    this['g-piece'] = SquareSet.empty();
+    this['pp-piece'] = SquareSet.empty();
+    this['pl-piece'] = SquareSet.empty();
+    this['pn-piece'] = SquareSet.empty();
+    this['ps-piece'] = SquareSet.empty();
+    this['pb-piece'] = SquareSet.empty();
+    this['pr-piece'] = SquareSet.empty();
+  }
+
   static empty(rules: Rules): Board {
     const board = new Board(rules);
-    board.reset();
+    if (rules === 'shogi') {
+      board.resetShogi();
+    } else {
+      board.reset();
+    }
     board.clear();
     return board;
   }

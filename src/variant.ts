@@ -69,7 +69,7 @@ export class Crazyhouse extends Chess {
           ? SquareSet.full64()
           : this.pockets?.[this.turn].hasPawns()
             ? SquareSet.backranks64().complement()
-            : SquareSet.empty()
+            : SquareSet.empty(),
       );
 
     ctx = ctx || this.ctx();
@@ -725,7 +725,9 @@ export class Shogi extends Chess {
   }
 
   static default(): Shogi {
-    return super.default();
+    const pos = new this();
+    pos.board = Board.shogi();
+    return pos;
   }
 
   static fromSetup(setup: Setup): Result<Shogi, PositionError> {
@@ -866,9 +868,8 @@ export class Amazons extends Chess {
   }
 
   static fromSetup(setup: Setup): Result<Amazons, PositionError> {
-    return super.fromSetup(setup).map((v) => {
-      if (setup.lastMove !== undefined)
-        v.play(setup.lastMove)
+    return super.fromSetup(setup).map(v => {
+      if (setup.lastMove !== undefined) v.play(setup.lastMove);
       return v as Amazons;
     });
   }
