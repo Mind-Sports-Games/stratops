@@ -205,7 +205,7 @@ export const parseUci =
                 const to = square(str.slice(2));
                 if (role && defined(to)) return { role, to };
             } else {
-                let promotion: Role | undefined = charToRole(str[str.length - 1]);
+                const promotion: Role | undefined = charToRole(str[str.length - 1]);
                 if (promotion) {
                     str = str.substr(0, str.length - 1);
                 }

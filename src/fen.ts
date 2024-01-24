@@ -94,7 +94,7 @@ export const parseBoardFen =
                         } else {
                             if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
                             const square = file + rank * files;
-                            const isShogiPromotion = rules === 'shogi' && c === '+' && boardPart[i + 1] !== undefined;
+                            const isShogiPromotion = rules === 'shogi' && c === '+' && i + 1 < boardPart.length;
                             const pieceChar = isShogiPromotion ? c + boardPart[i + 1] : c;
                             if (isShogiPromotion) {
                                 ++i;
@@ -244,7 +244,7 @@ export const parseFen =
                 }
 
                 // Castling
-                let castlingPart = parts.shift();
+                const castlingPart = parts.shift();
                 const unmovedRooks = defined(castlingPart) ? parseCastlingFen(board, castlingPart) : Result.ok(SquareSet.empty());
 
                 // En passant square
@@ -415,7 +415,10 @@ export function mancalaScore(northScore: number | undefined, southScore: number 
     return `${southScore} ${northScore}`;
 }
 
-export const makeLastMove = (rules: Rules) => (move: Move) => `½${makeUci(rules)(move)}`;
+export const makeLastMove =
+    (rules: Rules) =>
+        (move: Move): string =>
+            `½${makeUci(rules)(move)}`;
 
 const owareMancalaFenParts = (setup: Setup): string[] => [
     mancalaScore(setup.northScore, setup.southScore),
