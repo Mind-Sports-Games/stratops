@@ -39,7 +39,7 @@ export enum IllegalSetup {
   Variant = 'ERR_VARIANT',
 }
 
-export class PositionError extends Error { }
+export class PositionError extends Error {}
 
 function attacksTo(square: Square, attacker: PlayerIndex, board: Board, occupied: SquareSet): SquareSet {
   return board[attacker].intersect(
@@ -61,7 +61,7 @@ export class Castles {
   rook: ByPlayerIndex<ByCastlingSide<Square | undefined>>;
   path: ByPlayerIndex<ByCastlingSide<SquareSet>>;
 
-  private constructor() { }
+  private constructor() {}
 
   static default(): Castles {
     const castles = new Castles();
@@ -169,7 +169,7 @@ export abstract class Position {
   halfmoves: number;
   fullmoves: number;
 
-  protected constructor(readonly rules: Rules) { }
+  protected constructor(readonly rules: Rules) {}
 
   // When subclassing:
   // - static default()

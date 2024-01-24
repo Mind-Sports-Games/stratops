@@ -20,7 +20,7 @@ export const FILE_NAMES = [
   's',
 ] as const;
 
-export type FileName = (typeof FILE_NAMES)[number];
+export type FileName = typeof FILE_NAMES[number];
 
 export const RANK_NAMES = [
   '1',
@@ -44,7 +44,7 @@ export const RANK_NAMES = [
   '19',
 ] as const;
 
-export type RankName = (typeof RANK_NAMES)[number];
+export type RankName = typeof RANK_NAMES[number];
 
 export type Square = number;
 
@@ -65,7 +65,7 @@ export type BySquare<T> = T[];
 
 export const PLAYERINDEXES = ['p1', 'p2'] as const;
 
-export type PlayerIndex = (typeof PLAYERINDEXES)[number];
+export type PlayerIndex = typeof PLAYERINDEXES[number];
 
 /**
  * Indexable by `p1` and `p2`.
@@ -239,8 +239,8 @@ export const stoneCounts = [
   '48',
 ] as const;
 
-export type Letter = (typeof letters)[number];
-export type StoneCount = (typeof stoneCounts)[number];
+export type Letter = typeof letters[number];
+export type StoneCount = typeof stoneCounts[number];
 export type Role = `${Letter}-piece` | `p${Letter}-piece` | `s${StoneCount}-piece`;
 
 /**
@@ -252,7 +252,7 @@ export type ByRole<T> = {
 
 export const CASTLING_SIDES = ['a', 'h'] as const;
 
-export type CastlingSide = (typeof CASTLING_SIDES)[number];
+export type CastlingSide = typeof CASTLING_SIDES[number];
 
 /**
  * Indexable by `a` and `h`.
@@ -316,7 +316,7 @@ export const RULES = [
   'go19x19',
 ] as const;
 
-export type Rules = (typeof RULES)[number];
+export type Rules = typeof RULES[number];
 
 export interface Outcome {
   winner: PlayerIndex | undefined;
