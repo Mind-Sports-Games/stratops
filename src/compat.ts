@@ -79,6 +79,7 @@ export function playstrategyRules(
     | 'go13x13'
     | 'go19x19'
     | 'backgammon'
+    | 'nackgammon'
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -132,7 +133,8 @@ export function playstrategyVariants(
   | 'go9x9'
   | 'go13x13'
   | 'go19x19'
-  | 'backgammon' {
+  | 'backgammon'
+  | 'nackgammon' {
   switch (rules) {
     case 'chess':
       return 'standard';
