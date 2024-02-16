@@ -235,7 +235,6 @@ export class SquareSet implements Iterable<Square> {
         ]);
       },
       [BitPartTarget.Gt0]: (shift: number) => {
-        console.log('HERE!');
         bbpp128('this', this);
         return new SquareSet([
           (this.bitParts[0] >>> shift) ^ (this.bitParts[1] << (32 - shift)),

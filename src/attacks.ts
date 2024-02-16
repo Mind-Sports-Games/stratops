@@ -24,7 +24,7 @@ function computeRange(square: Square, deltas: number[]): SquareSet {
   let range = SquareSet.empty();
   for (const delta of deltas) {
     const sq = square + delta;
-    if (isValid(sq) && Math.abs(squareFile(square) - squareFile(sq)) <= 2) {
+    if (isValid(sq) && Math.abs(squareFile('chess')(square) - squareFile('chess')(sq)) <= 2) {
       range = range.with(sq);
     }
   }
@@ -66,18 +66,18 @@ export function pawnAttacks(playerIndex: PlayerIndex, square: Square): SquareSet
   return PAWN_ATTACKS[playerIndex][square];
 }
 
-const FILE_RANGE = tabulate(sq => SquareSet.fromFile64(squareFile(sq)).without(sq));
-const RANK_RANGE = tabulate(sq => SquareSet.fromRank64(squareRank(sq)).without(sq));
+const FILE_RANGE = tabulate(sq => SquareSet.fromFile64(squareFile('chess')(sq)).without(sq));
+const RANK_RANGE = tabulate(sq => SquareSet.fromRank64(squareRank('chess')(sq)).without(sq));
 
 const DIAG_RANGE = tabulate(sq => {
   const diag = new SquareSet([0x0804_0201, 0x8040_2010, 0, 0]);
-  const shift = 8 * (squareRank(sq) - squareFile(sq));
+  const shift = 8 * (squareRank('chess')(sq) - squareFile('chess')(sq));
   return (shift >= 0 ? diag.shl64(shift) : diag.shr64(-shift)).without(sq);
 });
 
 const ANTI_DIAG_RANGE = tabulate(sq => {
   const diag = new SquareSet([0x1020_4080, 0x0102_0408, 0, 0]);
-  const shift = 8 * (squareRank(sq) + squareFile(sq) - 7);
+  const shift = 8 * (squareRank('chess')(sq) + squareFile('chess')(sq) - 7);
   return (shift >= 0 ? diag.shl64(shift) : diag.shr64(-shift)).without(sq);
 });
 

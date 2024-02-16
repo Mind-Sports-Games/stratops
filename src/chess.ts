@@ -483,7 +483,7 @@ export class Chess extends Position {
     if (!defined(square)) return;
     const epRank = this.turn === 'p1' ? 5 : 2;
     const forward = this.turn === 'p1' ? 8 : -8;
-    if (squareRank(square) !== epRank) return;
+    if (squareRank('chess')(square) !== epRank) return;
     if (this.board.occupied.has(square + forward)) return;
     const pawn = square - forward;
     if (!this.board['p-piece'].has(pawn) || !this.board[opposite(this.turn)].has(pawn)) return;

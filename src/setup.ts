@@ -1,4 +1,4 @@
-import { PlayerIndex, ROLES, Square } from './types';
+import { PlayerIndex, ROLES, Square, Move } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 
@@ -250,6 +250,7 @@ export interface Setup {
   backgammonP2Score?: number;
   unusedDice?: string | undefined;
   usedDice?: string | undefined;
+  lastMove?: Move;
 }
 
 export function defaultSetup(): Setup {
@@ -262,5 +263,6 @@ export function defaultSetup(): Setup {
     remainingChecks: undefined,
     halfmoves: 0,
     fullmoves: 1,
+    lastMove: undefined,
   };
 }

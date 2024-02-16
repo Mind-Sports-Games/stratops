@@ -2,6 +2,10 @@ import { parseFen, makeFen, makeBoardFen, INITIAL_FEN, INITIAL_BOARD_FEN, EMPTY_
 import { SquareSet } from '../src/squareSet';
 import { Board } from '../src/board';
 import { defaultSetup } from '../src/setup';
+import { setupPosition } from '../src/variant';
+import { parseSquare } from '../src/util';
+import { Piece } from '../src/types';
+import { amazonsChessgroundFen } from '../src/compat';
 
 test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.default())).toEqual(INITIAL_BOARD_FEN);
@@ -57,13 +61,15 @@ test.each(['rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3 w kq - 0 1'])('parse and make m
   const setup = parseFen('monster')(fen).unwrap();
   expect(makeFen('monster')(setup, { promoted: true })).toEqual(fen);
 });
-test.each(['lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1'])(
-  'parse and make shogi fen',
-  fen => {
-    const setup = parseFen('shogi')(fen).unwrap();
-    expect(makeFen('shogi')(setup, { promoted: true })).toEqual(fen);
-  }
-);
+
+test.each([
+  'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1',
+  'lnsgkgsnl/1r5+B1/pppppp1pp/6p2/9/2P6/PP1PPPPPP/7R1/LNSGKGSNL[B] b - - 0 2',
+])('parse and make shogi fen', fen => {
+  const setup = parseFen('shogi')(fen).unwrap();
+  expect(makeFen('shogi')(setup, { promoted: true })).toEqual(fen);
+});
+
 test.each(['1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 w - - 0 1'])('parse and make lines of action fen', fen => {
   const setup = parseFen('linesofaction')(fen).unwrap();
   expect(makeFen('linesofaction')(setup, { promoted: true })).toEqual(fen);
@@ -91,10 +97,32 @@ test.each(['2,T,24S,2S,9S,3S,9S,9S/2S,11S,2S,T,2,9S,9S,4S 30 39 S 16'])('parse a
 });
 test.each([
   '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1',
+  '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1 ½g1j1',
 ])('parse and make amazons fen', fen => {
   const setup = parseFen('amazons')(fen).unwrap();
   expect(makeFen('amazons')(setup, { promoted: true })).toEqual(fen);
 });
+test.each([
+  '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1 ½g1j1',
+])('amazons fen for chessground', fen => {
+  const setup = parseFen('amazons')(fen).unwrap();
+  const game = setupPosition('amazons', setup).unwrap();
+  const j1 = parseSquare('amazons')('j1');
+  expect(j1 !== undefined).toBeTruthy();
+  const pieceOrUndef = game.board.get(j1 as number);
+  expect(pieceOrUndef !== undefined).toBeTruthy();
+  const piece = pieceOrUndef as Piece;
+  expect(piece.role).toEqual('q-piece');
+  const chessGroundFen = `3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q5Q b - - 1 1`;
+  expect(amazonsChessgroundFen(fen)).toEqual(chessGroundFen);
+});
+test.each([
+  '8/8/8/3pP3/3Pp3/8/8/8[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1',
+])('parse and make flipello fen', fen => {
+  const setup = parseFen('flipello')(fen).unwrap();
+  expect(makeFen('flipello')(setup, { promoted: true })).toEqual(fen);
+});
+
 test.each(['5S,3,3s,1,5s,4,2S/5s,3,3S,1,5S,4,2s[] - - w 0 0 1'])('parse and make backgammon fen', fen => {
   const setup = parseFen('backgammon')(fen).unwrap();
   expect(makeFen('backgammon')(setup, { promoted: true })).toEqual(fen);
