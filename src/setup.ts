@@ -246,6 +246,10 @@ export interface Setup {
   fullmoves: number;
   northScore?: number;
   southScore?: number;
+  backgammonP1Score?: number;
+  backgammonP2Score?: number;
+  unusedDice?: string | undefined;
+  usedDice?: string | undefined;
   lastMove?: Move;
 }
 
