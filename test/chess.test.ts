@@ -116,26 +116,26 @@ test('test illegal promotion', () => {
 
 test('starting perft', () => {
   const pos = Chess.default();
-  expect(perft(pos, 0, false)).toBe(1);
-  expect(perft(pos, 1, false)).toBe(20);
-  expect(perft(pos, 2, false)).toBe(400);
-  expect(perft(pos, 3, false)).toBe(8902);
+  expect(perft('chess')(pos, 0, false)).toBe(1);
+  expect(perft('chess')(pos, 1, false)).toBe(20);
+  expect(perft('chess')(pos, 2, false)).toBe(400);
+  expect(perft('chess')(pos, 3, false)).toBe(8902);
 });
 
 test.each(tricky)('tricky perft: %s: %s', (_, fen, d1, d2, d3) => {
   const pos = Chess.fromSetup(parseFen('chess')(fen).unwrap()).unwrap();
-  expect(perft(pos, 1, false)).toBe(d1);
-  expect(perft(pos, 2, false)).toBe(d2);
-  expect(perft(pos, 3, false)).toBe(d3);
+  expect(perft('chess')(pos, 1, false)).toBe(d1);
+  expect(perft('chess')(pos, 2, false)).toBe(d2);
+  expect(perft('chess')(pos, 3, false)).toBe(d3);
 });
 
 test.each(random)('random perft: %s: %s', (_, fen, d1, d2, d3, d4, d5) => {
   const pos = Chess.fromSetup(parseFen('chess')(fen).unwrap()).unwrap();
-  expect(perft(pos, 1, false)).toBe(d1);
-  expect(perft(pos, 2, false)).toBe(d2);
-  expect(perft(pos, 3, false)).toBe(d3);
-  expect(perft(pos, 4, false)).toBe(d4);
-  if (d5 < 100000) expect(perft(pos, 5, false)).toBe(d5);
+  expect(perft('chess')(pos, 1, false)).toBe(d1);
+  expect(perft('chess')(pos, 2, false)).toBe(d2);
+  expect(perft('chess')(pos, 3, false)).toBe(d3);
+  expect(perft('chess')(pos, 4, false)).toBe(d4);
+  if (d5 < 100000) expect(perft('chess')(pos, 5, false)).toBe(d5);
 });
 
 const insufficientMaterial: [string, boolean, boolean][] = [
@@ -182,7 +182,7 @@ test('impossible checker alignment', () => {
 
 test('king captures unmoved rook', () => {
   const pos = Chess.fromSetup(parseFen('chess')('8/8/8/B2p3Q/2qPp1P1/b7/2P2PkP/4K2R b K - 0 1').unwrap()).unwrap();
-  const move = parseUci('g2h1')!;
+  const move = parseUci('chess')('g2h1')!;
   expect(move).toEqual({ from: 14, to: 7 });
   expect(pos.isLegal(move)).toBe(true);
   pos.play(move);

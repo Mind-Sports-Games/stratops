@@ -1,4 +1,4 @@
-import { PlayerIndex, ROLES, Square } from './types';
+import { PlayerIndex, ROLES, Square, Move } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
 
@@ -246,6 +246,7 @@ export interface Setup {
   fullmoves: number;
   northScore?: number;
   southScore?: number;
+  lastMove?: Move;
 }
 
 export function defaultSetup(): Setup {
@@ -258,5 +259,6 @@ export function defaultSetup(): Setup {
     remainingChecks: undefined,
     halfmoves: 0,
     fullmoves: 1,
+    lastMove: undefined,
   };
 }

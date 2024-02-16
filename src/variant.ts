@@ -725,7 +725,9 @@ export class Shogi extends Chess {
   }
 
   static default(): Shogi {
-    return super.default();
+    const pos = new this();
+    pos.board = Board.shogi();
+    return pos;
   }
 
   static fromSetup(setup: Setup): Result<Shogi, PositionError> {
@@ -861,12 +863,17 @@ export class Amazons extends Chess {
   }
 
   static default(): Amazons {
-    return super.default();
+    const pos = super.default();
+    return pos as Amazons;
   }
 
   static fromSetup(setup: Setup): Result<Amazons, PositionError> {
-    return super.fromSetup(setup);
+    return super.fromSetup(setup).map(v => {
+      if (setup.lastMove !== undefined) v.play(setup.lastMove);
+      return v as Amazons;
+    });
   }
+  // TODO: override toSetup to include half move.
 
   clone(): Amazons {
     return super.clone() as Amazons;
@@ -874,6 +881,12 @@ export class Amazons extends Chess {
 
   hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
+  }
+
+  protected validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+
+    return Result.ok(undefined);
   }
 }
 

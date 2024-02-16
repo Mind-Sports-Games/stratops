@@ -41,9 +41,9 @@ const variantPerfts: [Rules, string, string, number, number, number][] = [
 
 test.each(variantPerfts)('variant perft: %s (%s): %s', (rules, _, fen, d1, d2, d3) => {
   const pos = setupPosition(rules, parseFen('chess')(fen).unwrap()).unwrap();
-  expect(perft(pos, 1, false)).toBe(d1);
-  if (d2) expect(perft(pos, 2, false)).toBe(d2);
-  if (d3) expect(perft(pos, 3, false)).toBe(d3);
+  expect(perft(rules)(pos, 1, false)).toBe(d1);
+  if (d2) expect(perft(rules)(pos, 2, false)).toBe(d2);
+  if (d3) expect(perft(rules)(pos, 3, false)).toBe(d3);
 });
 
 const falseNegative = false;

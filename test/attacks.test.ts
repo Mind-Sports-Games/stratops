@@ -1,8 +1,10 @@
 import { rookAttacks, ray, between, linesOfActionAttacks } from '../src/attacks';
 import { SquareSet } from '../src/squareSet';
 import { Board } from '../src/board';
-import { parseSquare, defined } from '../src/util';
+import { parseSquare as parseSquareRules, defined } from '../src/util';
 import { PlayerIndex, Square } from '../src/types';
+
+const parseSquare = parseSquareRules('chess');
 
 test('rook attacks', () => {
   const d6 = 43;
