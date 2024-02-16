@@ -513,12 +513,6 @@ export const makeLastMove =
   (move: Move): string =>
     `½${makeUci(rules)(move)}`;
 
-const owareMancalaFenParts = (setup: Setup): string[] => [
-  mancalaScore(setup.northScore, setup.southScore),
-  setup.turn === 'p1' ? 'S' : 'N',
-  `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
-];
-
 const chessVariantFenParts =
   (rules: Rules) =>
   (setup: Setup, opts?: FenOpts): string[] =>
