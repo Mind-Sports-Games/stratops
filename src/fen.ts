@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import { Move, Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES, Rules } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
-import { Setup, MaterialSide, Material, RemainingChecks } from './setup';
+import { Setup, MaterialSide, Material, RemainingChecks, defaultSetup } from './setup';
 import {
   defined,
   squareFile,
@@ -14,6 +14,10 @@ import {
   parseUci,
   makeUci,
 } from './util';
+import * as fp from './fp';
+
+const O = fp.Option;
+const T = fp.Tuple;
 
 export const INITIAL_BOARD_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 export const INITIAL_EPD = INITIAL_BOARD_FEN + ' w KQkq -';
@@ -34,11 +38,15 @@ export enum InvalidFen {
   RemainingChecks = 'ERR_REMAINING_CHECKS',
   Halfmoves = 'ERR_HALFMOVES',
   Fullmoves = 'ERR_FULLMOVES',
+  PlayerScore = 'ERR_PLAYER_SCORE',
+  PlayerCaptures = 'ERR_PLAYER_CAPTURES',
   MancalaScore = 'ERR_MANCALA_SCORE',
   BackgammonScore = 'ERR_BACKGAMMON_SCORE',
 }
 
-export class FenError extends Error {}
+export class FenError extends Error { }
+
+const fenErr = (err: InvalidFen) => () => new FenError(err);
 
 function nthIndexOf(haystack: string, needle: string, n: number): number {
   let index = haystack.indexOf(needle);
@@ -49,7 +57,7 @@ function nthIndexOf(haystack: string, needle: string, n: number): number {
   return index;
 }
 
-function parseSmallUint(str: string): number | undefined {
+function parseSmallUint(str: string): fp.Option<number> {
   return /^\d{1,4}$/.test(str) ? parseInt(str, 10) : undefined;
 }
 
@@ -60,119 +68,119 @@ function charToPiece(ch: string): Piece | undefined {
 
 export const parseBoardFen =
   (rules: Rules) =>
-  (boardPart: string): Result<Board, FenError> => {
-    const board = Board.empty(rules);
-    const { ranks, files } = dimensionsForRules(rules);
-    let rank = ranks - 1;
-    let file = 0;
-    if (!COMMA_FEN_RULES.includes(rules)) {
-      let skipNext = false;
-      for (let i = 0; i < boardPart.length; i++) {
-        if (skipNext) {
-          skipNext = false;
-          continue;
-        }
-        const c = boardPart[i];
-        if (c === '/' && file === files) {
-          file = 0;
-          rank--;
-        } else {
-          const step = parseInt(c, 10);
-          if (step > 0) {
-            // with amazons, we now have fens where two digits must
-            // be parsed in a row. We'll use a look ahead here.
-            let stepped = false;
-            if (files > 9 && i < boardPart.length + 1 && parseInt(boardPart[i + 1]) >= 0) {
-              const twoCharStep = parseInt(c + boardPart[i + 1]);
-              if (twoCharStep > 0) {
-                file += twoCharStep;
-                stepped = true;
-                skipNext = true;
+    (boardPart: string): Result<Board, FenError> => {
+      const board = Board.empty(rules);
+      const { ranks, files } = dimensionsForRules(rules);
+      let rank = ranks - 1;
+      let file = 0;
+      if (!COMMA_FEN_RULES.includes(rules)) {
+        let skipNext = false;
+        for (let i = 0; i < boardPart.length; i++) {
+          if (skipNext) {
+            skipNext = false;
+            continue;
+          }
+          const c = boardPart[i];
+          if (c === '/' && file === files) {
+            file = 0;
+            rank--;
+          } else {
+            const step = parseInt(c, 10);
+            if (step > 0) {
+              // with amazons, we now have fens where two digits must
+              // be parsed in a row. We'll use a look ahead here.
+              let stepped = false;
+              if (files > 9 && i < boardPart.length + 1 && parseInt(boardPart[i + 1]) >= 0) {
+                const twoCharStep = parseInt(c + boardPart[i + 1]);
+                if (twoCharStep > 0) {
+                  file += twoCharStep;
+                  stepped = true;
+                  skipNext = true;
+                }
               }
+              if (!stepped) {
+                file += step;
+              }
+            } else {
+              if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
+              const square = file + rank * files;
+              const isShogiPromotion = rules === 'shogi' && c === '+' && i + 1 < boardPart.length;
+              const pieceChar = isShogiPromotion ? c + boardPart[i + 1] : c;
+              if (isShogiPromotion) {
+                ++i;
+              }
+              const piece = charToPiece(pieceChar);
+              if (!piece) return Result.err(new FenError(InvalidFen.Board));
+              if (boardPart[i + 1] === '~') {
+                piece.promoted = true;
+                i++;
+              }
+              board.set(square, piece);
+              file++;
             }
-            if (!stepped) {
-              file += step;
+          }
+        }
+      } else {
+        for (const r of boardPart.split(' ')[0].split('/')) {
+          for (const f of r.split(',')) {
+            if (isNaN(+f)) {
+              if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
+              const square = file + rank * files;
+              const count = f.slice(0, -1);
+              const role = f.substring(f.length - 1).toLowerCase();
+              const playerIndex = MANCALA_FEN_VARIANT.includes(rules)
+                ? rank === 1
+                  ? 'p1'
+                  : 'p2'
+                : f.substring(f.length - 1) === role
+                  ? 'p2'
+                  : 'p1';
+              const piece = {
+                role: `${role}${count}-piece`,
+                playerIndex: playerIndex,
+              } as Piece;
+              board.set(square, piece);
+              file++;
+            } else {
+              file += +f;
             }
-          } else {
-            if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
-            const square = file + rank * files;
-            const isShogiPromotion = rules === 'shogi' && c === '+' && i + 1 < boardPart.length;
-            const pieceChar = isShogiPromotion ? c + boardPart[i + 1] : c;
-            if (isShogiPromotion) {
-              ++i;
-            }
-            const piece = charToPiece(pieceChar);
-            if (!piece) return Result.err(new FenError(InvalidFen.Board));
-            if (boardPart[i + 1] === '~') {
-              piece.promoted = true;
-              i++;
-            }
-            board.set(square, piece);
-            file++;
+          }
+          if (rank !== 0 && file === files) {
+            file = 0;
+            rank--;
           }
         }
       }
-    } else {
-      for (const r of boardPart.split(' ')[0].split('/')) {
-        for (const f of r.split(',')) {
-          if (isNaN(+f)) {
-            if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
-            const square = file + rank * files;
-            const count = f.slice(0, -1);
-            const role = f.substring(f.length - 1).toLowerCase();
-            const playerIndex = MANCALA_FEN_VARIANT.includes(rules)
-              ? rank === 1
-                ? 'p1'
-                : 'p2'
-              : f.substring(f.length - 1) === role
-              ? 'p2'
-              : 'p1';
-            const piece = {
-              role: `${role}${count}-piece`,
-              playerIndex: playerIndex,
-            } as Piece;
-            board.set(square, piece);
-            file++;
-          } else {
-            file += +f;
-          }
-        }
-        if (rank !== 0 && file === files) {
-          file = 0;
-          rank--;
-        }
-      }
-    }
-    if (rank !== 0 || file !== files) return Result.err(new FenError(InvalidFen.Board));
-    return Result.ok(board);
-  };
+      if (rank !== 0 || file !== files) return Result.err(new FenError(InvalidFen.Board));
+      return Result.ok(board);
+    };
 
 export const parsePockets =
   (rules: Rules) =>
-  (pocketPart: string): Result<Material, FenError> => {
-    // TODO: What would the limit need to be for us right now?
-    if (pocketPart.length > 64 * 4) return Result.err(new FenError(InvalidFen.Pockets));
-    const pockets = Material.empty();
-    if (COMMA_FEN_RULES.includes(rules)) {
-      for (const p of pocketPart.split(',')) {
-        const count = p.slice(0, -1);
-        const role = p.substring(p.length - 1).toLowerCase();
-        const playerIndex = p.substring(p.length - 1) === role ? 'p2' : 'p1';
-        const piece = {
-          role: `${role}${count}-piece`,
-          playerIndex: playerIndex,
-        } as Piece;
-        pockets[piece.playerIndex][piece.role]++;
+    (pocketPart: string): Result<Material, FenError> => {
+      // TODO: What would the limit need to be for us right now?
+      if (pocketPart.length > 64 * 4) return Result.err(new FenError(InvalidFen.Pockets));
+      const pockets = Material.empty();
+      if (COMMA_FEN_RULES.includes(rules)) {
+        for (const p of pocketPart.split(',')) {
+          const count = p.slice(0, -1);
+          const role = p.substring(p.length - 1).toLowerCase();
+          const playerIndex = p.substring(p.length - 1) === role ? 'p2' : 'p1';
+          const piece = {
+            role: `${role}${count}-piece`,
+            playerIndex: playerIndex,
+          } as Piece;
+          pockets[piece.playerIndex][piece.role]++;
+        }
+      } else {
+        for (const c of pocketPart) {
+          const piece = charToPiece(c);
+          if (!piece) return Result.err(new FenError(InvalidFen.Pockets));
+          pockets[piece.playerIndex][piece.role]++;
+        }
       }
-    } else {
-      for (const c of pocketPart) {
-        const piece = charToPiece(c);
-        if (!piece) return Result.err(new FenError(InvalidFen.Pockets));
-        pockets[piece.playerIndex][piece.role]++;
-      }
-    }
-    return Result.ok(pockets);
-  };
+      return Result.ok(pockets);
+    };
 
 export function parseCastlingFen(board: Board, castlingPart: string): Result<SquareSet, FenError> {
   let unmovedRooks = SquareSet.empty();
@@ -214,148 +222,299 @@ export function parseRemainingChecks(part: string): Result<RemainingChecks, FenE
   } else return Result.err(new FenError(InvalidFen.RemainingChecks));
 }
 
+type BoardAndPocketStrings = {
+  board: string;
+  pockets?: string;
+};
+// Extracts the board and pocket portions of the string
+const boardAndPocketStrings =
+  (rules: Rules) =>
+    (boardPart: string): Result<BoardAndPocketStrings, FenError> => {
+      const { ranks } = dimensionsForRules(rules);
+      if (boardPart.endsWith(']')) {
+        const pocketStart = boardPart.indexOf('[');
+        if (pocketStart === -1) return Result.err(new FenError(InvalidFen.Fen));
+        return Result.ok({
+          board: boardPart.substr(0, pocketStart),
+          pockets: boardPart.substr(pocketStart + 1, boardPart.length - 1 - pocketStart - 1),
+        });
+      } else {
+        const pocketStart = nthIndexOf(boardPart, '/', ranks - 1);
+        if (pocketStart === -1) {
+          return Result.ok({ board: boardPart });
+        } else {
+          return Result.ok({
+            board: boardPart.substr(0, pocketStart),
+            pockets: boardPart.substr(pocketStart + 1),
+          });
+        }
+      }
+    };
+
+type BoardAndOptPockets = {
+  board: Board;
+  pockets?: Material;
+};
+const parseBoardAndOptPockets =
+  (rules: Rules) =>
+    (boardAndPockets: BoardAndPocketStrings): Result<BoardAndOptPockets, FenError> =>
+      parseBoardFen(rules)(boardAndPockets.board).chain(board =>
+        defined(boardAndPockets.pockets)
+          ? parsePockets(rules)(boardAndPockets.pockets).map(pockets => ({ board, pockets }))
+          : Result.ok({ board }),
+      );
+
+type BoardAndPockets = {
+  board: Board;
+  pockets: Material;
+};
+const parseBoardAndPockets =
+  (rules: Rules) =>
+    (boardAndPockets: string): Result<BoardAndPockets, FenError> =>
+      fp.pipe(
+        boardAndPockets,
+        boardAndPocketStrings(rules),
+        fp.Result.flatMap(({ board, pockets }) =>
+          fp.Result.zip([
+            parseBoardFen(rules)(board),
+            fp.pipe(pockets, O.flatMapErr(parsePockets(rules), fenErr(InvalidFen.Pockets))),
+          ]),
+        ),
+        fp.Result.map(([board, pockets]) => ({ board, pockets })),
+      );
+
+const parsePlayerTurn =
+  (p1Char: string = 'w', p2Char: string = 'b') =>
+    (turnPart: fp.Option<string>): Result<PlayerIndex, FenError> =>
+      fp.pipe(
+        turnPart,
+        O.flatMap((turnPart: string) =>
+          turnPart.toLowerCase() === p1Char.toLowerCase()
+            ? 'p1'
+            : turnPart.toLowerCase() === p2Char.toLowerCase()
+              ? 'p2'
+              : undefined,
+        ),
+        O.toResult(fenErr(InvalidFen.Turn)),
+      );
+
+const fullMoves = (part: fp.Option<string>): Result<number, FenError> =>
+  fp.pipe(
+    part,
+    O.flatMap(parseSmallUint),
+    O.map(fullmoves => Math.max(1, fullmoves)),
+    O.toResult(fenErr(InvalidFen.Fullmoves)),
+  );
+
+const parseFenUint =
+  (err: () => Error) =>
+    (part: fp.Option<string>): Result<number, FenError> =>
+      fp.pipe(part, O.flatMap(parseSmallUint), O.toResult(err));
+
+const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
+const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
+
+const ignored = (_: fp.Option<string>): Result<undefined, FenError> => Result.ok(undefined);
+
+//------------------------------------------------------------------------------
+// Mancala FEN parsing
+const parseMancalaScore = parseFenUint(fenErr(InvalidFen.MancalaScore));
+const mancalaPlayerTurn = parsePlayerTurn('s', 'n');
+
+const parseMancalaFen =
+  (rules: Rules) =>
+    (fen: string): Result<Setup, FenError> => {
+      const [boardPart, ...parts] = fen.split(' ').filter(f => !f.includes('½'));
+
+      return fp
+        .resultZip([
+          parseBoardFen(rules)(boardPart),
+          parseMancalaScore(parts[0]),
+          parseMancalaScore(parts[1]),
+          mancalaPlayerTurn(parts[2]),
+          fullMoves(parts[3]),
+        ])
+        .map(([board, southScore, northScore, turn, fullmoves]) => ({
+          ...defaultSetup(),
+          board,
+          turn,
+          fullmoves,
+          southScore,
+          northScore,
+        }));
+    };
+
+//------------------------------------------------------------------------------
+// Go FEN parsing
+const parseGoFen =
+  (rules: Rules) =>
+    (fen: string): Result<Setup, FenError> => {
+      const [boardAndPockets, ...parts] = fen.split(' ').filter(f => !f.includes('½'));
+
+      return fp
+        .resultZip([
+          parseBoardAndPockets(rules)(boardAndPockets),
+          parsePlayerTurn()(parts[0]),
+          ignored(parts[1]), // TODO: this is wrong
+          parseScore(parts[2]),
+          parseScore(parts[3]),
+          parseCaptures(parts[4]),
+          parseCaptures(parts[5]),
+          parseScore(parts[6]),
+          fullMoves(parts[7]),
+        ])
+        .map(([{ board, pockets }, turn, _, p1Score, p2Score, p1Captures, p2Captures, komi, fullmoves]) => ({
+          ...defaultSetup(),
+          board,
+          pockets,
+          turn,
+          p1Score,
+          p2Score,
+          p1Captures,
+          p2Captures,
+          komi,
+          fullmoves,
+        }));
+    };
+
+export const makeGoFen =
+  (rules: Rules) =>
+    (setup: Setup, opts?: FenOpts): string => {
+      return [
+        makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
+        playerTurn(setup),
+        '-', // TODO: get this right.
+        int(setup.p1Score),
+        int(setup.p2Score),
+        int(setup.p1Captures),
+        int(setup.p2Captures),
+        int(setup.komi),
+        int(setup.fullmoves),
+      ].join(' ');
+    };
+
+//------------------------------------------------------------------------------
+// Regular fen parsing
 export const parseFen =
   (rules: Rules) =>
-  (fen: string): Result<Setup, FenError> => {
-    const originalParts = fen.split(' ');
-    const lastMoveParts = originalParts.filter(f => f.includes('½'));
-    const parts = originalParts.filter(f => !f.includes('½'));
-    const boardPart = parts.shift()!;
-
-    // Board and pockets
-    let board,
-      pockets = Result.ok<Material | undefined, FenError>(undefined);
-    const { ranks } = dimensionsForRules(rules);
-    if (boardPart.endsWith(']')) {
-      const pocketStart = boardPart.indexOf('[');
-      if (pocketStart === -1) return Result.err(new FenError(InvalidFen.Fen));
-      board = parseBoardFen(rules)(boardPart.substr(0, pocketStart));
-      pockets = parsePockets(rules)(boardPart.substr(pocketStart + 1, boardPart.length - 1 - pocketStart - 1));
-    } else {
-      const pocketStart = nthIndexOf(boardPart, '/', ranks - 1);
-      if (pocketStart === -1) board = parseBoardFen(rules)(boardPart);
-      else {
-        board = parseBoardFen(rules)(boardPart.substr(0, pocketStart));
-        pockets = parsePockets(rules)(boardPart.substr(pocketStart + 1));
+    (fen: string): Result<Setup, FenError> => {
+      const originalParts = fen.split(' ');
+      const lastMoveParts = originalParts.filter(f => f.includes('½'));
+      const parts = originalParts.filter(f => !f.includes('½'));
+      const boardPart = parts.shift()!;
+      if (rules === 'oware' || rules === 'togyzkumalak') {
+        return parseMancalaFen(rules)(fen);
       }
-    }
-
-    let northScore: number | undefined;
-    let southScore: number | undefined;
-    // Oware scores?
-    if (rules === 'oware' || rules === 'togyzkumalak') {
-      const southScoreText = parts.shift();
-      const northScoreText = parts.shift();
-      if (!northScoreText || !southScoreText) return Result.err(new FenError(InvalidFen.MancalaScore));
-      southScore = parseSmallUint(southScoreText);
-      northScore = parseSmallUint(northScoreText);
-    }
-
-    // Backgammon dice
-    let unusedDice: string | undefined;
-    let usedDice: string | undefined;
-    if (rules === 'backgammon' || rules === 'nackgammon') {
-      unusedDice = parts.shift();
-      usedDice = parts.shift();
-    }
-
-    // Turn
-    let turn: PlayerIndex;
-    const turnPart = parts.shift();
-    if (!defined(turnPart) || turnPart === 'w' || turnPart.toLowerCase() === 's') turn = 'p1';
-    else if (turnPart === 'b' || turnPart.toLowerCase() === 'n') turn = 'p2';
-    else return Result.err(new FenError(InvalidFen.Turn));
-
-    // Backgammon score
-    let backgammonP1Score: number | undefined;
-    let backgammonP2Score: number | undefined;
-    if (rules === 'backgammon' || rules === 'nackgammon') {
-      const p1ScoreText = parts.shift();
-      const p2ScoreText = parts.shift();
-      if (!p1ScoreText || !p2ScoreText) return Result.err(new FenError(InvalidFen.BackgammonScore));
-      backgammonP1Score = parseSmallUint(p1ScoreText);
-      backgammonP2Score = parseSmallUint(p2ScoreText);
-    }
-
-    return board.chain(board => {
-      let commaFenFullMoves: number | undefined;
-      if (COMMA_FEN_RULES.includes(rules)) {
-        const commaFenFullMovesPart = parts.shift();
-        commaFenFullMoves = defined(commaFenFullMovesPart) ? parseSmallUint(commaFenFullMovesPart) : 1;
+      if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
+        return parseGoFen(rules)(fen);
       }
 
-      // Castling
-      const castlingPart = parts.shift();
-      const unmovedRooks = defined(castlingPart) ? parseCastlingFen(board, castlingPart) : Result.ok(SquareSet.empty());
+      // Board and pockets
+      return boardAndPocketStrings(rules)(boardPart)
+        .chain(parseBoardAndOptPockets(rules))
+        .chain(({ board, pockets }) => {
+          // Backgammon dice
+          let unusedDice: string | undefined;
+          let usedDice: string | undefined;
+          if (rules === 'backgammon' || rules === 'nackgammon') {
+            unusedDice = parts.shift();
+            usedDice = parts.shift();
+          }
 
-      // En passant square
-      let epSquare: Square | undefined;
-      const epPart = parts.shift();
-      if (defined(epPart) && epPart !== '-') {
-        epSquare = parseSquare(rules)(epPart);
-        if (!defined(epSquare)) return Result.err(new FenError(InvalidFen.EpSquare));
-      }
+          // Turn
+          let turn: PlayerIndex;
+          const turnPart = parts.shift();
+          if (!defined(turnPart) || turnPart === 'w' || turnPart.toLowerCase() === 's') turn = 'p1';
+          else if (turnPart === 'b' || turnPart.toLowerCase() === 'n') turn = 'p2';
+          else return Result.err(new FenError(InvalidFen.Turn));
 
-      // Halfmoves or remaining checks
-      let halfmovePart = parts.shift();
-      let earlyRemainingChecks: Result<RemainingChecks, FenError> | undefined;
-      if (defined(halfmovePart) && halfmovePart.includes('+')) {
-        earlyRemainingChecks = parseRemainingChecks(halfmovePart);
-        halfmovePart = parts.shift();
-      }
-      const halfmoves = defined(halfmovePart) ? parseSmallUint(halfmovePart) : 0;
-      if (!defined(halfmoves)) return Result.err(new FenError(InvalidFen.Halfmoves));
+          // Backgammon score
+          let p1Score: fp.Option<number>;
+          let p2Score: fp.Option<number>;
+          if (rules === 'backgammon' || rules === 'nackgammon') {
+            const p1ScoreText = parts.shift();
+            const p2ScoreText = parts.shift();
+            if (!p1ScoreText || !p2ScoreText) return Result.err(new FenError(InvalidFen.BackgammonScore));
+            p1Score = parseSmallUint(p1ScoreText);
+            p2Score = parseSmallUint(p2ScoreText);
+          }
 
-      const fullmovesPart = parts.shift();
-      const fullmoves = COMMA_FEN_RULES.includes(rules)
-        ? commaFenFullMoves
-        : defined(fullmovesPart)
-        ? parseSmallUint(fullmovesPart)
-        : 1;
-      if (!defined(fullmoves)) return Result.err(new FenError(InvalidFen.Fullmoves));
+          let commaFenFullMoves: fp.Option<number>;
+          if (COMMA_FEN_RULES.includes(rules)) {
+            const commaFenFullMovesPart = parts.shift();
+            commaFenFullMoves = defined(commaFenFullMovesPart) ? parseSmallUint(commaFenFullMovesPart) : 1;
+          }
 
-      const remainingChecksPart = parts.shift();
-      let remainingChecks: Result<RemainingChecks | undefined, FenError> = Result.ok(undefined);
-      if (defined(remainingChecksPart)) {
-        if (defined(earlyRemainingChecks)) return Result.err(new FenError(InvalidFen.RemainingChecks));
-        remainingChecks = parseRemainingChecks(remainingChecksPart);
-      } else if (defined(earlyRemainingChecks)) {
-        remainingChecks = earlyRemainingChecks;
-      }
+          // Castling
+          const castlingPart = parts.shift();
+          const unmovedRooks = defined(castlingPart)
+            ? parseCastlingFen(board, castlingPart)
+            : Result.ok(SquareSet.empty());
 
-      let lastMove: Move | undefined = undefined;
-      const lastMovePart = lastMoveParts.shift();
-      if (defined(lastMovePart) && lastMovePart.includes('½')) {
-        lastMove = parseUci(rules)(lastMovePart.substr(1));
-      }
+          // En passant square
+          let epSquare: Square | undefined;
+          const epPart = parts.shift();
+          if (defined(epPart) && epPart !== '-') {
+            epSquare = parseSquare(rules)(epPart);
+            if (!defined(epSquare)) return Result.err(new FenError(InvalidFen.EpSquare));
+          }
 
-      if (parts.length > 0) return Result.err(new FenError(InvalidFen.Fen));
+          // Halfmoves or remaining checks
+          let halfmovePart = parts.shift();
+          let earlyRemainingChecks: Result<RemainingChecks, FenError> | undefined;
+          if (defined(halfmovePart) && halfmovePart.includes('+')) {
+            earlyRemainingChecks = parseRemainingChecks(halfmovePart);
+            halfmovePart = parts.shift();
+          }
+          const halfmoves = defined(halfmovePart) ? parseSmallUint(halfmovePart) : 0;
+          if (!defined(halfmoves)) return Result.err(new FenError(InvalidFen.Halfmoves));
 
-      return pockets.chain(pockets =>
-        unmovedRooks.chain(unmovedRooks =>
-          remainingChecks.map(remainingChecks => {
-            return {
-              board,
-              pockets,
-              turn,
-              unmovedRooks,
-              remainingChecks,
-              epSquare,
-              halfmoves,
-              fullmoves: Math.max(1, fullmoves),
-              southScore,
-              northScore,
-              backgammonP1Score,
-              backgammonP2Score,
-              unusedDice,
-              usedDice,
-              lastMove,
-            };
-          })
-        )
-      );
-    });
-  };
+          const fullmovesPart = parts.shift();
+          const fullmoves = COMMA_FEN_RULES.includes(rules)
+            ? commaFenFullMoves
+            : defined(fullmovesPart)
+              ? parseSmallUint(fullmovesPart)
+              : 1;
+          if (!defined(fullmoves)) return Result.err(new FenError(InvalidFen.Fullmoves));
+
+          const remainingChecksPart = parts.shift();
+          let remainingChecks: Result<RemainingChecks | undefined, FenError> = Result.ok(undefined);
+          if (defined(remainingChecksPart)) {
+            if (defined(earlyRemainingChecks)) return Result.err(new FenError(InvalidFen.RemainingChecks));
+            remainingChecks = parseRemainingChecks(remainingChecksPart);
+          } else if (defined(earlyRemainingChecks)) {
+            remainingChecks = earlyRemainingChecks;
+          }
+
+          let lastMove: Move | undefined = undefined;
+          const lastMovePart = lastMoveParts.shift();
+          if (defined(lastMovePart) && lastMovePart.includes('½')) {
+            lastMove = parseUci(rules)(lastMovePart.substr(1));
+          }
+
+          if (parts.length > 0) return Result.err(new FenError(InvalidFen.Fen));
+
+          return unmovedRooks.chain(unmovedRooks =>
+            remainingChecks.map(remainingChecks => {
+              return {
+                board,
+                pockets,
+                turn,
+                unmovedRooks,
+                remainingChecks,
+                epSquare,
+                halfmoves,
+                fullmoves: Math.max(1, fullmoves),
+                p1Score,
+                p2Score,
+                unusedDice,
+                usedDice,
+                lastMove,
+              };
+            }),
+          );
+        });
+    };
 
 interface FenOpts {
   promoted?: boolean;
@@ -381,50 +540,50 @@ export function makePiece(piece: Piece, opts?: FenOpts): string {
 
 export const makeCFPiece =
   (rules: Rules) =>
-  (piece: Piece, endOfRank: boolean): string => {
-    const letter = piece.role.charAt(0);
-    const roleLetter = MANCALA_FEN_VARIANT.includes(rules)
-      ? letter.toUpperCase()
-      : piece.playerIndex === 'p1'
-      ? letter.toUpperCase()
-      : letter;
-    const count = piece.role.split('-')[0].substring(1);
-    return count + roleLetter + (endOfRank ? '' : ',');
-  };
+    (piece: Piece, endOfRank: boolean): string => {
+      const letter = piece.role.charAt(0);
+      const roleLetter = MANCALA_FEN_VARIANT.includes(rules)
+        ? letter.toUpperCase()
+        : piece.playerIndex === 'p1'
+          ? letter.toUpperCase()
+          : letter;
+      const count = piece.role.split('-')[0].substring(1);
+      return count + roleLetter + (endOfRank ? '' : ',');
+    };
 
 export const makeBoardFen =
   (rules: Rules) =>
-  (board: Board, opts?: FenOpts): string => {
-    const { ranks, files } = dimensionsForRules(rules);
-    let fen = '';
-    let empty = 0;
-    for (let rank: number = ranks - 1; rank >= 0; rank--) {
-      for (let file = 0; file < files; file++) {
-        const square = file + rank * files;
-        const piece = board.get(square);
-        if (!piece) empty++;
-        else {
-          if (empty > 0) {
-            fen += empty;
-            fen += COMMA_FEN_RULES.includes(rules) ? ',' : '';
-            empty = 0;
+    (board: Board, opts?: FenOpts): string => {
+      const { ranks, files } = dimensionsForRules(rules);
+      let fen = '';
+      let empty = 0;
+      for (let rank: number = ranks - 1; rank >= 0; rank--) {
+        for (let file = 0; file < files; file++) {
+          const square = file + rank * files;
+          const piece = board.get(square);
+          if (!piece) empty++;
+          else {
+            if (empty > 0) {
+              fen += empty;
+              fen += COMMA_FEN_RULES.includes(rules) ? ',' : '';
+              empty = 0;
+            }
+            fen += COMMA_FEN_RULES.includes(rules)
+              ? makeCFPiece(rules)(piece, file === files - 1)
+              : makePiece(piece, opts);
           }
-          fen += COMMA_FEN_RULES.includes(rules)
-            ? makeCFPiece(rules)(piece, file === files - 1)
-            : makePiece(piece, opts);
-        }
 
-        if (file === files - 1) {
-          if (empty > 0) {
-            fen += empty;
-            empty = 0;
+          if (file === files - 1) {
+            if (empty > 0) {
+              fen += empty;
+              empty = 0;
+            }
+            if (rank !== 0) fen += '/';
           }
-          if (rank !== 0) fen += '/';
         }
       }
-    }
-    return fen;
-  };
+      return fen;
+    };
 
 export function makePocket(material: MaterialSide): string {
   return ROLES.map(role => roleToChar(role).repeat(material[role])).join('');
@@ -441,40 +600,39 @@ export function makeCommaFenPocket(material: MaterialSide, playerIndex: PlayerIn
 
 export const makePockets =
   (rules: Rules) =>
-  (pocket: Material): string => {
-    if (COMMA_FEN_RULES.includes(rules)) {
-      console.log(pocket);
-      if (makeCommaFenPocket(pocket.p1, 'p1') !== '' && makeCommaFenPocket(pocket.p2, 'p2') !== '') {
-        return [makeCommaFenPocket(pocket.p1, 'p1'), makeCommaFenPocket(pocket.p2, 'p2')].join(',');
-      } else {
-        return makeCommaFenPocket(pocket.p1, 'p1') + makeCommaFenPocket(pocket.p2, 'p2');
-      }
-    } else return makePocket(pocket.p1).toUpperCase() + makePocket(pocket.p2);
-  };
+    (pocket: Material): string => {
+      if (COMMA_FEN_RULES.includes(rules)) {
+        if (makeCommaFenPocket(pocket.p1, 'p1') !== '' && makeCommaFenPocket(pocket.p2, 'p2') !== '') {
+          return [makeCommaFenPocket(pocket.p1, 'p1'), makeCommaFenPocket(pocket.p2, 'p2')].join(',');
+        } else {
+          return makeCommaFenPocket(pocket.p1, 'p1') + makeCommaFenPocket(pocket.p2, 'p2');
+        }
+      } else return makePocket(pocket.p1).toUpperCase() + makePocket(pocket.p2);
+    };
 
 export const makeCastlingFen =
   (rules: Rules) =>
-  (board: Board, unmovedRooks: SquareSet, opts?: FenOpts): string => {
-    const shredder = opts?.shredder;
-    let fen = '';
-    for (const playerIndex of PLAYERINDEXES) {
-      const backrank = SquareSet.backrank64(playerIndex);
-      const king = board.kingOf(playerIndex);
-      if (!defined(king) || !backrank.has(king)) continue;
-      const candidates = board.pieces(playerIndex, 'r-piece').intersect(backrank);
-      for (const rook of unmovedRooks.intersect(candidates).reversed()) {
-        if (!shredder && rook === candidates.first() && rook < king) {
-          fen += playerIndex === 'p1' ? 'Q' : 'q';
-        } else if (!shredder && rook === candidates.last() && king < rook) {
-          fen += playerIndex === 'p1' ? 'K' : 'k';
-        } else {
-          const file = FILE_NAMES[squareFile(rules)(rook)];
-          fen += playerIndex === 'p1' ? file.toUpperCase() : file;
+    (board: Board, unmovedRooks: SquareSet, opts?: FenOpts): string => {
+      const shredder = opts?.shredder;
+      let fen = '';
+      for (const playerIndex of PLAYERINDEXES) {
+        const backrank = SquareSet.backrank64(playerIndex);
+        const king = board.kingOf(playerIndex);
+        if (!defined(king) || !backrank.has(king)) continue;
+        const candidates = board.pieces(playerIndex, 'r-piece').intersect(backrank);
+        for (const rook of unmovedRooks.intersect(candidates).reversed()) {
+          if (!shredder && rook === candidates.first() && rook < king) {
+            fen += playerIndex === 'p1' ? 'Q' : 'q';
+          } else if (!shredder && rook === candidates.last() && king < rook) {
+            fen += playerIndex === 'p1' ? 'K' : 'k';
+          } else {
+            const file = FILE_NAMES[squareFile(rules)(rook)];
+            fen += playerIndex === 'p1' ? file.toUpperCase() : file;
+          }
         }
       }
-    }
-    return fen || '-';
-  };
+      return fen || '-';
+    };
 
 export function makeRemainingChecks(checks: RemainingChecks): string {
   return `${checks.p1}+${checks.p2}`;
@@ -484,15 +642,16 @@ export function mancalaScore(northScore: number | undefined, southScore: number 
   if (!southScore) southScore = 0;
   return `${southScore} ${northScore}`;
 }
-export function backgammonScore(p1Score: number | undefined, p2Score: number | undefined): string {
-  if (!p2Score) p2Score = 0;
-  if (!p1Score) p1Score = 0;
-  return `${p1Score} ${p2Score}`;
+
+const int = (i: fp.Option<number>): string => `${fp.Option.unwrapOr(0)(i)}`;
+
+export function playerScores(p1Score: fp.Option<number>, p2Score: fp.Option<number>): string {
+  const withDefault = fp.Option.unwrapOr(0);
+  return `${withDefault(p1Score)} ${withDefault(p2Score)}`;
 }
-export function backgammonDice(unusedDice: string | undefined, usedDice: string | undefined): string {
-  if (!unusedDice) unusedDice = '-';
-  if (!usedDice) usedDice = '-';
-  return `${unusedDice} ${usedDice}`;
+export function backgammonDice(unusedDice: fp.Option<string>, usedDice: fp.Option<string>): string {
+  const withDefault = fp.Option.unwrapOr('-');
+  return `${withDefault(unusedDice)} ${withDefault(usedDice)}`;
 }
 
 const owareMancalaFenParts = (setup: Setup): string[] => [
@@ -504,20 +663,21 @@ const owareMancalaFenParts = (setup: Setup): string[] => [
 const backgammonFenParts = (setup: Setup): string[] => [
   backgammonDice(setup.unusedDice, setup.usedDice),
   setup.turn === 'p1' ? 'w' : 'b',
-  backgammonScore(setup.backgammonP1Score, setup.backgammonP2Score),
+  playerScores(setup.p1Score, setup.p2Score),
   `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
 ];
 
+const playerTurn = (setup: Setup): string => (setup.turn === 'p1' ? 'w' : 'b');
+
 export const makeLastMove =
   (rules: Rules) =>
-  (move: Move): string =>
-    `½${makeUci(rules)(move)}`;
+    (move: Move): string =>
+      `½${makeUci(rules)(move)}`;
 
 const chessVariantFenParts =
   (rules: Rules) =>
-  (setup: Setup, opts?: FenOpts): string[] =>
-    [
-      setup.turn === 'p1' ? 'w' : 'b',
+    (setup: Setup, opts?: FenOpts): string[] => [
+      playerTurn(setup),
       makeCastlingFen(rules)(setup.board, setup.unmovedRooks, opts),
       defined(setup.epSquare) ? makeSquare(rules)(setup.epSquare) : '-',
       ...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks)] : []),
@@ -528,14 +688,17 @@ const chessVariantFenParts =
 
 export const makeFen =
   (rules: Rules) =>
-  (setup: Setup, opts?: FenOpts): string => {
-    return [
-      makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
-      ...(MANCALA_FEN_VARIANT.includes(rules)
-        ? owareMancalaFenParts(setup)
-        : rules === 'backgammon' || rules === 'nackgammon'
-        ? backgammonFenParts(setup)
-        : chessVariantFenParts(rules)(setup, opts)),
-      ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
-    ].join(' ');
-  };
+    (setup: Setup, opts?: FenOpts): string => {
+      if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
+        return makeGoFen(rules)(setup, opts);
+      }
+      return [
+        makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
+        ...(MANCALA_FEN_VARIANT.includes(rules)
+          ? owareMancalaFenParts(setup)
+          : rules === 'backgammon' || rules === 'nackgammon'
+            ? backgammonFenParts(setup)
+            : chessVariantFenParts(rules)(setup, opts)),
+        ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
+      ].join(' ');
+    };

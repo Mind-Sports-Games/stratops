@@ -11,9 +11,10 @@ import {
   Rules,
   BoardDimensions,
 } from './types';
+import * as fp from './fp';
 
-export function defined<A>(v: A | undefined): v is A {
-  return v !== undefined;
+export function defined<A>(v: fp.Option<A>): v is A {
+  return v !== undefined && v !== null;
 }
 
 export function opposite(playerIndex: PlayerIndex): PlayerIndex {
@@ -242,11 +243,6 @@ export const makeUci =
 export function kingCastlesTo(playerIndex: PlayerIndex, side: CastlingSide): Square {
   return playerIndex === 'p1' ? (side === 'a' ? 2 : 6) : side === 'a' ? 58 : 62;
 }
-
-export function zip<T>(a: T[], b: T[]): Array<[T, T]> {
-  return a.map((k, i) => [k, b[i]]);
-}
-
 export const dimensionsForRules = (rules: Rules): BoardDimensions => {
   switch (rules) {
     case 'chess':

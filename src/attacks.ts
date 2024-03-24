@@ -12,7 +12,8 @@
  * @packageDocumentation
  */
 
-import { squareFile, squareRank, zip } from './util';
+import { squareFile, squareRank } from './util';
+import { zip } from './fp';
 import { Square, Piece, PlayerIndex, BySquare } from './types';
 import { SquareSet } from './squareSet';
 
@@ -136,7 +137,7 @@ export function linesOfActionAttacks(
   square: Square,
   occupied: SquareSet,
   p1: SquareSet,
-  p2: SquareSet
+  p2: SquareSet,
 ): SquareSet {
   // TODO: write some tests.
   const ours = playerIndex === 'p1' ? p1 : p2;
