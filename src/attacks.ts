@@ -137,7 +137,7 @@ export function linesOfActionAttacks(
   square: Square,
   occupied: SquareSet,
   p1: SquareSet,
-  p2: SquareSet,
+  p2: SquareSet
 ): SquareSet {
   // TODO: write some tests.
   const ours = playerIndex === 'p1' ? p1 : p2;
