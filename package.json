@@ -49,6 +49,7 @@
     "squareSet.js",
     "types.js",
     "util.js",
+    "fp.js",
     "debug.js",
     "fen.js",
     "san.js",
