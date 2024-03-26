@@ -12,7 +12,8 @@
  * @packageDocumentation
  */
 
-import { squareFile, squareRank, zip } from './util';
+import { squareFile, squareRank } from './util';
+import { zip } from './fp';
 import { Square, Piece, PlayerIndex, BySquare } from './types';
 import { SquareSet } from './squareSet';
 
