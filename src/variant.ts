@@ -68,8 +68,8 @@ export class Crazyhouse extends Chess {
         this.pockets?.[this.turn].hasNonPawns()
           ? SquareSet.full64()
           : this.pockets?.[this.turn].hasPawns()
-          ? SquareSet.backranks64().complement()
-          : SquareSet.empty()
+            ? SquareSet.backranks64().complement()
+            : SquareSet.empty(),
       );
 
     ctx = ctx || this.ctx();
@@ -869,7 +869,7 @@ export class Amazons extends Chess {
 
   static fromSetup(setup: Setup): Result<Amazons, PositionError> {
     return super.fromSetup(setup).map(v => {
-      if (setup.lastMove !== undefined) v.play(setup.lastMove);
+      if (defined(setup.lastMove)) v.play(setup.lastMove);
       return v as Amazons;
     });
   }

@@ -29,6 +29,7 @@ import {
   ray,
 } from './attacks';
 import { kingCastlesTo, opposite, defined, squareRank } from './util';
+import * as fp from './fp';
 
 export enum IllegalSetup {
   Empty = 'ERR_EMPTY',
@@ -48,7 +49,7 @@ function attacksTo(square: Square, attacker: PlayerIndex, board: Board, occupied
       .union(bishopAttacks(square, occupied).intersect(board.bishopsAndQueens()))
       .union(knightAttacks(square).intersect(board['n-piece']))
       .union(kingAttacks(square).intersect(board['k-piece']))
-      .union(pawnAttacks(opposite(attacker), square).intersect(board['p-piece']))
+      .union(pawnAttacks(opposite(attacker), square).intersect(board['p-piece'])),
   );
 }
 
@@ -479,7 +480,7 @@ export class Chess extends Position {
     return Result.ok(undefined);
   }
 
-  private validEpSquare(square: Square | undefined): Square | undefined {
+  private validEpSquare(square: fp.Option<Square>): Square | undefined {
     if (!defined(square)) return;
     const epRank = this.turn === 'p1' ? 5 : 2;
     const forward = this.turn === 'p1' ? 8 : -8;

@@ -173,7 +173,10 @@ export class MaterialSide {
 }
 
 export class Material {
-  constructor(public p1: MaterialSide, public p2: MaterialSide) {}
+  constructor(
+    public p1: MaterialSide,
+    public p2: MaterialSide,
+  ) {}
 
   static empty(): Material {
     return new Material(MaterialSide.empty(), MaterialSide.empty());
@@ -217,7 +220,10 @@ export class Material {
 }
 
 export class RemainingChecks {
-  constructor(public p1: number, public p2: number) {}
+  constructor(
+    public p1: number,
+    public p2: number,
+  ) {}
 
   static default(): RemainingChecks {
     return new RemainingChecks(3, 3);
@@ -241,8 +247,8 @@ export interface Setup {
   pockets: Material | undefined;
   turn: PlayerIndex;
   unmovedRooks: SquareSet;
-  epSquare: Square | undefined;
-  remainingChecks: RemainingChecks | undefined;
+  epSquare: fp.Option<Square>;
+  remainingChecks: fp.Option<RemainingChecks>;
   halfmoves: number;
   fullmoves: number;
   northScore?: number;
@@ -251,10 +257,11 @@ export interface Setup {
   p2Score?: fp.Option<number>;
   p1Captures?: fp.Option<number>;
   p2Captures?: fp.Option<number>;
+  ko?: fp.Option<number>;
   komi?: fp.Option<number>;
-  unusedDice?: string | undefined;
-  usedDice?: string | undefined;
-  lastMove?: Move;
+  unusedDice?: fp.Option<string>;
+  usedDice?: fp.Option<string>;
+  lastMove?: fp.Option<Move>;
 }
 
 export function defaultSetup(): Setup {
