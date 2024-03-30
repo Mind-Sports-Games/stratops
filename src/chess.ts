@@ -49,7 +49,7 @@ function attacksTo(square: Square, attacker: PlayerIndex, board: Board, occupied
       .union(bishopAttacks(square, occupied).intersect(board.bishopsAndQueens()))
       .union(knightAttacks(square).intersect(board['n-piece']))
       .union(kingAttacks(square).intersect(board['k-piece']))
-      .union(pawnAttacks(opposite(attacker), square).intersect(board['p-piece'])),
+      .union(pawnAttacks(opposite(attacker), square).intersect(board['p-piece']))
   );
 }
 

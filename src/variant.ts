@@ -68,8 +68,8 @@ export class Crazyhouse extends Chess {
         this.pockets?.[this.turn].hasNonPawns()
           ? SquareSet.full64()
           : this.pockets?.[this.turn].hasPawns()
-            ? SquareSet.backranks64().complement()
-            : SquareSet.empty(),
+          ? SquareSet.backranks64().complement()
+          : SquareSet.empty()
       );
 
     ctx = ctx || this.ctx();
