@@ -301,7 +301,7 @@ const parseBoardAndPockets =
     );
 
 const parsePlayerTurn =
-  (p1Char: string = 'w', p2Char: string = 'b') =>
+  (p1Char = 'w', p2Char = 'b') =>
   (turnPart: fp.Option<string>): Result<PlayerIndex, FenError> =>
     fp.pipe(
       turnPart,
@@ -382,7 +382,7 @@ const parseMancalaFen =
   (fen: string): Result<Setup, FenError> => {
     const [boardPart, ...parts] = fen.split(' ');
 
-    if (parts.length != 4) {
+    if (parts.length !== 4) {
       return Result.err(new FenError(InvalidFen.Fen));
     }
 
@@ -422,7 +422,7 @@ const parseGoFen =
   (fen: string): Result<Setup, FenError> => {
     const [boardAndPockets, ...parts] = fen.split(' ');
 
-    if (parts.length != 8) {
+    if (parts.length !== 8) {
       return Result.err(new FenError(InvalidFen.Fen));
     }
 
@@ -480,7 +480,7 @@ export const parseBackgammonFen =
   (fen: string): Result<Setup, FenError> => {
     const [boardAndPockets, ...parts] = fen.split(' ');
 
-    if (parts.length != 6) {
+    if (parts.length !== 6) {
       return Result.err(new FenError(InvalidFen.Fen));
     }
 
@@ -508,23 +508,13 @@ export const parseBackgammonFen =
   };
 
 //------------------------------------------------------------------------------
-// Regular fen parsing
-export const parseFen =
+// Default fens
+export const parseDefaultFen =
   (rules: Rules) =>
   (fen: string): Result<Setup, FenError> => {
     const [boardPart, ...originalParts] = fen.split(' ');
     const lastMoveParts = originalParts.filter(f => f.includes('½'));
     const parts = originalParts.filter(f => !f.includes('½'));
-
-    if (rules === 'oware' || rules === 'togyzkumalak') {
-      return parseMancalaFen(rules)(fen);
-    }
-    if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
-      return parseGoFen(rules)(fen);
-    }
-    if (rules === 'backgammon' || rules === 'nackgammon') {
-      return parseBackgammonFen(rules)(fen);
-    }
 
     if (parts.length > 6) {
       return Result.err(new FenError(InvalidFen.Fen));
@@ -558,6 +548,24 @@ export const parseFen =
             lastMove,
           }));
       });
+  };
+
+//------------------------------------------------------------------------------
+// Regular fen parsing
+export const parseFen =
+  (rules: Rules) =>
+  (fen: string): Result<Setup, FenError> => {
+    if (rules === 'oware' || rules === 'togyzkumalak') {
+      return parseMancalaFen(rules)(fen);
+    }
+    if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
+      return parseGoFen(rules)(fen);
+    }
+    if (rules === 'backgammon' || rules === 'nackgammon') {
+      return parseBackgammonFen(rules)(fen);
+    }
+
+    return parseDefaultFen(rules)(fen);
   };
 
 interface FenOpts {

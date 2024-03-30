@@ -6,7 +6,7 @@ export type Option<A> = A | undefined | null;
 export const Option = {
   isSome: <A>(a: Option<A>): a is A => a !== undefined && a !== null,
   isNone: <A>(a: Option<A>): a is undefined | null => a === undefined || a === null,
-  map: <A, B>(f: (a: A) => B) => Option.flatMap<A, B>(a => f(a)),
+  map: <A, B>(f: (a: A) => B) => Option.flatMap<A, B>(a => f(a)), // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
   unwrap: <A>(a: Option<A>): A => {
     if (Option.isNone(a)) {
       throw new Error('panic!');
@@ -48,7 +48,7 @@ export const Option = {
       Option.isSome(a) ? br.Result.ok(a) : br.Result.err(err()),
   filter:
     <A>(f: (a: A) => boolean) =>
-    (a: Option<A>) =>
+    (a: Option<A>): Option<A> =>
       Option.isSome(a) && f(a) ? a : undefined,
 };
 
@@ -467,14 +467,14 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>
 ): T;
 export function pipe(
   a: unknown,
-  ab?: Function,
-  bc?: Function,
-  cd?: Function,
-  de?: Function,
-  ef?: Function,
-  fg?: Function,
-  gh?: Function,
-  hi?: Function
+  ab?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  bc?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  cd?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  de?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  ef?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  fg?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  gh?: Function, // eslint-disable-line @typescript-eslint/ban-types
+  hi?: Function // eslint-disable-line @typescript-eslint/ban-types
 ): unknown {
   switch (arguments.length) {
     case 1:
@@ -496,9 +496,10 @@ export function pipe(
     case 9:
       return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))));
     default: {
-      let ret = arguments[0];
+      let ret = arguments[0]; // eslint-disable-line prefer-rest-params
       for (let i = 1; i < arguments.length; i++) {
-        ret = arguments[i](ret);
+        // eslint-disable-line prefer-rest-params
+        ret = arguments[i](ret); // eslint-disable-line prefer-rest-params
       }
       return ret;
     }
