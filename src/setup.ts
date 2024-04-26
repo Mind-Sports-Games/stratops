@@ -1,6 +1,7 @@
 import { PlayerIndex, ROLES, Square, Move } from './types';
 import { SquareSet } from './squareSet';
 import { Board } from './board';
+import * as fp from './fp';
 
 export class MaterialSide {
   'a-piece': number;
@@ -240,17 +241,21 @@ export interface Setup {
   pockets: Material | undefined;
   turn: PlayerIndex;
   unmovedRooks: SquareSet;
-  epSquare: Square | undefined;
-  remainingChecks: RemainingChecks | undefined;
+  epSquare: fp.Option<Square>;
+  remainingChecks: fp.Option<RemainingChecks>;
   halfmoves: number;
   fullmoves: number;
   northScore?: number;
   southScore?: number;
-  backgammonP1Score?: number;
-  backgammonP2Score?: number;
-  unusedDice?: string | undefined;
-  usedDice?: string | undefined;
-  lastMove?: Move;
+  p1Score?: fp.Option<number>;
+  p2Score?: fp.Option<number>;
+  p1Captures?: fp.Option<number>;
+  p2Captures?: fp.Option<number>;
+  ko?: fp.Option<number>;
+  komi?: fp.Option<number>;
+  unusedDice?: fp.Option<string>;
+  usedDice?: fp.Option<string>;
+  lastMove?: fp.Option<Move>;
 }
 
 export function defaultSetup(): Setup {
