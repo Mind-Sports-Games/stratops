@@ -169,10 +169,24 @@ test('breakthrough wins', () => {
   expect(pos.isVariantEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
-  // pos = setupPosition(
-  //   'breakthrough',
-  //   parseFen('breakthrough')('ppppppp1/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPp w - - 0 1').unwrap()
-  // ).unwrap();
-  // expect(pos.isEnd()).toBe(true);
-  // expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+  pos = setupPosition(
+    'breakthrough',
+    parseFen('breakthrough')('ppppppp1/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPp w - - 0 1').unwrap()
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+
+  pos = setupPosition(
+    'breakthrough',
+    parseFen('breakthrough')('ppppPppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPP1 w - - 0 1').unwrap()
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+
+  pos = setupPosition(
+    'breakthrough',
+    parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/8/8 w - - 0 1').unwrap()
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });
