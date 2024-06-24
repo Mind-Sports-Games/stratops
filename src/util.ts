@@ -258,10 +258,12 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'monster':
     case 'linesofaction':
     case 'scrambledeggs':
+    case 'breakthrough':
       return { ranks: 8, files: 8 };
     case 'shogi':
       return { ranks: 9, files: 9 };
     case 'minishogi':
+    case 'minibreakthrough':
       return { ranks: 5, files: 5 };
     case 'xiangqi':
       return { ranks: 10, files: 9 };

@@ -1,4 +1,5 @@
 import { Result } from '@badrap/result';
+
 import { Square, Outcome, PlayerIndex, PLAYERINDEXES, Piece, Rules } from './types';
 import { defined, opposite } from './util';
 import { between, kingAttacks } from './attacks';
@@ -6,6 +7,7 @@ import { SquareSet } from './squareSet';
 import { Board } from './board';
 import { Setup, RemainingChecks, Material } from './setup';
 import { PositionError, Position, IllegalSetup, Context, Castles, Chess } from './chess';
+import { Breakthrough, MiniBreakthrough } from './variants/breakthrough';
 
 export { Position, PositionError, IllegalSetup, Context, Chess, Castles };
 
@@ -1107,6 +1109,10 @@ export function defaultPosition(rules: Rules): Position {
       return Backgammon.default();
     case 'nackgammon':
       return Nackgammon.default();
+    case 'breakthrough':
+      return Breakthrough.default();
+    case 'minibreakthrough':
+      return MiniBreakthrough.default();
   }
 }
 
@@ -1166,5 +1172,9 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Backgammon.fromSetup(setup);
     case 'nackgammon':
       return Nackgammon.fromSetup(setup);
+    case 'breakthrough':
+      return Breakthrough.fromSetup(setup);
+    case 'minibreakthrough':
+      return MiniBreakthrough.fromSetup(setup);
   }
 }

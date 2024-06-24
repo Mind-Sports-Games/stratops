@@ -88,6 +88,8 @@ export function playstrategyRules(
     | 'go19x19'
     | 'backgammon'
     | 'nackgammon'
+    | 'breakthroughtroyka'
+    | 'minibreakthroughtroyka'
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -108,6 +110,10 @@ export function playstrategyRules(
       return 'linesofaction';
     case 'scrambledEggs':
       return 'scrambledeggs';
+    case 'breakthroughtroyka':
+      return 'breakthrough';
+    case 'minibreakthroughtroyka':
+      return 'minibreakthrough';
     default:
       return variant;
   }
@@ -142,7 +148,9 @@ export function playstrategyVariants(
   | 'go13x13'
   | 'go19x19'
   | 'backgammon'
-  | 'nackgammon' {
+  | 'nackgammon'
+  | 'breakthrough'
+  | 'minibreakthrough' {
   switch (rules) {
     case 'chess':
       return 'standard';
