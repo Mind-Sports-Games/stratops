@@ -8,25 +8,23 @@ based on chessops: https://github.com/niklasf/chessops/
 
 ## Development
 
-node version : 20
-
 Before committing:
 
 ```sh
-npm run lint
-npm run format
+yarn lint
+yarn format
 ```
 
 Install build dependencies:
 
 ```sh
-npm install
+yarn
 ```
 
 To compile typescript:
 
 ```sh
-npm run compile -- --watch
+yarn compile -- --watch
 ```
 
 ## License
