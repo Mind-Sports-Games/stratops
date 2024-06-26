@@ -16,7 +16,7 @@
   "type": "commonjs",
   "sideEffects": false,
   "dependencies": {
-    "@badrap/result": "0.2.8"
+    "@badrap/result": "^0.2.8"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",

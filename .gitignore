@@ -1,7 +1,6 @@
 node_modules/
 docs/
 coverage/
-yarn.lock
 
 /attacks.js
 /board.js
