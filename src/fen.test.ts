@@ -1,11 +1,11 @@
-import { parseFen, makeFen, makeBoardFen, INITIAL_FEN, INITIAL_BOARD_FEN, EMPTY_BOARD_FEN } from '../src/fen';
-import { SquareSet } from '../src/squareSet';
-import { Board } from '../src/board';
-import { defaultSetup } from '../src/setup';
-import { setupPosition } from '../src/variant';
-import { parseSquare } from '../src/util';
-import { Piece } from '../src/types';
-import { amazonsChessgroundFen } from '../src/compat';
+import { parseFen, makeFen, makeBoardFen, INITIAL_FEN, INITIAL_BOARD_FEN, EMPTY_BOARD_FEN } from './fen';
+import { SquareSet } from './squareSet';
+import { Board } from './board';
+import { defaultSetup } from './setup';
+import { setupPosition } from './variant';
+import { parseSquare } from './util';
+import { Piece } from './types';
+import { amazonsChessgroundFen } from './compat';
 
 test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.default())).toEqual(INITIAL_BOARD_FEN);

@@ -1,8 +1,8 @@
-import { parseUci as parseUciRules } from '../src/util';
-import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from '../src/san';
-import { Chess } from '../src/chess';
-import { parseFen, makeFen } from '../src/fen';
-import { Antichess, Crazyhouse } from '../src/variant';
+import { parseUci as parseUciRules } from './util';
+import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san';
+import { Chess } from './chess';
+import { parseFen, makeFen } from './fen';
+import { Antichess, Crazyhouse } from './variant';
 
 const sanVariation = makeSanVariation('chess');
 const parseSan = parseSanRules('chess');

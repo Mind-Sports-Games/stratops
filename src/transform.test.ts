@@ -1,5 +1,5 @@
-import { SquareSet } from '../src/squareSet';
-import { flipVertical, flipHorizontal, flipDiagonal, rotate180 } from '../src/transform';
+import { SquareSet } from './squareSet';
+import { flipVertical, flipHorizontal, flipDiagonal, rotate180 } from './transform';
 
 const r = new SquareSet([0x0e0a1222, 0x1e222212, 0, 0]);
 

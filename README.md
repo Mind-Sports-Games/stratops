@@ -11,23 +11,23 @@ based on chessops: https://github.com/niklasf/chessops/
 Before committing:
 
 ```sh
-yarn lint
-yarn format
+pnpm lint
+pnpm format
 ```
 
 Install build dependencies:
 
 ```sh
-yarn
+pnpm i
 ```
 
 To compile typescript:
 
 ```sh
-yarn compile -- --watch
+pnpm compile -- --watch
 ```
 
 ## License
 
-chessops is licensed under the GNU General Public License 3 or any later
+stratops is licensed under the GNU General Public License 3 or any later
 version at your choice. See LICENSE.txt for details.

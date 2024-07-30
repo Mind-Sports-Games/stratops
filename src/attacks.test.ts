@@ -1,8 +1,8 @@
-import { rookAttacks, ray, between, linesOfActionAttacks } from '../src/attacks';
-import { SquareSet } from '../src/squareSet';
-import { Board } from '../src/board';
-import { parseSquare as parseSquareRules, defined } from '../src/util';
-import { PlayerIndex, Square } from '../src/types';
+import { rookAttacks, ray, between, linesOfActionAttacks } from './attacks';
+import { SquareSet } from './squareSet';
+import { Board } from './board';
+import { parseSquare as parseSquareRules, defined } from './util';
+import { PlayerIndex, Square } from './types';
 
 const parseSquare = parseSquareRules('chess');
 

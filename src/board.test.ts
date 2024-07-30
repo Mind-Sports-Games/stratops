@@ -1,5 +1,5 @@
-import { Piece } from '../src/types';
-import { Board } from '../src/board';
+import { Piece } from './types';
+import { Board } from './board';
 
 test('set and get', () => {
   const board = Board.empty('chess');
