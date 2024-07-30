@@ -1,7 +1,7 @@
-import { Rules } from './types';
-import { perft } from './debug';
-import { setupPosition } from './variant';
-import { parseFen } from './fen';
+import { Rules } from './types.js';
+import { perft } from './debug.js';
+import { setupPosition } from './variant.js';
+import { parseFen } from './fen.js';
 
 const skip = 0;
 

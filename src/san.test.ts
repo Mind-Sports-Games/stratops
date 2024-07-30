@@ -1,8 +1,8 @@
-import { parseUci as parseUciRules } from './util';
-import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san';
-import { Chess } from './chess';
-import { parseFen, makeFen } from './fen';
-import { Antichess, Crazyhouse } from './variant';
+import { parseUci as parseUciRules } from './util.js';
+import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san.js';
+import { Chess } from './chess.js';
+import { parseFen, makeFen } from './fen.js';
+import { Antichess, Crazyhouse } from './variant.js';
 
 const sanVariation = makeSanVariation('chess');
 const parseSan = parseSanRules('chess');

@@ -10,8 +10,8 @@ import {
   SquareName,
   Rules,
   BoardDimensions,
-} from './types';
-import * as fp from './fp';
+} from './types.js';
+import * as fp from './fp.js';
 
 export function defined<A>(v: fp.Option<A>): v is A {
   return v !== undefined && v !== null;
