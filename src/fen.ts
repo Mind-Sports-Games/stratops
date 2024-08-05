@@ -1,8 +1,8 @@
 import { Result } from '@badrap/result';
-import { Move, Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES, Rules } from './types';
-import { SquareSet } from './squareSet';
-import { Board } from './board';
-import { Setup, MaterialSide, Material, RemainingChecks, defaultSetup } from './setup';
+import { Move, Piece, Square, PlayerIndex, PLAYERINDEXES, ROLES, FILE_NAMES, Rules } from './types.js';
+import { SquareSet } from './squareSet.js';
+import { Board } from './board.js';
+import { Setup, MaterialSide, Material, RemainingChecks, defaultSetup } from './setup.js';
 import {
   defined,
   squareFile,
@@ -13,8 +13,8 @@ import {
   dimensionsForRules,
   parseUci,
   makeUci,
-} from './util';
-import * as fp from './fp';
+} from './util.js';
+import * as fp from './fp.js';
 
 const O = fp.Option;
 const R = fp.Result;

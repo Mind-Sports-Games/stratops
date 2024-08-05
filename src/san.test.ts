@@ -1,8 +1,9 @@
-import { parseUci as parseUciRules } from '../src/util';
-import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from '../src/san';
-import { Chess } from '../src/chess';
-import { parseFen, makeFen } from '../src/fen';
-import { Antichess, Crazyhouse } from '../src/variant';
+import { parseUci as parseUciRules } from './util.js';
+import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san.js';
+import { Chess } from './chess.js';
+import { parseFen, makeFen } from './fen.js';
+import { Antichess, Crazyhouse } from './variant.js';
+import { expect, test } from '@jest/globals';
 
 const sanVariation = makeSanVariation('chess');
 const parseSan = parseSanRules('chess');

@@ -1,8 +1,8 @@
-import { Rules, SquareName, Move, isDrop } from './types';
-import { parseFen, makeFen } from './fen';
-import { setupPosition } from './variant';
-import { makeSquare, squareFile } from './util';
-import { Position } from './chess';
+import { Rules, SquareName, Move, isDrop } from './types.js';
+import { parseFen, makeFen } from './fen.js';
+import { setupPosition } from './variant.js';
+import { makeSquare, squareFile } from './util.js';
+import { Position } from './chess.js';
 
 export interface ChessgroundDestsOpts {
   chess960?: boolean;

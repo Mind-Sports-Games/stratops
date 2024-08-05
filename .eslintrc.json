@@ -1,7 +1,7 @@
 {
   "root": true,
   "env": {
-    "es2017": true
+    "es2018": true
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -20,10 +20,10 @@
     "eqeqeq": ["error", "smart"],
     "prefer-const": "warn",
     "@typescript-eslint/no-empty-function": ["error", { "allow": ["constructors"] }],
-    "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-this-alias": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/no-unnecessary-condition": "error",
-    "@typescript-eslint/strict-boolean-expressions": "off"
+    "@typescript-eslint/no-unnecessary-condition": "error"
   }
 }

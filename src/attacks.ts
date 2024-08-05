@@ -12,10 +12,10 @@
  * @packageDocumentation
  */
 
-import { squareFile, squareRank } from './util';
-import { zip } from './fp';
-import { Square, Piece, PlayerIndex, BySquare } from './types';
-import { SquareSet } from './squareSet';
+import { squareFile, squareRank } from './util.js';
+import { zip } from './fp.js';
+import { Square, Piece, PlayerIndex, BySquare } from './types.js';
+import { SquareSet } from './squareSet.js';
 
 function isValid(square: Square): boolean {
   return square >= 0 && square < 64;

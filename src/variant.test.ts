@@ -1,7 +1,8 @@
-import { Rules } from '../src/types';
-import { perft } from '../src/debug';
-import { setupPosition } from '../src/variant';
-import { parseFen } from '../src/fen';
+import { Rules } from './types.js';
+import { perft } from './debug.js';
+import { setupPosition } from './variant.js';
+import { parseFen } from './fen.js';
+import { expect, test } from '@jest/globals';
 
 const skip = 0;
 
