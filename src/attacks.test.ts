@@ -1,16 +1,16 @@
-import { rookAttacks, ray, between, linesOfActionAttacks } from './attacks.js';
-import { SquareSet } from './squareSet.js';
-import { Board } from './board.js';
-import { parseSquare as parseSquareRules, defined } from './util.js';
-import { PlayerIndex, Square } from './types.js';
 import { expect, test } from '@jest/globals';
+import { between, linesOfActionAttacks, ray, rookAttacks } from './attacks.js';
+import { Board } from './board.js';
+import { SquareSet } from './squareSet.js';
+import { PlayerIndex, Square } from './types.js';
+import { defined, parseSquare as parseSquareRules } from './util.js';
 
 const parseSquare = parseSquareRules('chess');
 
 test('rook attacks', () => {
   const d6 = 43;
   expect(rookAttacks(d6, new SquareSet([0x2826f5b9, 0x3f7f2880, 0, 0]))).toEqual(
-    new SquareSet([0x8000000, 0x83708, 0, 0])
+    new SquareSet([0x8000000, 0x83708, 0, 0]),
   );
   expect(rookAttacks(d6, SquareSet.empty())).toEqual(SquareSet.fromFile64(3).xor(SquareSet.fromRank64(5)));
 });

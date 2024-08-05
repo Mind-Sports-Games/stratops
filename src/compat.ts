@@ -1,16 +1,15 @@
-import { Rules, SquareName, Move, isDrop } from './types.js';
-import { parseFen, makeFen } from './fen.js';
-import { setupPosition } from './variant.js';
-import { makeSquare, squareFile } from './util.js';
 import { Position } from './chess.js';
+import { makeFen, parseFen } from './fen.js';
+import { isDrop, Move, Rules, SquareName } from './types.js';
+import { makeSquare, squareFile } from './util.js';
+import { setupPosition } from './variant.js';
 
 export interface ChessgroundDestsOpts {
   chess960?: boolean;
 }
 
 export const chessgroundDests =
-  (rules: Rules) =>
-  (pos: Position, opts?: ChessgroundDestsOpts): Map<SquareName, SquareName[]> => {
+  (rules: Rules) => (pos: Position, opts?: ChessgroundDestsOpts): Map<SquareName, SquareName[]> => {
     const result = new Map();
     const ctx = pos.ctx();
     for (const [from, squares] of pos.allDests(ctx)) {
@@ -30,32 +29,29 @@ export const chessgroundDests =
     return result;
   };
 
-export const chessgroundMove =
-  (rules: Rules) =>
-  (move: Move): SquareName[] => {
-    return isDrop(move) ? [makeSquare(rules)(move.to)] : [makeSquare(rules)(move.from), makeSquare(rules)(move.to)];
-  };
+export const chessgroundMove = (rules: Rules) => (move: Move): SquareName[] => {
+  return isDrop(move) ? [makeSquare(rules)(move.to)] : [makeSquare(rules)(move.from), makeSquare(rules)(move.to)];
+};
 
-export const scalachessCharPair =
-  (rules: Rules) =>
-  (move: Move): string => {
-    // TODO: Update this once we have it in scala chess.
-    if (isDrop(move))
-      return String.fromCharCode(
-        35 + move.to,
-        35 + 64 + 8 * 5 + ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'p-piece'].indexOf(move.role)
-      );
-    else
-      return String.fromCharCode(
-        35 + move.from,
-        move.promotion
-          ? 35 +
-              64 +
-              8 * ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'k-piece'].indexOf(move.promotion) +
-              squareFile(rules)(move.to)
-          : 35 + move.to
-      );
-  };
+export const scalachessCharPair = (rules: Rules) => (move: Move): string => {
+  // TODO: Update this once we have it in scala chess.
+  if (isDrop(move)) {
+    return String.fromCharCode(
+      35 + move.to,
+      35 + 64 + 8 * 5 + ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'p-piece'].indexOf(move.role),
+    );
+  } else {
+    return String.fromCharCode(
+      35 + move.from,
+      move.promotion
+        ? 35
+          + 64
+          + 8 * ['q-piece', 'r-piece', 'b-piece', 'n-piece', 'k-piece'].indexOf(move.promotion)
+          + squareFile(rules)(move.to)
+        : 35 + move.to,
+    );
+  }
+};
 
 export function playstrategyRules(
   variant:
@@ -89,7 +85,7 @@ export function playstrategyRules(
     | 'backgammon'
     | 'nackgammon'
     | 'breakthroughtroyka'
-    | 'minibreakthroughtroyka'
+    | 'minibreakthroughtroyka',
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -120,7 +116,7 @@ export function playstrategyRules(
 }
 
 export function playstrategyVariants(
-  rules: Rules
+  rules: Rules,
 ):
   | 'standard'
   | 'antichess'
@@ -150,7 +146,8 @@ export function playstrategyVariants(
   | 'backgammon'
   | 'nackgammon'
   | 'breakthrough'
-  | 'minibreakthrough' {
+  | 'minibreakthrough'
+{
   switch (rules) {
     case 'chess':
       return 'standard';

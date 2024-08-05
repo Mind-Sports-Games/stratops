@@ -1,35 +1,35 @@
 import { Result } from '@badrap/result';
 import {
-  Rules,
-  CastlingSide,
-  CASTLING_SIDES,
-  PlayerIndex,
-  PLAYERINDEXES,
-  Square,
-  ByPlayerIndex,
+  attacks,
+  between,
+  bishopAttacks,
+  kingAttacks,
+  knightAttacks,
+  pawnAttacks,
+  queenAttacks,
+  ray,
+  rookAttacks,
+} from './attacks.js';
+import { Board } from './board.js';
+import * as fp from './fp.js';
+import { Material, RemainingChecks, Setup } from './setup.js';
+import { SquareSet } from './squareSet.js';
+import {
   ByCastlingSide,
+  ByPlayerIndex,
+  CASTLING_SIDES,
+  CastlingSide,
+  isDrop,
   Move,
   NormalMove,
-  isDrop,
-  Piece,
   Outcome,
+  Piece,
+  PlayerIndex,
+  PLAYERINDEXES,
+  Rules,
+  Square,
 } from './types.js';
-import { SquareSet } from './squareSet.js';
-import { Board } from './board.js';
-import { Setup, Material, RemainingChecks } from './setup.js';
-import {
-  attacks,
-  bishopAttacks,
-  rookAttacks,
-  queenAttacks,
-  knightAttacks,
-  kingAttacks,
-  pawnAttacks,
-  between,
-  ray,
-} from './attacks.js';
-import { kingCastlesTo, opposite, defined, squareRank } from './util.js';
-import * as fp from './fp.js';
+import { defined, kingCastlesTo, opposite, squareRank } from './util.js';
 
 export enum IllegalSetup {
   Empty = 'ERR_EMPTY',
@@ -49,7 +49,7 @@ function attacksTo(square: Square, attacker: PlayerIndex, board: Board, occupied
       .union(bishopAttacks(square, occupied).intersect(board.bishopsAndQueens()))
       .union(knightAttacks(square).intersect(board['n-piece']))
       .union(kingAttacks(square).intersect(board['k-piece']))
-      .union(pawnAttacks(opposite(attacker), square).intersect(board['p-piece']))
+      .union(pawnAttacks(opposite(attacker), square).intersect(board['p-piece'])),
   );
 }
 
@@ -199,8 +199,9 @@ export abstract class Position {
   ctx(): Context {
     const variantEnd = this.isVariantEnd();
     const king = this.board.kingOf(this.turn);
-    if (!defined(king))
+    if (!defined(king)) {
       return { king, blockers: SquareSet.empty(), checkers: SquareSet.empty(), variantEnd, mustCapture: false };
+    }
     const snipers = rookAttacks(king, SquareSet.empty())
       .intersect(this.board.rooksAndQueens())
       .union(bishopAttacks(king, SquareSet.empty()).intersect(this.board.bishopsAndQueens()))
@@ -237,14 +238,14 @@ export abstract class Position {
 
   equalsIgnoreMoves(other: Position): boolean {
     return (
-      this.rules === other.rules &&
-      (this.pockets ? this.board.equals(other.board) : this.board.equalsIgnorePromoted(other.board)) &&
-      ((other.pockets && this.pockets?.equals(other.pockets)) || (!this.pockets && !other.pockets)) &&
-      this.turn === other.turn &&
-      this.castles.unmovedRooks.equals(other.castles.unmovedRooks) &&
-      this.legalEpSquare() === other.legalEpSquare() &&
-      ((other.remainingChecks && this.remainingChecks?.equals(other.remainingChecks)) ||
-        (!this.remainingChecks && !other.remainingChecks))
+      this.rules === other.rules
+      && (this.pockets ? this.board.equals(other.board) : this.board.equalsIgnorePromoted(other.board))
+      && ((other.pockets && this.pockets?.equals(other.pockets)) || (!this.pockets && !other.pockets))
+      && this.turn === other.turn
+      && this.castles.unmovedRooks.equals(other.castles.unmovedRooks)
+      && this.legalEpSquare() === other.legalEpSquare()
+      && ((other.remainingChecks && this.remainingChecks?.equals(other.remainingChecks))
+        || (!this.remainingChecks && !other.remainingChecks))
     );
   }
 
@@ -281,8 +282,9 @@ export abstract class Position {
     } else {
       if (move.promotion === 'p-piece') return false;
       if (move.promotion === 'k-piece' && this.rules !== 'antichess') return false;
-      if (!!move.promotion !== (this.board['p-piece'].has(move.from) && SquareSet.backranks64().has(move.to)))
+      if (!!move.promotion !== (this.board['p-piece'].has(move.from) && SquareSet.backranks64().has(move.to))) {
         return false;
+      }
       const dests = this.dests(move.from, ctx);
       return dests.has(move.to) || dests.has(this.normalizeMove(move).to);
     }
@@ -452,11 +454,13 @@ export class Chess extends Position {
 
     const otherKing = this.board.kingOf(opposite(this.turn));
     if (!defined(otherKing)) return Result.err(new PositionError(IllegalSetup.Kings));
-    if (this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty())
+    if (this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty()) {
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
+    }
 
-    if (SquareSet.backranks64().intersects(this.board['p-piece']))
+    if (SquareSet.backranks64().intersects(this.board['p-piece'])) {
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
+    }
 
     return this.validateCheckers();
   }
@@ -466,14 +470,16 @@ export class Chess extends Position {
     if (defined(ourKing)) {
       // Multiple sliding checkers aligned with king.
       const checkers = this.kingAttackers(ourKing, opposite(this.turn), this.board.occupied);
-      if (checkers.size() > 2 || (checkers.size() === 2 && ray(checkers.first()!, checkers.last()!).has(ourKing)))
+      if (checkers.size() > 2 || (checkers.size() === 2 && ray(checkers.first()!, checkers.last()!).has(ourKing))) {
         return Result.err(new PositionError(IllegalSetup.ImpossibleCheck));
+      }
 
       // En passant square aligned with checker and king.
       if (defined(this.epSquare)) {
         for (const checker of checkers) {
-          if (ray(checker, this.epSquare).has(ourKing))
+          if (ray(checker, this.epSquare).has(ourKing)) {
             return Result.err(new PositionError(IllegalSetup.ImpossibleCheck));
+          }
         }
       }
     }
@@ -612,18 +618,18 @@ export class Chess extends Position {
   }
 
   hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {
-    if (this.board[playerIndex].intersect(this.board['p-piece'].union(this.board.rooksAndQueens())).nonEmpty())
+    if (this.board[playerIndex].intersect(this.board['p-piece'].union(this.board.rooksAndQueens())).nonEmpty()) {
       return false;
+    }
     if (this.board[playerIndex].intersects(this.board['n-piece'])) {
       return (
-        this.board[playerIndex].size() <= 2 &&
-        this.board[opposite(playerIndex)].diff64(this.board['k-piece']).diff64(this.board['q-piece']).isEmpty()
+        this.board[playerIndex].size() <= 2
+        && this.board[opposite(playerIndex)].diff64(this.board['k-piece']).diff64(this.board['q-piece']).isEmpty()
       );
     }
     if (this.board[playerIndex].intersects(this.board['b-piece'])) {
-      const samePlayerIndex =
-        !this.board['b-piece'].intersects(SquareSet.darkSquares64()) ||
-        !this.board['b-piece'].intersects(SquareSet.lightSquares64());
+      const samePlayerIndex = !this.board['b-piece'].intersects(SquareSet.darkSquares64())
+        || !this.board['b-piece'].intersects(SquareSet.lightSquares64());
       return samePlayerIndex && this.board['p-piece'].isEmpty() && this.board['n-piece'].isEmpty();
     }
     return true;

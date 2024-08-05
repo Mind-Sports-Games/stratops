@@ -74,7 +74,7 @@ export type ByPlayerIndex<T> = {
   [playerIndex in PlayerIndex]: T;
 };
 
-//currently supported pieces, should change to use Role to accept all new peices.
+// currently supported pieces, should change to use Role to accept all new peices.
 export const ROLES = [
   'a-piece',
   'b-piece',
@@ -157,7 +157,7 @@ export const ROLES = [
   's47-piece',
   's48-piece',
 ] as const;
-//export type Role = typeof ROLES[number];
+// export type Role = typeof ROLES[number];
 
 export const letters = [
   'a',
@@ -327,6 +327,5 @@ export interface Outcome {
 }
 
 // From: https://stackoverflow.com/questions/41139763/how-to-declare-a-fixed-length-array-in-typescript
-export type Tuple<T, N extends number, R extends readonly T[] = []> = R['length'] extends N
-  ? R
+export type Tuple<T, N extends number, R extends readonly T[] = []> = R['length'] extends N ? R
   : Tuple<T, N, readonly [T, ...R]>;

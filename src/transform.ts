@@ -1,8 +1,8 @@
-import { ROLES, PLAYERINDEXES } from './types.js';
-import { defined } from './util.js';
-import { SquareSet } from './squareSet.js';
 import { Board } from './board.js';
 import { Setup } from './setup.js';
+import { SquareSet } from './squareSet.js';
+import { PLAYERINDEXES, ROLES } from './types.js';
+import { defined } from './util.js';
 
 export function flipVertical(s: SquareSet): SquareSet {
   return s.bswap64();

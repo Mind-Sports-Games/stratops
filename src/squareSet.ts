@@ -1,4 +1,4 @@
-import { Tuple, Square, PlayerIndex } from './types.js';
+import { PlayerIndex, Square, Tuple } from './types.js';
 
 function popcnt32(n: number): number {
   n = n - ((n >>> 1) & 0x5555_5555);
@@ -37,23 +37,21 @@ type BitPartTargetHandler<R> = {
   [BitPartTarget.Default]: () => R;
 };
 
-const bitPartMap =
-  (shift: number) =>
-  <R>(handlers: BitPartTargetHandler<R>) => {
-    if (shift >= 128) {
-      return handlers[BitPartTarget.Gte128](shift);
-    } else if (shift >= 96) {
-      return handlers[BitPartTarget.Gte96](shift);
-    } else if (shift >= 64) {
-      return handlers[BitPartTarget.Gte64](shift);
-    } else if (shift >= 32) {
-      return handlers[BitPartTarget.Gte32](shift);
-    } else if (shift > 0) {
-      return handlers[BitPartTarget.Gt0](shift);
-    } else {
-      return handlers[BitPartTarget.Default]();
-    }
-  };
+const bitPartMap = (shift: number) => <R>(handlers: BitPartTargetHandler<R>) => {
+  if (shift >= 128) {
+    return handlers[BitPartTarget.Gte128](shift);
+  } else if (shift >= 96) {
+    return handlers[BitPartTarget.Gte96](shift);
+  } else if (shift >= 64) {
+    return handlers[BitPartTarget.Gte64](shift);
+  } else if (shift >= 32) {
+    return handlers[BitPartTarget.Gte32](shift);
+  } else if (shift > 0) {
+    return handlers[BitPartTarget.Gt0](shift);
+  } else {
+    return handlers[BitPartTarget.Default]();
+  }
+};
 
 type CopyParams = {
   [0]?: (x: number) => number;
@@ -199,13 +197,14 @@ export class SquareSet implements Iterable<Square> {
   shr64(shift: number): SquareSet {
     if (shift >= 64) return SquareSet.empty();
     if (shift >= 32) return new SquareSet([this.bitParts[1] >>> (shift - 32), 0, 0, 0]);
-    if (shift > 0)
+    if (shift > 0) {
       return new SquareSet([
         (this.bitParts[0] >>> shift) ^ (this.bitParts[1] << (32 - shift)),
         this.bitParts[1] >>> shift,
         0,
         0,
       ]);
+    }
     return this;
   }
 
@@ -254,13 +253,14 @@ export class SquareSet implements Iterable<Square> {
     //       than you'd expect with a 64 bit shift.
     if (shift >= 64) return SquareSet.empty();
     if (shift >= 32) return new SquareSet([0, this.bitParts[0] << (shift - 32), 0, 0]);
-    if (shift > 0)
+    if (shift > 0) {
       return new SquareSet([
         this.bitParts[0] << shift,
         (this.bitParts[1] << shift) ^ (this.bitParts[0] >>> (32 - shift)),
         0,
         0,
       ]);
+    }
     return this;
   }
 
@@ -337,10 +337,10 @@ export class SquareSet implements Iterable<Square> {
 
   equals(other: SquareSet): boolean {
     return (
-      this.bitParts[0] === other.bitParts[0] &&
-      this.bitParts[1] === other.bitParts[1] &&
-      this.bitParts[2] === other.bitParts[2] &&
-      this.bitParts[3] === other.bitParts[3]
+      this.bitParts[0] === other.bitParts[0]
+      && this.bitParts[1] === other.bitParts[1]
+      && this.bitParts[2] === other.bitParts[2]
+      && this.bitParts[3] === other.bitParts[3]
     );
   }
 
@@ -359,17 +359,17 @@ export class SquareSet implements Iterable<Square> {
   }
 
   has(square: Square): boolean {
-    //console.log(`square: ${square}`);
+    // console.log(`square: ${square}`);
     return (
-      0 !==
-      bitPartMap(square)({
-        [BitPartTarget.Gte128]: (_: number) => 0,
-        [BitPartTarget.Gte96]: (square: number) => this.bitParts[3] & (1 << (square - 96)),
-        [BitPartTarget.Gte64]: (square: number) => this.bitParts[2] & (1 << (square - 64)),
-        [BitPartTarget.Gte32]: (square: number) => this.bitParts[1] & (1 << (square - 32)),
-        [BitPartTarget.Gt0]: (square: number) => this.bitParts[0] & (1 << square),
-        [BitPartTarget.Default]: () => this.bitParts[0] & 1,
-      })
+      0
+        !== bitPartMap(square)({
+          [BitPartTarget.Gte128]: (_: number) => 0,
+          [BitPartTarget.Gte96]: (square: number) => this.bitParts[3] & (1 << (square - 96)),
+          [BitPartTarget.Gte64]: (square: number) => this.bitParts[2] & (1 << (square - 64)),
+          [BitPartTarget.Gte32]: (square: number) => this.bitParts[1] & (1 << (square - 32)),
+          [BitPartTarget.Gt0]: (square: number) => this.bitParts[0] & (1 << square),
+          [BitPartTarget.Default]: () => this.bitParts[0] & 1,
+        })
     );
   }
 
@@ -439,11 +439,11 @@ export class SquareSet implements Iterable<Square> {
     // for readability rather than efficiency.
     const count = [0, 1, 2, 3].map<number>(i => (this.bitParts[i] !== 0 ? 1 : 0)).reduce((x, y) => x + y);
     return (
-      count > 1 ||
-      (this.bitParts[0] & (this.bitParts[0] - 1)) !== 0 ||
-      (this.bitParts[1] & (this.bitParts[1] - 1)) !== 0 ||
-      (this.bitParts[2] & (this.bitParts[2] - 1)) !== 0 ||
-      (this.bitParts[3] & (this.bitParts[3] - 1)) !== 0
+      count > 1
+      || (this.bitParts[0] & (this.bitParts[0] - 1)) !== 0
+      || (this.bitParts[1] & (this.bitParts[1] - 1)) !== 0
+      || (this.bitParts[2] & (this.bitParts[2] - 1)) !== 0
+      || (this.bitParts[3] & (this.bitParts[3] - 1)) !== 0
     );
   }
 

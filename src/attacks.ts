@@ -12,10 +12,10 @@
  * @packageDocumentation
  */
 
-import { squareFile, squareRank } from './util.js';
 import { zip } from './fp.js';
-import { Square, Piece, PlayerIndex, BySquare } from './types.js';
 import { SquareSet } from './squareSet.js';
+import { BySquare, Piece, PlayerIndex, Square } from './types.js';
+import { squareFile, squareRank } from './util.js';
 
 function isValid(square: Square): boolean {
   return square >= 0 && square < 64;
@@ -137,7 +137,7 @@ export function linesOfActionAttacks(
   square: Square,
   occupied: SquareSet,
   p1: SquareSet,
-  p2: SquareSet
+  p2: SquareSet,
 ): SquareSet {
   // TODO: write some tests.
   const ours = playerIndex === 'p1' ? p1 : p2;

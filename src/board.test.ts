@@ -1,6 +1,6 @@
-import { Piece } from './types.js';
-import { Board } from './board.js';
 import { expect, test } from '@jest/globals';
+import { Board } from './board.js';
+import { Piece } from './types.js';
 
 test('set and get', () => {
   const board = Board.empty('chess');

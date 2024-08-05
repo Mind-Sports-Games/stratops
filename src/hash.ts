@@ -1,7 +1,7 @@
+import { Board } from './board.js';
+import { Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
 import { PLAYERINDEXES, ROLES, Tuple } from './types.js';
 import { defined } from './util.js';
-import { Board } from './board.js';
-import { Setup, MaterialSide, Material, RemainingChecks } from './setup.js';
 
 function rol32(n: number, left: number): number {
   return (n << left) | (n >>> (32 - left));

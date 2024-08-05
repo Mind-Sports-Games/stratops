@@ -1,19 +1,19 @@
-import { parseFen, makeFen, makeBoardFen, INITIAL_FEN, INITIAL_BOARD_FEN, EMPTY_BOARD_FEN } from './fen.js';
-import { SquareSet } from './squareSet.js';
-import { Board } from './board.js';
-import { defaultSetup } from './setup.js';
-import { setupPosition } from './variant.js';
-import { parseSquare } from './util.js';
-import { Piece } from './types.js';
-import { amazonsChessgroundFen } from './compat.js';
 import { expect, test } from '@jest/globals';
+import { Board } from './board.js';
+import { amazonsChessgroundFen } from './compat.js';
+import { EMPTY_BOARD_FEN, INITIAL_BOARD_FEN, INITIAL_FEN, makeBoardFen, makeFen, parseFen } from './fen.js';
+import { defaultSetup } from './setup.js';
+import { SquareSet } from './squareSet.js';
+import { Piece } from './types.js';
+import { parseSquare } from './util.js';
+import { setupPosition } from './variant.js';
 
 test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.default())).toEqual(INITIAL_BOARD_FEN);
   expect(makeBoardFen('chess')(Board.empty('chess'))).toEqual(EMPTY_BOARD_FEN);
   expect(makeBoardFen('chess')(Board.racingKings())).toEqual('8/8/8/8/8/8/krbnNBRK/qrbnNBRQ');
   expect(makeBoardFen('chess')(Board.horde())).toEqual(
-    'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP'
+    'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP',
   );
   expect(makeBoardFen('chess')(Board.monster())).toEqual('rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3');
 });
@@ -139,7 +139,7 @@ test.each(['6,2s,2s,2s,2s,2s,2s/6,5S,5[5S,2s] 2/2/2 2 w 5 1 25'])('parse and mak
 });
 
 test.each([
-  //'SSS16/19/5S1S11/4S1S4S7/11s7/6s3ss7/S8S2s1S4/4s5Ss2s2S1/4sS7S5/8s9S/3sS3S3S2s3/7s1S1Ss5S/8Ss9/3sS7s2ss2/5s2s2s7/7sS10/4S6S1s5/8S10/16sss[SSSSSSSSSSssssssssss] b - 280 345 0 0 75 29',
+  // 'SSS16/19/5S1S11/4S1S4S7/11s7/6s3ss7/S8S2s1S4/4s5Ss2s2S1/4sS7S5/8s9S/3sS3S3S2s3/7s1S1Ss5S/8Ss9/3sS7s2ss2/5s2s2s7/7sS10/4S6S1s5/8S10/16sss[SSSSSSSSSSssssssssss] b - 280 345 0 0 75 29',
   '19/19/19/19/19/19/19/19/19/19/19/19/19/19/19/19/19/19/19[SSSSSSSSSSssssssssss] b - 0 75 0 0 75 1',
 ])('parse and make go fens', fen => {
   const setup = parseFen('go19x19')(fen).unwrap();

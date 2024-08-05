@@ -1,29 +1,29 @@
 export {
-  FILE_NAMES,
-  RANK_NAMES,
-  FileName,
-  RankName,
-  Square,
-  SquareName,
-  BySquare,
-  PlayerIndex,
-  PLAYERINDEXES,
-  ByPlayerIndex,
-  Role,
-  ROLES,
-  ByRole,
-  CastlingSide,
-  CASTLING_SIDES,
   ByCastlingSide,
-  Piece,
-  NormalMove,
+  ByPlayerIndex,
+  ByRole,
+  BySquare,
+  CASTLING_SIDES,
+  CastlingSide,
   DropMove,
-  Move,
+  FILE_NAMES,
+  FileName,
   isDrop,
   isNormal,
-  Rules,
-  RULES,
+  Move,
+  NormalMove,
   Outcome,
+  Piece,
+  PlayerIndex,
+  PLAYERINDEXES,
+  RANK_NAMES,
+  RankName,
+  Role,
+  ROLES,
+  RULES,
+  Rules,
+  Square,
+  SquareName,
 } from './types.js';
 
 export {
@@ -55,9 +55,9 @@ export {
 
 export { Board } from './board.js';
 
-export { Material, MaterialSide, RemainingChecks, Setup, defaultSetup } from './setup.js';
+export { defaultSetup, Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
 
-export { IllegalSetup, Castles, Chess, Position, PositionError, Context } from './chess.js';
+export { Castles, Chess, Context, IllegalSetup, Position, PositionError } from './chess.js';
 
 export * as compat from './compat.js';
 
