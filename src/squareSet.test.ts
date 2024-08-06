@@ -32,11 +32,11 @@ test('shl64', () => {
   const r = new SquareSet([0xe0a1222, 0x1e222212, 0, 0]);
   expect(r.shl64(0)).toEqual(r);
   expect(r.shl64(1)).toEqual(new SquareSet([0x1c142444, 0x3c444424, 0, 0]));
-  expect(r.shl64(3)).toEqual(new SquareSet([0x70509110, 0xf1111090, 0, 0])); // fails
+  expect(r.shl64(3)).toEqual(new SquareSet([0x70509110, 0xf1111090, 0, 0]));
   expect(r.shl64(31)).toEqual(new SquareSet([0x0, 0x7050911, 0, 0]));
   expect(r.shl64(32)).toEqual(new SquareSet([0x0, 0xe0a1222, 0, 0]));
   expect(r.shl64(33)).toEqual(new SquareSet([0x0, 0x1c142444, 0, 0]));
-  expect(r.shl64(62)).toEqual(new SquareSet([0x0, 0x80000000, 0, 0])); // fails
+  expect(r.shl64(62)).toEqual(new SquareSet([0x0, 0x80000000, 0, 0]));
   expect(r.shl64(63)).toEqual(new SquareSet([0x0, 0x0, 0, 0]));
 });
 
