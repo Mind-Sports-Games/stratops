@@ -1,7 +1,8 @@
-import { Rules } from '../src/types';
-import { perft } from '../src/debug';
-import { setupPosition } from '../src/variant';
-import { parseFen } from '../src/fen';
+import { expect, test } from '@jest/globals';
+import { perft } from './debug.js';
+import { parseFen } from './fen.js';
+import { Rules } from './types.js';
+import { setupPosition } from './variant.js';
 
 const skip = 0;
 
@@ -35,7 +36,7 @@ const variantPerfts: [Rules, string, string, number, number, number][] = [
   ['antichess', 'antichess-start', 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - -', 20, 400, 8067],
   ['antichess', 'a-pawn-vs-b-pawn', '8/1p6/8/8/8/8/P7/8 w - -', 2, 4, 4],
   ['antichess', 'a-pawn-vs-c-pawn', '8/2p5/8/8/8/8/P7/8 w - -', 2, 4, 4],
-  //dont understand how these final three integers work but just set them so the test would pass
+  // dont understand how these final three integers work but just set them so the test would pass
   ['monster', 'monster-start', 'rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3 w kq -', 10, 200, 1984],
 ];
 
@@ -90,7 +91,7 @@ test.each(insufficientMaterial)('%s insufficient material: %s', (rules, fen, p1,
 test('king of the hill not over', () => {
   const pos = setupPosition(
     'kingofthehill',
-    parseFen('chess')('rnbqkbnr/pppppppp/8/1Q6/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1').unwrap()
+    parseFen('chess')('rnbqkbnr/pppppppp/8/1Q6/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isInsufficientMaterial()).toBe(false);
   expect(pos.isCheck()).toBe(false);
@@ -104,7 +105,7 @@ test('racing kings end', () => {
   // Both players reached the backrank.
   const draw = setupPosition(
     'racingkings',
-    parseFen('chess')('kr3NK1/1q2R3/8/8/8/5n2/2N5/1rb2B1R w - - 11 14').unwrap()
+    parseFen('chess')('kr3NK1/1q2R3/8/8/8/5n2/2N5/1rb2B1R w - - 11 14').unwrap(),
   ).unwrap();
   expect(draw.isEnd()).toBe(true);
   expect(draw.outcome()).toStrictEqual({ winner: undefined });
@@ -128,7 +129,7 @@ test('racing kings end', () => {
 test('atomic king exploded', () => {
   const pos = setupPosition(
     'atomic',
-    parseFen('chess')('r4b1r/ppp1pppp/7n/8/8/8/PPPPPPPP/RNBQKB1R b KQ - 0 3').unwrap()
+    parseFen('chess')('r4b1r/ppp1pppp/7n/8/8/8/PPPPPPPP/RNBQKB1R b KQ - 0 3').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
@@ -143,7 +144,7 @@ test('lines of action wins', () => {
 
   pos = setupPosition(
     'linesofaction',
-    parseFen('chess')('1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 b - - 0 1').unwrap()
+    parseFen('chess')('1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 b - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
@@ -163,7 +164,7 @@ test('lines of action wins', () => {
 test('breakthrough wins', () => {
   let pos = setupPosition(
     'breakthrough',
-    parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPP w - - 0 1').unwrap()
+    parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPP w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
@@ -171,21 +172,21 @@ test('breakthrough wins', () => {
 
   pos = setupPosition(
     'breakthrough',
-    parseFen('breakthrough')('ppppppp1/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPp w - - 0 1').unwrap()
+    parseFen('breakthrough')('ppppppp1/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPp w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 
   pos = setupPosition(
     'breakthrough',
-    parseFen('breakthrough')('ppppPppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPP1 w - - 0 1').unwrap()
+    parseFen('breakthrough')('ppppPppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPP1 w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 
   pos = setupPosition(
     'breakthrough',
-    parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/8/8 w - - 0 1').unwrap()
+    parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/8/8 w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p2' });

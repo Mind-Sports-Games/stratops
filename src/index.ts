@@ -1,30 +1,30 @@
 export {
-  FILE_NAMES,
-  RANK_NAMES,
-  FileName,
-  RankName,
-  Square,
-  SquareName,
-  BySquare,
-  PlayerIndex,
-  PLAYERINDEXES,
-  ByPlayerIndex,
-  Role,
-  ROLES,
-  ByRole,
-  CastlingSide,
-  CASTLING_SIDES,
   ByCastlingSide,
-  Piece,
-  NormalMove,
+  ByPlayerIndex,
+  ByRole,
+  BySquare,
+  CASTLING_SIDES,
+  CastlingSide,
   DropMove,
-  Move,
+  FILE_NAMES,
+  FileName,
   isDrop,
   isNormal,
-  Rules,
-  RULES,
+  Move,
+  NormalMove,
   Outcome,
-} from './types';
+  Piece,
+  PlayerIndex,
+  PLAYERINDEXES,
+  RANK_NAMES,
+  RankName,
+  Role,
+  ROLES,
+  RULES,
+  Rules,
+  Square,
+  SquareName,
+} from './types.js';
 
 export {
   charToRole,
@@ -37,9 +37,9 @@ export {
   roleToChar,
   squareFile,
   squareRank,
-} from './util';
+} from './util.js';
 
-export { SquareSet } from './squareSet';
+export { SquareSet } from './squareSet.js';
 
 export {
   attacks,
@@ -51,24 +51,24 @@ export {
   queenAttacks,
   ray,
   rookAttacks,
-} from './attacks';
+} from './attacks.js';
 
-export { Board } from './board';
+export { Board } from './board.js';
 
-export { Material, MaterialSide, RemainingChecks, Setup, defaultSetup } from './setup';
+export { defaultSetup, Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
 
-export { IllegalSetup, Castles, Chess, Position, PositionError, Context } from './chess';
+export { Castles, Chess, Context, IllegalSetup, Position, PositionError } from './chess.js';
 
-export * as compat from './compat';
+export * as compat from './compat.js';
 
-export * as debug from './debug';
+export * as debug from './debug.js';
 
-export * as fen from './fen';
+export * as fen from './fen.js';
 
-export * as hash from './hash';
+export * as hash from './hash.js';
 
-export * as san from './san';
+export * as san from './san.js';
 
-export * as transform from './transform';
+export * as transform from './transform.js';
 
-export * as variant from './variant';
+export * as variant from './variant.js';

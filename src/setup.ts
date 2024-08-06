@@ -1,7 +1,7 @@
-import { PlayerIndex, ROLES, Square, Move } from './types';
-import { SquareSet } from './squareSet';
-import { Board } from './board';
-import * as fp from './fp';
+import { Board } from './board.js';
+import * as fp from './fp.js';
+import { SquareSet } from './squareSet.js';
+import { Move, PlayerIndex, ROLES, Square } from './types.js';
 
 export class MaterialSide {
   'a-piece': number;
@@ -150,24 +150,24 @@ export class MaterialSide {
   hasNonPawns(): boolean {
     // TODO: I don't know if we should be editing this.
     return (
-      this['n-piece'] > 0 ||
-      this['b-piece'] > 0 ||
-      this['r-piece'] > 0 ||
-      this['q-piece'] > 0 ||
-      this['k-piece'] > 0 ||
-      this['l-piece'] > 0
+      this['n-piece'] > 0
+      || this['b-piece'] > 0
+      || this['r-piece'] > 0
+      || this['q-piece'] > 0
+      || this['k-piece'] > 0
+      || this['l-piece'] > 0
     );
   }
 
   count(): number {
     return (
-      this['p-piece'] +
-      this['n-piece'] +
-      this['b-piece'] +
-      this['r-piece'] +
-      this['q-piece'] +
-      this['k-piece'] +
-      this['l-piece']
+      this['p-piece']
+      + this['n-piece']
+      + this['b-piece']
+      + this['r-piece']
+      + this['q-piece']
+      + this['k-piece']
+      + this['l-piece']
     );
   }
 }

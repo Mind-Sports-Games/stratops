@@ -1,8 +1,9 @@
-import { parseUci as parseUciRules } from '../src/util';
-import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from '../src/san';
-import { Chess } from '../src/chess';
-import { parseFen, makeFen } from '../src/fen';
-import { Antichess, Crazyhouse } from '../src/variant';
+import { expect, test } from '@jest/globals';
+import { Chess } from './chess.js';
+import { makeFen, parseFen } from './fen.js';
+import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san.js';
+import { parseUci as parseUciRules } from './util.js';
+import { Antichess, Crazyhouse } from './variant.js';
 
 const sanVariation = makeSanVariation('chess');
 const parseSan = parseSanRules('chess');
@@ -32,7 +33,7 @@ test('make stockfish line with many knight moves', () => {
       .split(' ')
       .map(uci => parseUci(uci)!);
   expect(sanVariation(pos, variation)).toBe(
-    '16. Nbd2 Nb4 17. Rd1 Re8 18. Nf1 Nd3 19. Ne1 Nxe1 20. Rxe1 Nf8 21. f4 Ne6 22. Be3 h5 23. f5 Ng5 24. Bxg5 Bxg5 25. f6 Qc7'
+    '16. Nbd2 Nb4 17. Rd1 Re8 18. Nf1 Nd3 19. Ne1 Nxe1 20. Rxe1 Nf8 21. f4 Ne6 22. Be3 h5 23. f5 Ng5 24. Bxg5 Bxg5 25. f6 Qc7',
   );
   expect(pos).toEqual(Chess.fromSetup(setup).unwrap());
 });
@@ -69,7 +70,7 @@ test('parse pawn capture', () => {
   expect(makeFen('chess')(pos.toSetup())).toBe('rnbqkb1r/ppp1pppp/5n2/3P4/2P5/8/PP1P1PPP/RNBQKBNR b KQkq - 0 3');
 
   pos = Chess.fromSetup(parseFen('chess')('r4br1/pp1Npkp1/2P4p/5P2/6P1/5KnP/PP6/R1B5 b - -').unwrap()).unwrap();
-  //const bxc6 = parseSan(pos, 'bxc6');
+  // const bxc6 = parseSan(pos, 'bxc6');
   expect(parseSan(pos, 'bxc6')).toEqual({ from: 49, to: 42 });
 });
 
@@ -197,6 +198,6 @@ test('parse crazyhouse', () => {
   ];
   for (const san of line) pos.play(parseSan(pos, san)!);
   expect(makeFen('crazyhouse')(pos.toSetup())).toBe(
-    'r4rk1/ppp1nppp/6b1/8/2B1pP2/4Pq2/PPP4P/R1BqK3[BNNNPPRp] w - - 1 25'
+    'r4rk1/ppp1nppp/6b1/8/2B1pP2/4Pq2/PPP4P/R1BqK3[BNNNPPRp] w - - 1 25',
   );
 });

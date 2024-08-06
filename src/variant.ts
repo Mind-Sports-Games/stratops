@@ -1,14 +1,14 @@
 import { Result } from '@badrap/result';
 
-import { Square, Outcome, PlayerIndex, PLAYERINDEXES, Piece, Rules } from './types';
-import { defined, opposite } from './util';
-import { between, kingAttacks } from './attacks';
-import { SquareSet } from './squareSet';
-import { Board } from './board';
-import { Setup, RemainingChecks, Material } from './setup';
-import { PositionError, Position, IllegalSetup, Context, Castles, Chess } from './chess';
+import { between, kingAttacks } from './attacks.js';
+import { Board } from './board.js';
+import { Castles, Chess, Context, IllegalSetup, Position, PositionError } from './chess.js';
+import { Material, RemainingChecks, Setup } from './setup.js';
+import { SquareSet } from './squareSet.js';
+import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Rules, Square } from './types.js';
+import { defined, opposite } from './util.js';
 
-export { Position, PositionError, IllegalSetup, Context, Chess, Castles };
+export { Castles, Chess, Context, IllegalSetup, Position, PositionError };
 
 export class Crazyhouse extends Chess {
   protected constructor() {
@@ -49,16 +49,16 @@ export class Crazyhouse extends Chess {
     // custom positions.
     if (!this.pockets) return super.hasInsufficientMaterial(playerIndex);
     return (
-      this.board.occupied.size() + this.pockets.count() <= 3 &&
-      this.board['p-piece'].isEmpty() &&
-      this.board.promoted.isEmpty() &&
-      this.board.rooksAndQueens().isEmpty() &&
-      this.pockets.p1['p-piece'] <= 0 &&
-      this.pockets.p2['p-piece'] <= 0 &&
-      this.pockets.p1['r-piece'] <= 0 &&
-      this.pockets.p2['r-piece'] <= 0 &&
-      this.pockets.p1['q-piece'] <= 0 &&
-      this.pockets.p2['q-piece'] <= 0
+      this.board.occupied.size() + this.pockets.count() <= 3
+      && this.board['p-piece'].isEmpty()
+      && this.board.promoted.isEmpty()
+      && this.board.rooksAndQueens().isEmpty()
+      && this.pockets.p1['p-piece'] <= 0
+      && this.pockets.p2['p-piece'] <= 0
+      && this.pockets.p1['r-piece'] <= 0
+      && this.pockets.p2['r-piece'] <= 0
+      && this.pockets.p1['q-piece'] <= 0
+      && this.pockets.p2['q-piece'] <= 0
     );
   }
 
@@ -70,7 +70,7 @@ export class Crazyhouse extends Chess {
           ? SquareSet.full64()
           : this.pockets?.[this.turn].hasPawns()
           ? SquareSet.backranks64().complement()
-          : SquareSet.empty()
+          : SquareSet.empty(),
       );
 
     ctx = ctx || this.ctx();
@@ -176,9 +176,9 @@ export class Atomic extends Chess {
       after.play({ from: square, to });
       const ourKing = after.board.kingOf(this.turn);
       if (
-        defined(ourKing) &&
-        (!defined(after.board.kingOf(after.turn)) ||
-          after.kingAttackers(ourKing, after.turn, after.board.occupied).isEmpty())
+        defined(ourKing)
+        && (!defined(after.board.kingOf(after.turn))
+          || after.kingAttackers(ourKing, after.turn, after.board.occupied).isEmpty())
       ) {
         dests = dests.with(to);
       }
@@ -222,8 +222,9 @@ export class Antichess extends Chess {
 
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    if (SquareSet.backranks64().intersects(this.board['p-piece']))
+    if (SquareSet.backranks64().intersects(this.board['p-piece'])) {
       return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
+    }
     return Result.ok(undefined);
   }
 
@@ -498,12 +499,14 @@ export class Horde extends Chess {
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
     if (!this.board['k-piece'].isSingleSquare()) return Result.err(new PositionError(IllegalSetup.Kings));
-    if (!this.board['k-piece'].diff64(this.board.promoted).isSingleSquare())
+    if (!this.board['k-piece'].diff64(this.board.promoted).isSingleSquare()) {
       return Result.err(new PositionError(IllegalSetup.Kings));
+    }
 
     const otherKing = this.board.kingOf(opposite(this.turn));
-    if (defined(otherKing) && this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty())
+    if (defined(otherKing) && this.kingAttackers(otherKing, this.turn, this.board.occupied).nonEmpty()) {
       return Result.err(new PositionError(IllegalSetup.OppositeCheck));
+    }
     for (const playerIndex of PLAYERINDEXES) {
       if (this.board.pieces(playerIndex, 'p-piece').intersects(SquareSet.backrank64(opposite(playerIndex)))) {
         return Result.err(new PositionError(IllegalSetup.PawnsOnBackrank));
@@ -720,7 +723,7 @@ export class ScrambledEggs extends Chess {
 }
 
 export class Shogi extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('shogi');
   }
@@ -767,7 +770,7 @@ export class MiniShogi extends Chess {
 }
 
 export class Xiangqi extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('xiangqi');
   }
@@ -812,7 +815,7 @@ export class MiniXiangqi extends Chess {
 }
 
 export class Flipello extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('flipello');
   }
@@ -835,7 +838,7 @@ export class Flipello extends Chess {
 }
 
 export class Flipello10 extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('flipello10');
   }
@@ -858,7 +861,7 @@ export class Flipello10 extends Chess {
 }
 
 export class Amazons extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('amazons');
   }
@@ -985,7 +988,7 @@ export class MiniBreakthrough extends Chess {
 }
 
 export class Oware extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('oware');
   }
@@ -1008,7 +1011,7 @@ export class Oware extends Chess {
 }
 
 export class Togyzkumalak extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('togyzkumalak');
   }
@@ -1031,7 +1034,7 @@ export class Togyzkumalak extends Chess {
 }
 
 export class Go9x9 extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('go9x9');
   }
@@ -1054,7 +1057,7 @@ export class Go9x9 extends Chess {
 }
 
 export class Go13x13 extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('go13x13');
   }
@@ -1077,7 +1080,7 @@ export class Go13x13 extends Chess {
 }
 
 export class Go19x19 extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('go19x19');
   }
@@ -1100,7 +1103,7 @@ export class Go19x19 extends Chess {
 }
 
 export class Backgammon extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('backgammon');
   }
@@ -1123,7 +1126,7 @@ export class Backgammon extends Chess {
 }
 
 export class Nackgammon extends Chess {
-  //TODO - move into own class and have variant family
+  // TODO - move into own class and have variant family
   protected constructor() {
     super('nackgammon');
   }

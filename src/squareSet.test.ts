@@ -1,4 +1,5 @@
-import { SquareSet } from '../src/squareSet';
+import { expect, test } from '@jest/globals';
+import { SquareSet } from './squareSet.js';
 
 // TODO: add in some tests for the 128 bit versions.
 

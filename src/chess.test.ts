@@ -1,8 +1,9 @@
-import { SquareSet } from '../src/squareSet';
-import { parseUci } from '../src/util';
-import { parseFen, makeFen, INITIAL_FEN } from '../src/fen';
-import { Castles, Chess, IllegalSetup } from '../src/chess';
-import { perft } from '../src/debug';
+import { expect, test } from '@jest/globals';
+import { Castles, Chess, IllegalSetup } from './chess.js';
+import { perft } from './debug.js';
+import { INITIAL_FEN, makeFen, parseFen } from './fen.js';
+import { SquareSet } from './squareSet.js';
+import { parseUci } from './util.js';
 
 const tricky: [string, string, number, number, number, number?, number?][] = [
   ['pos-2', 'r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -', 48, 2039, 97862], // Kiwipete by Peter McKenzie
@@ -87,7 +88,7 @@ test('castling moves', () => {
   expect(makeFen('chess')(pos.toSetup())).toBe('2r5/8/8/8/8/8/6PP/k4RK1 b - - 1 1');
 
   pos = Chess.fromSetup(
-    parseFen('chess')('r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1').unwrap()
+    parseFen('chess')('r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1').unwrap(),
   ).unwrap();
   move = { from: 4, to: 0 };
   expect(pos.isLegal(move)).toBe(true);
@@ -95,7 +96,7 @@ test('castling moves', () => {
   expect(makeFen('chess')(pos.toSetup())).toBe('r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/2KR3R b kq - 1 1');
 
   pos = Chess.fromSetup(
-    parseFen('chess')('1r2k2r/p1b1n1pp/1q3p2/1p2pPQ1/4P3/2P4P/1B2B1P1/R3K2R w KQk - 0 20').unwrap()
+    parseFen('chess')('1r2k2r/p1b1n1pp/1q3p2/1p2pPQ1/4P3/2P4P/1B2B1P1/R3K2R w KQk - 0 20').unwrap(),
   ).unwrap();
   const queenSide = { from: 4, to: 0 };
   const altQueenSide = { from: 4, to: 2 };
@@ -163,8 +164,8 @@ test('impossible checker alignment', () => {
   expect(
     r1.unwrap(
       _ => undefined,
-      err => err.message
-    )
+      err => err.message,
+    ),
   ).toEqual(IllegalSetup.ImpossibleCheck);
 
   // Checkers aligned with opponent king are fine.
@@ -175,8 +176,8 @@ test('impossible checker alignment', () => {
   expect(
     r2.unwrap(
       _ => undefined,
-      err => err.message
-    )
+      err => err.message,
+    ),
   ).toEqual(IllegalSetup.ImpossibleCheck);
 });
 

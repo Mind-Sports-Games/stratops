@@ -1,5 +1,5 @@
-import { Square, PlayerIndex, Role, Rules, Piece, PLAYERINDEXES, ROLES, ByRole, ByPlayerIndex } from './types';
-import { SquareSet } from './squareSet';
+import { SquareSet } from './squareSet.js';
+import { ByPlayerIndex, ByRole, Piece, PlayerIndex, PLAYERINDEXES, Role, ROLES, Rules, Square } from './types.js';
 
 /**
  * Piece positions on a board.

@@ -1,7 +1,8 @@
-import { parseUci } from '../src/util';
-import { parseFen } from '../src/fen';
-import { Chess } from '../src/chess';
-import { chessgroundDests, scalachessCharPair } from '../src/compat';
+import { expect, test } from '@jest/globals';
+import { Chess } from './chess.js';
+import { chessgroundDests, scalachessCharPair } from './compat.js';
+import { parseFen } from './fen.js';
+import { parseUci } from './util.js';
 
 test('chessground dests with Kh8', () => {
   const setup = parseFen('chess')('r1bq1r2/3n2k1/p1p1pp2/3pP2P/8/PPNB2Q1/2P2P2/R3K3 b Q - 1 22').unwrap();
