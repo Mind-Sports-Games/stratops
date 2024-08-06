@@ -8,17 +8,16 @@ based on chessops: https://github.com/niklasf/chessops/
 
 ## Development
 
-Before committing:
-
-```sh
-pnpm run lint
-pnpm run format
-```
-
 Install build dependencies:
 
 ```sh
-rm -rf node_modules pnpm-lock.yaml && pnpm store prune && pnpm i
+pnpm install
+```
+
+Update deps:
+
+```sh
+rm -rf node_modules pnpm-lock.yaml && pnpm store prune && pnpm install
 ```
 
 To compile typescript:
@@ -32,6 +31,13 @@ run tests:
 ```sh
 pnpm run test --watch
 pnpm run test src/squareSet --watch
+```
+
+Before committing:
+
+```sh
+pnpm run lint
+pnpm run format
 ```
 
 ## License
