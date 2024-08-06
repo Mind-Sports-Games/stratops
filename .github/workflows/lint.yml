@@ -27,6 +27,5 @@ jobs:
         with:
           run_install: |
             - recursive: false
-              args: [--no-frozen-lockfile, --strict-peer-dependencies]
       - run: pnpm run lint
       - run: pnpm run check-format
