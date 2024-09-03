@@ -1194,6 +1194,29 @@ export class Nackgammon extends Chess {
   }
 }
 
+export class Abalone extends Chess {
+  // TODO - move into own class and have variant family
+  protected constructor() {
+    super('abalone');
+  }
+
+  static default(): Abalone {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Abalone, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Abalone {
+    return super.clone() as Abalone;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export function defaultPosition(rules: Rules): Position {
   switch (rules) {
     case 'chess':
@@ -1258,6 +1281,8 @@ export function defaultPosition(rules: Rules): Position {
       return Breakthrough.default();
     case 'minibreakthrough':
       return MiniBreakthrough.default();
+    case 'abalone':
+      return Abalone.default();
   }
 }
 
@@ -1325,5 +1350,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Breakthrough.fromSetup(setup);
     case 'minibreakthrough':
       return MiniBreakthrough.fromSetup(setup);
+    case 'abalone':
+      return Abalone.fromSetup(setup);
   }
 }

@@ -87,7 +87,8 @@ export function playstrategyRules(
     | 'hyper'
     | 'nackgammon'
     | 'breakthroughtroyka'
-    | 'minibreakthroughtroyka',
+    | 'minibreakthroughtroyka'
+    | 'abalone',
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -151,6 +152,7 @@ export function playstrategyVariants(
   | 'nackgammon'
   | 'breakthrough'
   | 'minibreakthrough'
+  | 'abalone'
 {
   switch (rules) {
     case 'chess':
