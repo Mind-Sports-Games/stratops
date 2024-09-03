@@ -146,4 +146,4 @@ test.each([
   expect(makeFen('go19x19')(setup, { promoted: true })).toEqual(fen);
 });
 
-//TODO add Abalone fen tests (and parsing if its different)
+// TODO add Abalone fen tests (and parsing if its different)
