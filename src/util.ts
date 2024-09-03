@@ -279,7 +279,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'hyper':
     case 'backgammon':
       return { ranks: 2, files: 12 };
-    //TODO Add Abalone here and work out how the hex shaped board is handled
+    // TODO Add Abalone here and work out how the hex shaped board is handled
     default:
       return { ranks: 8, files: 8 }; // Is this a reasonable default?
   }
