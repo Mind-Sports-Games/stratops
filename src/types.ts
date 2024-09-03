@@ -319,6 +319,7 @@ export const RULES = [
   'nackgammon',
   'breakthrough',
   'minibreakthrough',
+  'abalone',
 ] as const;
 
 export type Rules = typeof RULES[number];
