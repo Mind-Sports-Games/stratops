@@ -145,3 +145,5 @@ test.each([
   const setup = parseFen('go19x19')(fen).unwrap();
   expect(makeFen('go19x19')(setup, { promoted: true })).toEqual(fen);
 });
+
+//TODO add Abalone fen tests (and parsing if its different)
