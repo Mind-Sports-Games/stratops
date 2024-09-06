@@ -117,7 +117,19 @@ export function resultZip<A, B, C, D, E, F, G, H, I, Err extends Error>([a, b, c
   br.Result<H, Err>,
   br.Result<I, Err>,
 ]): br.Result<[A, B, C, D, E, F, G, H, I], Err>;
-export function resultZip<Err extends Error>([a, b, c, d, e, f, g, h, i]: readonly [
+export function resultZip<A, B, C, D, E, F, G, H, I, J, Err extends Error>([a, b, c, d, e, f, g, h, i, j]: readonly [
+  br.Result<A, Err>,
+  br.Result<B, Err>,
+  br.Result<C, Err>,
+  br.Result<D, Err>,
+  br.Result<E, Err>,
+  br.Result<F, Err>,
+  br.Result<G, Err>,
+  br.Result<H, Err>,
+  br.Result<I, Err>,
+  br.Result<J, Err>,
+]): br.Result<[A, B, C, D, E, F, G, H, I, J], Err>;
+export function resultZip<Err extends Error>([a, b, c, d, e, f, g, h, i, j]: readonly [
   br.Result<unknown, Err>,
   br.Result<unknown, Err>?,
   br.Result<unknown, Err>?,
@@ -127,8 +139,9 @@ export function resultZip<Err extends Error>([a, b, c, d, e, f, g, h, i]: readon
   br.Result<unknown, Err>?,
   br.Result<unknown, Err>?,
   br.Result<unknown, Err>?,
+  br.Result<unknown, Err>?,
 ]): unknown {
-  const args = [a, b, c, d, e, f, g, h, i].filter(Option.isSome) as br.Result<unknown, Err>[];
+  const args = [a, b, c, d, e, f, g, h, i, j].filter(Option.isSome) as br.Result<unknown, Err>[];
   switch (args.length) {
     case 1:
       return a.map(a => [a]);
@@ -154,12 +167,24 @@ export function resultZip<Err extends Error>([a, b, c, d, e, f, g, h, i]: readon
           )
         )
       );
-    default:
+    case 9:
       return a.chain(a =>
         b!.chain(b =>
           c!.chain(c =>
             d!.chain(d =>
               e!.chain(e => f!.chain(f => g!.chain(g => h!.chain(h => i!.map(i => [a, b, c, d, e, f, g, h, i])))))
+            )
+          )
+        )
+      );
+    default:
+      return a.chain(a =>
+        b!.chain(b =>
+          c!.chain(c =>
+            d!.chain(d =>
+              e!.chain(e =>
+                f!.chain(f => g!.chain(g => h!.chain(h => i!.chain(i => j!.map(j => [a, b, c, d, e, f, g, h, i, j])))))
+              )
             )
           )
         )

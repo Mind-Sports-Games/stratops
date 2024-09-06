@@ -41,6 +41,7 @@ export enum InvalidFen {
   Fullmoves = 'ERR_FULLMOVES',
   PlayerScore = 'ERR_PLAYER_SCORE',
   PlayerCaptures = 'ERR_PLAYER_CAPTURES',
+  PassCount = 'ERR_PASS_COUNT',
   Ko = 'ERR_KO',
   BackgammonScore = 'ERR_BACKGAMMON_SCORE',
 }
@@ -330,6 +331,7 @@ const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<num
 
 const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
 const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
+const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
 
 const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
   fp.pipe(
@@ -397,7 +399,7 @@ const parseKo = (part: fp.Option<string>): Result<fp.Option<number>> => {
 const parseGoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardAndPockets, ...parts] = fen.split(' ');
 
-  if (parts.length !== 8) {
+  if (parts.length !== 9) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
 
@@ -411,9 +413,10 @@ const parseGoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
       parseCaptures(parts[4]),
       parseCaptures(parts[5]),
       parseScore(parts[6]),
-      parseFullMoves(parts[7]),
+      parsePassCount(parts[7]),
+      parseFullMoves(parts[8]),
     ])
-    .map(([{ board, pockets }, turn, ko, p1Score, p2Score, p1Captures, p2Captures, komi, fullmoves]) => ({
+    .map(([{ board, pockets }, turn, ko, p1Score, p2Score, p1Captures, p2Captures, komi, passCount, fullmoves]) => ({
       ...defaultSetup(),
       board,
       pockets,
@@ -424,6 +427,7 @@ const parseGoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
       p2Captures,
       ko,
       komi,
+      passCount,
       fullmoves,
     }));
 };
@@ -442,6 +446,7 @@ export const makeGoFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): strin
     int(setup.p1Captures),
     int(setup.p2Captures),
     int(setup.komi),
+    int(setup.passCount),
     int(setup.fullmoves),
   ].join(' ');
 };
