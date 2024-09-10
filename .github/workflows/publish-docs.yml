@@ -5,7 +5,10 @@ on:
     branches:
       - master
 jobs:
-  build:
+  deploy:
+    environment:
+      name: "github-pages"
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Check if organization member
@@ -32,7 +35,9 @@ jobs:
           run_install: |
             - recursive: false
       - run: pnpm run doc && touch docs/.nojekyll
-      - uses: maxheld83/ghpages@v0.3.0
-        env:
-          BUILD_DIR: "docs/"
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - uses: actions/deploy-pages@v4
+        id: deployment
