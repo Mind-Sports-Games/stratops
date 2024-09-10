@@ -1033,6 +1033,29 @@ export class Togyzkumalak extends Chess {
   }
 }
 
+export class Bestemshe extends Chess {
+  // TODO - move into own class and have variant family
+  protected constructor() {
+    super('bestemshe');
+  }
+
+  static default(): Bestemshe {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Bestemshe, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Bestemshe {
+    return super.clone() as Bestemshe;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export class Go9x9 extends Chess {
   // TODO - move into own class and have variant family
   protected constructor() {
@@ -1194,6 +1217,8 @@ export function defaultPosition(rules: Rules): Position {
       return Oware.default();
     case 'togyzkumalak':
       return Togyzkumalak.default();
+    case 'bestemshe':
+      return Bestemshe.default();
     case 'go9x9':
       return Go9x9.default();
     case 'go13x13':
@@ -1257,6 +1282,8 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Oware.fromSetup(setup);
     case 'togyzkumalak':
       return Togyzkumalak.fromSetup(setup);
+    case 'bestemshe':
+      return Bestemshe.fromSetup(setup);
     case 'go9x9':
       return Go9x9.fromSetup(setup);
     case 'go13x13':

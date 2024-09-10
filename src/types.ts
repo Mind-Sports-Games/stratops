@@ -311,6 +311,7 @@ export const RULES = [
   'amazons',
   'oware',
   'togyzkumalak',
+  'bestemshe',
   'go9x9',
   'go13x13',
   'go19x19',
