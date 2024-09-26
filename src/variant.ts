@@ -3,6 +3,7 @@ import { Result } from '@badrap/result';
 import { between, kingAttacks } from './attacks.js';
 import { Board } from './board.js';
 import { Castles, Chess, Context, IllegalSetup, Position, PositionError } from './chess.js';
+import { Oware } from './games/oware.js';
 import { Material, RemainingChecks, Setup } from './setup.js';
 import { SquareSet } from './squareSet.js';
 import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Rules, Square } from './types.js';
@@ -984,29 +985,6 @@ export class MiniBreakthrough extends Chess {
   protected validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
     return Result.ok(undefined);
-  }
-}
-
-export class Oware extends Chess {
-  // TODO - move into own class and have variant family
-  protected constructor() {
-    super('oware');
-  }
-
-  static default(): Oware {
-    return super.default();
-  }
-
-  static fromSetup(setup: Setup): Result<Oware, PositionError> {
-    return super.fromSetup(setup);
-  }
-
-  clone(): Oware {
-    return super.clone() as Oware;
-  }
-
-  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
-    return false;
   }
 }
 
