@@ -43,7 +43,7 @@
     "pnpm": "^9"
   },
   "dependencies": {
-    "@badrap/result": "^0.2.13",
+    "@badrap/result": "^0.2.8",
     "@jest/globals": "^29.7.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",

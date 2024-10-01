@@ -9,9 +9,8 @@ importers:
   .:
     dependencies:
       '@badrap/result':
-        specifier: ^0.2.13
+        specifier: ^0.2.8
         version: 0.2.13
-    devDependencies:
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
@@ -4115,11 +4114,7 @@ snapshots:
       pretty-format: 26.6.2
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-leak-detector@26.6.2:
     dependencies:
