@@ -7,7 +7,6 @@ import { PlayerIndex } from '../types';
 export class Oware extends Chess {
   // TODO - move into own class and have variant family
   protected constructor() {
-    console.log("created Oware object");
     super('oware');
   }
 
