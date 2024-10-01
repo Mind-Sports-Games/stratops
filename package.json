@@ -37,15 +37,13 @@
     }
   },
   "sideEffects": false,
-  "packageManager": "pnpm@9.1.0",
+  "packageManager": "pnpm@9.11.0",
   "engines": {
     "node": ">=20",
     "pnpm": "^9"
   },
   "dependencies": {
-    "@badrap/result": "^0.2.13"
-  },
-  "devDependencies": {
+    "@badrap/result": "^0.2.13",
     "@jest/globals": "^29.7.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
