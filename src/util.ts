@@ -267,6 +267,8 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
       return { ranks: 2, files: 6 };
     case 'togyzkumalak':
       return { ranks: 2, files: 9 };
+    case 'bestemshe':
+      return { ranks: 2, files: 5 };
     case 'go9x9':
       return { ranks: 9, files: 9 };
     case 'go13x13':

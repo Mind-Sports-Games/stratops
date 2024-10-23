@@ -25,8 +25,8 @@ export const INITIAL_FEN = INITIAL_EPD + ' 0 1';
 export const EMPTY_BOARD_FEN = '8/8/8/8/8/8/8/8';
 export const EMPTY_EPD = EMPTY_BOARD_FEN + ' w - -';
 export const EMPTY_FEN = EMPTY_EPD + ' 0 1';
-export const COMMA_FEN_RULES = ['oware', 'togyzkumalak', 'backgammon', 'nackgammon'];
-export const MANCALA_FEN_VARIANT = ['oware', 'togyzkumalak'];
+export const COMMA_FEN_RULES = ['oware', 'togyzkumalak', 'bestemshe', 'backgammon', 'nackgammon'];
+export const MANCALA_FEN_VARIANT = ['oware', 'togyzkumalak', 'bestemshe'];
 
 export enum InvalidFen {
   Fen = 'ERR_FEN',
@@ -527,7 +527,7 @@ export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, Fe
 // ------------------------------------------------------------------------------
 // Regular fen parsing
 export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
-  if (rules === 'oware' || rules === 'togyzkumalak') {
+  if (rules === 'oware' || rules === 'togyzkumalak' || rules === 'bestemshe') {
     return parseMancalaFen(rules)(fen);
   }
   if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
