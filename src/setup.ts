@@ -253,6 +253,7 @@ export interface Setup {
   p2Captures?: fp.Option<number>;
   ko?: fp.Option<number>;
   komi?: fp.Option<number>;
+  passCount?: fp.Option<number>;
   unusedDice?: fp.Option<string>;
   usedDice?: fp.Option<string>;
   lastMove?: fp.Option<Move>;
