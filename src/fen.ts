@@ -25,7 +25,7 @@ export const INITIAL_FEN = INITIAL_EPD + ' 0 1';
 export const EMPTY_BOARD_FEN = '8/8/8/8/8/8/8/8';
 export const EMPTY_EPD = EMPTY_BOARD_FEN + ' w - -';
 export const EMPTY_FEN = EMPTY_EPD + ' 0 1';
-export const COMMA_FEN_RULES = ['oware', 'togyzkumalak', 'bestemshe', 'backgammon', 'nackgammon'];
+export const COMMA_FEN_RULES = ['oware', 'togyzkumalak', 'bestemshe', 'backgammon', 'hyper', 'nackgammon'];
 export const MANCALA_FEN_VARIANT = ['oware', 'togyzkumalak', 'bestemshe'];
 
 export enum InvalidFen {
@@ -533,7 +533,7 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
     return parseGoFen(rules)(fen);
   }
-  if (rules === 'backgammon' || rules === 'nackgammon') {
+  if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
     return parseBackgammonFen(rules)(fen);
   }
 
@@ -705,7 +705,7 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
     ...(MANCALA_FEN_VARIANT.includes(rules)
       ? owareMancalaFenParts(setup)
-      : rules === 'backgammon' || rules === 'nackgammon'
+      : rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon'
       ? backgammonFenParts(setup)
       : chessVariantFenParts(rules)(setup, opts)),
     ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),

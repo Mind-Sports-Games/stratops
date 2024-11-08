@@ -84,6 +84,7 @@ export function playstrategyRules(
     | 'go13x13'
     | 'go19x19'
     | 'backgammon'
+    | 'hyper'
     | 'nackgammon'
     | 'breakthroughtroyka'
     | 'minibreakthroughtroyka',
@@ -146,6 +147,7 @@ export function playstrategyVariants(
   | 'go13x13'
   | 'go19x19'
   | 'backgammon'
+  | 'hyper'
   | 'nackgammon'
   | 'breakthrough'
   | 'minibreakthrough'
