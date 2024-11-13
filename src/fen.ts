@@ -399,7 +399,7 @@ const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
       parseAbaloneBoardFen(rules)(boardPart),
       parseScore(parts[0]),
       parseScore(parts[1]),
-      parsePlayerTurn("b", "w")(parts[2]),
+      parsePlayerTurn('b', 'w')(parts[2]),
       parseFullMoves(parts[3]),
     ])
     .map(([board, p1Captures, p2Captures, turn, fullmoves]) => ({
@@ -565,7 +565,7 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
     return parseBackgammonFen(rules)(fen);
   }
-  if(rules === 'abalone') {
+  if (rules === 'abalone') {
     return parseAbaloneFen(rules)(fen);
   }
 
