@@ -8,6 +8,8 @@ import { SquareSet } from './squareSet.js';
 import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Rules, Square } from './types.js';
 import { defined, opposite } from './util.js';
 
+import { Abalone } from './variants/abalone/abalone.js';
+
 export { Castles, Chess, Context, IllegalSetup, Position, PositionError };
 
 export class Crazyhouse extends Chess {
@@ -1187,29 +1189,6 @@ export class Nackgammon extends Chess {
 
   clone(): Nackgammon {
     return super.clone() as Nackgammon;
-  }
-
-  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
-    return false;
-  }
-}
-
-export class Abalone extends Chess {
-  // TODO - move into own class and have variant family
-  protected constructor() {
-    super('abalone');
-  }
-
-  static default(): Abalone {
-    return super.default();
-  }
-
-  static fromSetup(setup: Setup): Result<Abalone, PositionError> {
-    return super.fromSetup(setup);
-  }
-
-  clone(): Abalone {
-    return super.clone() as Abalone;
   }
 
   hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
