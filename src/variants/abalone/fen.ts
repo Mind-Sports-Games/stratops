@@ -49,7 +49,6 @@ export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board
         const square = file + rank * files;
         const piece = charToPiece(c);
         if (!piece) {
-          console.log('char:' + c);
           return Result.err(new FenError(InvalidFen.Board));
         }
         board.set(square, piece);
@@ -57,6 +56,6 @@ export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board
       }
     }
   }
-  if (rank !== 0 /*|| file !== files*/) return Result.err(new FenError(InvalidFen.Board));
+  if (rank !== 0) return Result.err(new FenError(InvalidFen.Board));
   return Result.ok(board);
 };
