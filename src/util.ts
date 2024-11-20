@@ -276,6 +276,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'go19x19':
       return { ranks: 19, files: 19 };
     case 'nackgammon':
+    case 'hyper':
     case 'backgammon':
       return { ranks: 2, files: 12 };
     default:

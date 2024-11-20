@@ -316,6 +316,7 @@ export const RULES = [
   'go13x13',
   'go19x19',
   'backgammon',
+  'hyper',
   'nackgammon',
   'breakthrough',
   'minibreakthrough',

@@ -1148,6 +1148,29 @@ export class Backgammon extends Chess {
   }
 }
 
+export class Hyper extends Chess {
+  // TODO - move into own class and have variant family
+  protected constructor() {
+    super('hyper');
+  }
+
+  static default(): Hyper {
+    return super.default();
+  }
+
+  static fromSetup(setup: Setup): Result<Hyper, PositionError> {
+    return super.fromSetup(setup);
+  }
+
+  clone(): Hyper {
+    return super.clone() as Hyper;
+  }
+
+  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+    return false;
+  }
+}
+
 export class Nackgammon extends Chess {
   // TODO - move into own class and have variant family
   protected constructor() {
@@ -1227,6 +1250,8 @@ export function defaultPosition(rules: Rules): Position {
       return Go19x19.default();
     case 'backgammon':
       return Backgammon.default();
+    case 'hyper':
+      return Hyper.default();
     case 'nackgammon':
       return Nackgammon.default();
     case 'breakthrough':
@@ -1292,6 +1317,8 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Go19x19.fromSetup(setup);
     case 'backgammon':
       return Backgammon.fromSetup(setup);
+    case 'hyper':
+      return Hyper.fromSetup(setup);
     case 'nackgammon':
       return Nackgammon.fromSetup(setup);
     case 'breakthrough':
