@@ -8,6 +8,8 @@ import { SquareSet } from './squareSet.js';
 import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Rules, Square } from './types.js';
 import { defined, opposite } from './util.js';
 
+import { Abalone } from './variants/abalone/abalone.js';
+
 export { Castles, Chess, Context, IllegalSetup, Position, PositionError };
 
 export class Crazyhouse extends Chess {
@@ -1258,6 +1260,8 @@ export function defaultPosition(rules: Rules): Position {
       return Breakthrough.default();
     case 'minibreakthrough':
       return MiniBreakthrough.default();
+    case 'abalone':
+      return Abalone.default();
   }
 }
 
@@ -1325,5 +1329,7 @@ export function setupPosition(rules: Rules, setup: Setup): Result<Position, Posi
       return Breakthrough.fromSetup(setup);
     case 'minibreakthrough':
       return MiniBreakthrough.fromSetup(setup);
+    case 'abalone':
+      return Abalone.fromSetup(setup);
   }
 }

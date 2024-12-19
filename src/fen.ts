@@ -16,6 +16,8 @@ import {
   squareFile,
 } from './util.js';
 
+import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
+
 const O = fp.Option;
 const R = fp.Result;
 
@@ -63,7 +65,7 @@ function parseSmallUint(str: string): fp.Option<number> {
   return /^\d{1,4}$/.test(str) ? parseInt(str, 10) : undefined;
 }
 
-function charToPiece(ch: string): Piece | undefined {
+export function charToPiece(ch: string): Piece | undefined {
   const role = charToRole(ch);
   return role && { role, playerIndex: ch.toLowerCase() === ch ? 'p2' : 'p1' };
 }
@@ -384,6 +386,33 @@ const parseMancalaFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
 };
 
 // ------------------------------------------------------------------------------
+// Abalone FEN parsing
+const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+  const [boardPart, ...parts] = fen.split(' ');
+
+  if (parts.length !== 5) {
+    return Result.err(new FenError(InvalidFen.Fen));
+  }
+
+  return fp
+    .resultZip([
+      parseAbaloneBoardFen(rules)(boardPart),
+      parseScore(parts[0]),
+      parseScore(parts[1]),
+      parsePlayerTurn('b', 'w')(parts[2]),
+      parseFullMoves(parts[3]),
+    ])
+    .map(([board, p1Captures, p2Captures, turn, fullmoves]) => ({
+      ...defaultSetup(),
+      board,
+      p1Captures,
+      p2Captures,
+      turn,
+      fullmoves,
+    }));
+};
+
+// ------------------------------------------------------------------------------
 // Go FEN parsing
 const parseKo = (part: fp.Option<string>): Result<fp.Option<number>> => {
   return fp.pipe(
@@ -535,6 +564,9 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   }
   if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
     return parseBackgammonFen(rules)(fen);
+  }
+  if (rules === 'abalone') {
+    return parseAbaloneFen(rules)(fen);
   }
 
   return parseDefaultFen(rules)(fen);
