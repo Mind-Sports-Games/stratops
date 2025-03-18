@@ -10,8 +10,7 @@ export abstract class XiangqiFamily extends Chess {
   }
 
   protected validate(): Result<undefined, PositionError> {
-    // @TODO: validate xiangqi position
-    return super.validate();
+    return Result.ok(undefined); // @TODO: validate xiangqi position
   }
 
   static defaultBoard(pos: XiangqiFamily) {
