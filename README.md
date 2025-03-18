@@ -8,36 +8,65 @@ based on chessops: https://github.com/niklasf/chessops/
 
 ## Development
 
-Install build dependencies:
+### Install build dependencies
 
 ```sh
 pnpm install
 ```
 
-Update deps:
+### Update deps based on package.json file
 
 ```sh
 rm -rf node_modules pnpm-lock.yaml && pnpm store prune && pnpm install
 ```
 
-To compile typescript:
+### Compile typescript
 
 ```sh
-pnpm prepare --watch
+pnpm run prepare --watch
 ```
 
-run tests:
+### Run tests
 
 ```sh
 pnpm run test --watch
 pnpm run test src/squareSet --watch
 ```
 
-Before committing:
+### Before committing
 
 ```sh
 pnpm run lint
 pnpm run format
+```
+
+### Watch changes from another project (link)
+
+#### In the other project (e.g. lila)
+
+- declare the link towards stratops (from project's `package.json`)
+
+```json
+"dependencies": {
+  ...
+  "stratops": "link:/path/to/stratops",
+  ...
+}
+```
+
+#### in stratops
+
+- create `.env.local` file based on .env.local.default
+- link back:
+
+```sh
+pnpm run link
+```
+
+- trigger compilation (no watch mode):
+
+```sh
+pnpm run prepare
 ```
 
 ## License
