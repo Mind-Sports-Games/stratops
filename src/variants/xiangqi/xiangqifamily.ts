@@ -10,11 +10,12 @@ export abstract class XiangqiFamily extends Chess {
   }
 
   protected validate(): Result<undefined, PositionError> {
-    return Result.ok(undefined); // @TODO: validate xiangqi position
+    return Result.ok(undefined); // @TODO: used in Ceval only currently - does not need a real validation
   }
 
+  // these are stubs so the code compiles - we do not use them in lila yet.
   static defaultBoard(pos: XiangqiFamily) {
-    pos.board = Board.default(); // @TODO: currently default chess board
+    pos.board = Board.default();
     pos.pockets = undefined;
     pos.turn = 'p1';
     pos.castles = Castles.empty();
