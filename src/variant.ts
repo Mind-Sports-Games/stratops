@@ -9,6 +9,7 @@ import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Rules, Square } from './typ
 import { defined, opposite } from './util.js';
 
 import { Abalone } from './variants/abalone/abalone.js';
+import { MiniXiangqi, Xiangqi } from './variants/xiangqi';
 
 export { Castles, Chess, Context, IllegalSetup, Position, PositionError };
 
@@ -764,51 +765,6 @@ export class MiniShogi extends Chess {
 
   clone(): MiniShogi {
     return super.clone() as MiniShogi;
-  }
-
-  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
-    return false;
-  }
-}
-
-export class Xiangqi extends Chess {
-  // TODO - move into own class and have variant family
-  protected constructor() {
-    super('xiangqi');
-  }
-
-  static default(): Xiangqi {
-    return super.default();
-  }
-
-  static fromSetup(setup: Setup): Result<Xiangqi, PositionError> {
-    return super.fromSetup(setup);
-  }
-
-  clone(): Xiangqi {
-    return super.clone() as Xiangqi;
-  }
-
-  hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
-    return false;
-  }
-}
-
-export class MiniXiangqi extends Chess {
-  protected constructor() {
-    super('minixiangqi');
-  }
-
-  static default(): MiniXiangqi {
-    return super.default();
-  }
-
-  static fromSetup(setup: Setup): Result<MiniXiangqi, PositionError> {
-    return super.fromSetup(setup);
-  }
-
-  clone(): MiniXiangqi {
-    return super.clone() as MiniXiangqi;
   }
 
   hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
