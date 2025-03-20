@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
+import { PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { XiangqiFamily } from './xiangqifamily';
-import { PositionError } from '../../chess';
 
 export class MiniXiangqi extends XiangqiFamily {
   protected constructor() {
