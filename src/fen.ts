@@ -15,7 +15,6 @@ import {
   roleToChar,
   squareFile,
 } from './util.js';
-
 import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
 
 const O = fp.Option;
@@ -106,7 +105,8 @@ export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board
         } else {
           if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
           const square = file + rank * files;
-          const isShogiPromotion = rules === 'shogi' && c === '+' && i + 1 < boardPart.length;
+          const isShogiPromotion = (rules === 'shogi' || rules === 'minishogi') && c === '+'
+            && i + 1 < boardPart.length;
           const pieceChar = isShogiPromotion ? c + boardPart[i + 1] : c;
           if (isShogiPromotion) {
             ++i;
