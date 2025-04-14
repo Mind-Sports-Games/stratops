@@ -3,7 +3,6 @@ import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { charToPiece, FenError, InvalidFen } from '../../fen';
 import { Rules } from '../../types';
-import { dimensionsForRules } from '../../util';
 
 /*
 9 -              &  \' (  )  *
@@ -30,9 +29,11 @@ import { dimensionsForRules } from '../../util';
      |  |  |  |  |  |  |  |  |
      A  B  C  D  E  F  G  H  I
 */
+// @TODO: refactor this so it is included in the GameFamily
 export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board, FenError> => {
   const board = Board.empty(rules);
-  const { ranks, files } = dimensionsForRules(rules);
+  const ranks = 9,
+    files = 9;
   let rank = ranks - 1;
   let file = 0;
   for (let i = 0; i < boardPart.length; i++) {

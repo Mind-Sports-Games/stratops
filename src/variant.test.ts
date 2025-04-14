@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals';
 import { perft } from './debug.js';
 import { parseFen } from './fen.js';
 import { Rules } from './types.js';
-import { setupPosition } from './variant.js';
+import { getClassFromRules } from './variants/utils.js';
 
 const skip = 0;
 
@@ -41,7 +41,7 @@ const variantPerfts: [Rules, string, string, number, number, number][] = [
 ];
 
 test.each(variantPerfts)('variant perft: %s (%s): %s', (rules, _, fen, d1, d2, d3) => {
-  const pos = setupPosition(rules, parseFen('chess')(fen).unwrap()).unwrap();
+  const pos = getClassFromRules(rules).fromSetup(parseFen('chess')(fen).unwrap()).unwrap();
   expect(perft(rules)(pos, 1, false)).toBe(d1);
   if (d2) expect(perft(rules)(pos, 2, false)).toBe(d2);
   if (d3) expect(perft(rules)(pos, 3, false)).toBe(d3);
@@ -83,14 +83,13 @@ const insufficientMaterial: [Rules, string, boolean, boolean][] = [
 ];
 
 test.each(insufficientMaterial)('%s insufficient material: %s', (rules, fen, p1, p2) => {
-  const pos = setupPosition(rules, parseFen('chess')(fen).unwrap()).unwrap();
+  const pos = getClassFromRules(rules).fromSetup(parseFen('chess')(fen).unwrap()).unwrap();
   expect(pos.hasInsufficientMaterial('p1')).toBe(p1);
   expect(pos.hasInsufficientMaterial('p2')).toBe(p2);
 });
 
 test('king of the hill not over', () => {
-  const pos = setupPosition(
-    'kingofthehill',
+  const pos = getClassFromRules('kingofthehill').fromSetup(
     parseFen('chess')('rnbqkbnr/pppppppp/8/1Q6/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isInsufficientMaterial()).toBe(false);
@@ -103,32 +102,34 @@ test('king of the hill not over', () => {
 
 test('racing kings end', () => {
   // Both players reached the backrank.
-  const draw = setupPosition(
-    'racingkings',
+  const draw = getClassFromRules('racingkings').fromSetup(
     parseFen('chess')('kr3NK1/1q2R3/8/8/8/5n2/2N5/1rb2B1R w - - 11 14').unwrap(),
   ).unwrap();
   expect(draw.isEnd()).toBe(true);
   expect(draw.outcome()).toStrictEqual({ winner: undefined });
 
   // P1 to move is lost because p2 reached the backrank.
-  const p2 = setupPosition('racingkings', parseFen('chess')('1k6/6K1/8/8/8/8/8/8 w - - 0 1').unwrap()).unwrap();
+  const p2 = getClassFromRules('racingkings').fromSetup(parseFen('chess')('1k6/6K1/8/8/8/8/8/8 w - - 0 1').unwrap())
+    .unwrap();
   expect(p2.isEnd()).toBe(true);
   expect(p2.outcome()).toStrictEqual({ winner: 'p2' });
 
   // P2 is given a chance to catch up.
-  const pos = setupPosition('racingkings', parseFen('chess')('1K6/7k/8/8/8/8/8/8 b - - 0 1').unwrap()).unwrap();
+  const pos = getClassFromRules('racingkings').fromSetup(parseFen('chess')('1K6/7k/8/8/8/8/8/8 b - - 0 1').unwrap())
+    .unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
   // P2 near backrank but cannot move there.
-  const p1 = setupPosition('racingkings', parseFen('chess')('2KR4/k7/2Q5/4q3/8/8/8/2N5 b - - 0 1').unwrap()).unwrap();
+  const p1 = getClassFromRules('racingkings').fromSetup(
+    parseFen('chess')('2KR4/k7/2Q5/4q3/8/8/8/2N5 b - - 0 1').unwrap(),
+  ).unwrap();
   expect(p1.isEnd()).toBe(true);
   expect(p1.outcome()).toStrictEqual({ winner: 'p1' });
 });
 
 test('atomic king exploded', () => {
-  const pos = setupPosition(
-    'atomic',
+  const pos = getClassFromRules('atomic').fromSetup(
     parseFen('chess')('r4b1r/ppp1pppp/7n/8/8/8/PPPPPPPP/RNBQKB1R b KQ - 0 3').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
@@ -137,55 +138,54 @@ test('atomic king exploded', () => {
 });
 
 test('lines of action wins', () => {
-  let pos = setupPosition('linesofaction', parseFen('chess')('1LLLLLL1/8/8/8/8/8/8/8 b - - 0 1').unwrap()).unwrap();
+  let pos = getClassFromRules('linesofaction').fromSetup(parseFen('chess')('1LLLLLL1/8/8/8/8/8/8/8 b - - 0 1').unwrap())
+    .unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 
-  pos = setupPosition(
-    'linesofaction',
+  pos = getClassFromRules('linesofaction').fromSetup(
     parseFen('chess')('1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 b - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
-  pos = setupPosition('linesofaction', parseFen('chess')('8/l6l/l6l/l6l/l6l/l6l/l6l/8 b - - 0 1').unwrap()).unwrap();
+  pos = getClassFromRules('linesofaction').fromSetup(
+    parseFen('chess')('8/l6l/l6l/l6l/l6l/l6l/l6l/8 b - - 0 1').unwrap(),
+  ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
-  pos = setupPosition('linesofaction', parseFen('chess')('8/l7/l7/l7/l7/l7/l7/8 b - - 0 1').unwrap()).unwrap();
+  pos = getClassFromRules('linesofaction').fromSetup(parseFen('chess')('8/l7/l7/l7/l7/l7/l7/8 b - - 0 1').unwrap())
+    .unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });
 
 test('breakthrough wins', () => {
-  let pos = setupPosition(
-    'breakthrough',
+  let pos = getClassFromRules('breakthrough').fromSetup(
     parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPP w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
-  pos = setupPosition(
-    'breakthrough',
+  pos = getClassFromRules('breakthrough').fromSetup(
     parseFen('breakthrough')('ppppppp1/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPp w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 
-  pos = setupPosition(
-    'breakthrough',
+  pos = getClassFromRules('breakthrough').fromSetup(
     parseFen('breakthrough')('ppppPppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPP1 w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 
-  pos = setupPosition(
-    'breakthrough',
+  pos = getClassFromRules('breakthrough').fromSetup(
     parseFen('breakthrough')('pppppppp/pppppppp/8/8/8/8/8/8 w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);

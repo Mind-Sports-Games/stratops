@@ -442,7 +442,7 @@ export class Chess extends Position {
     return pos.validate().map(_ => pos);
   }
 
-  clone(): Chess {
+  override clone(): Chess {
     return super.clone() as Chess;
   }
 
