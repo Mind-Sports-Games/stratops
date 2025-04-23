@@ -1,7 +1,7 @@
 import { expect, test } from '@jest/globals';
 import { perft } from './debug.js';
 import { parseFen } from './fen.js';
-import { Rules } from './types.js';
+import type { Rules } from './types.js';
 import { getClassFromRules } from './variants/utils.js';
 
 const skip = 0;

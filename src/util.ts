@@ -1,16 +1,16 @@
-import * as fp from './fp.js';
+import type * as fp from './fp.js';
 import {
-  BoardDimensions,
-  CastlingSide,
+  type BoardDimensions,
+  type CastlingSide,
   FILE_NAMES,
   isDrop,
-  Move,
-  PlayerIndex,
+  type Move,
+  type PlayerIndex,
   RANK_NAMES,
-  Role,
-  Rules,
-  Square,
-  SquareName,
+  type Role,
+  type Rules,
+  type Square,
+  type SquareName,
 } from './types.js';
 
 export function defined<A>(v: fp.Option<A>): v is A {

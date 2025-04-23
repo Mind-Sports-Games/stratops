@@ -14,7 +14,7 @@
 
 import { zip } from './fp.js';
 import { SquareSet } from './squareSet.js';
-import { BySquare, Piece, PlayerIndex, Square } from './types.js';
+import type { BySquare, Piece, PlayerIndex, Square } from './types.js';
 import { squareFile, squareRank } from './util.js';
 
 function isValid(square: Square): boolean {

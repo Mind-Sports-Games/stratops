@@ -1,6 +1,6 @@
-import { Position } from './chess.js';
+import type { Position } from './chess.js';
 import { makeFen, parseFen } from './fen.js';
-import { isDrop, Move, Rules, SquareName } from './types.js';
+import { isDrop, type Move, type Rules, type SquareName } from './types.js';
 import { makeSquare, squareFile } from './util.js';
 import { getClassFromRules } from './variants/utils.js';
 

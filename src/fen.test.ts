@@ -4,7 +4,7 @@ import { amazonsChessgroundFen } from './compat.js';
 import { EMPTY_BOARD_FEN, INITIAL_BOARD_FEN, INITIAL_FEN, makeBoardFen, makeFen, parseFen } from './fen.js';
 import { defaultSetup } from './setup.js';
 import { SquareSet } from './squareSet.js';
-import { Piece } from './types.js';
+import type { Piece } from './types.js';
 import { parseSquare } from './util.js';
 import { getClassFromRules } from './variants/utils.js';
 

@@ -1,8 +1,8 @@
 // TODO: SAN isn't really great for other games, should we bother implementing it?
 import { attacks, bishopAttacks, kingAttacks, knightAttacks, queenAttacks, rookAttacks } from './attacks.js';
-import { Position } from './chess.js';
+import type { Position } from './chess.js';
 import { SquareSet } from './squareSet.js';
-import { CastlingSide, FILE_NAMES, isDrop, Move, RANK_NAMES, Rules } from './types.js';
+import { type CastlingSide, FILE_NAMES, isDrop, type Move, RANK_NAMES, type Rules } from './types.js';
 import { charToRole, defined, makeSquare, opposite, parseSquare, roleToChar, squareFile, squareRank } from './util.js';
 
 const makeSanWithoutSuffix = (rules: Rules) => (pos: Position, move: Move): string => {

@@ -1,4 +1,4 @@
-import { PlayerIndex, Square, Tuple } from './types.js';
+import type { PlayerIndex, Square, Tuple } from './types.js';
 
 function popcnt32(n: number): number {
   n = n - ((n >>> 1) & 0x5555_5555);

@@ -2,12 +2,29 @@ import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { Castles, type PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { type DropMove, isDrop, type Move, type PlayerIndex } from '../../types';
+import { isDrop, type Move, type PlayerIndex, Role, SquareName } from '../../types';
 import { opposite } from '../../util';
-import type { ExtendedMoveInfo, ParsedMove } from '../interfaces';
+import { ExtendedMoveInfo, Key, LexicalUci, NotationStyle, ParsedMove } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override computeMoveNotation(move: ExtendedMoveInfo): string {
+    const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
+      board = this.readFen(move.fen, this.height, this.width),
+      prevBoard = this.readFen(move.prevFen, this.height, this.width),
+      prevrole = prevBoard.pieces[parsed.orig],
+      dest = parsed.dest,
+      connector = this.isCapture(prevBoard, board) ? 'x' : this.isDrop(prevBoard, board) ? '*' : '-',
+      role = board.pieces[dest],
+      piece = role[0] === '+' ? role[0] + role[1].toUpperCase() : role[0].toUpperCase(),
+      origin = !this.isDrop(prevBoard, board) && this.isMoveAmbiguous(board, parsed.dest, prevrole) ? parsed.orig : '',
+      promotion = this.promotionSymbol(prevBoard, board, parsed);
+
+    if (promotion == '+') return `${piece.slice(1)}${origin}${connector}${dest}${promotion}`;
+
+    return `${piece}${origin}${connector}${dest}${promotion}`;
+  }
+
   // @TODO: manage pockets
   static override defaultBoard(pos: Variant) {
     pos.board = Board.default();
@@ -15,6 +32,43 @@ export abstract class GameFamily extends Variant {
     pos.halfmoves = 0;
     pos.fullmoves = 1;
     return pos;
+  }
+
+  static override getNotationStyle(): NotationStyle {
+    return NotationStyle.usi;
+  }
+
+  static override parseLexicalUci(uci: string): LexicalUci | undefined {
+    if (!uci) return undefined;
+    const pos = uci.match(/[a-z][1-9][0-9]?/g) as Key[];
+
+    if (uci[1] === '@') {
+      return {
+        from: pos[0],
+        to: pos[0],
+        dropRole: `${uci[0].toLowerCase()}-piece` as Role,
+      };
+    }
+
+    let promotion: Role | undefined = undefined;
+
+    const uciToFrom = `${pos[0]}${pos[1]}`;
+    if (uci.startsWith(uciToFrom) && uci.length == uciToFrom.length + 1) {
+      promotion = `p${uci[uci.length - 1]}-piece` as Role;
+    }
+
+    return {
+      from: pos[0],
+      to: pos[1],
+      promotion,
+    };
+  }
+
+  static override patchFairyUci(move: string, fen: string) {
+    if (move.length !== 5) {
+      return move;
+    }
+    return `${move.slice(0, 4)}${this.getRoleFromFenAt(fen, move.slice(0, 2) as SquareName)}`;
   }
 
   static fromSetupAndPos(setup: Setup, pos: GameFamily): Result<GameFamily, PositionError> {
@@ -27,6 +81,14 @@ export abstract class GameFamily extends Variant {
     pos.halfmoves = setup.halfmoves;
     pos.fullmoves = setup.fullmoves;
     return pos.validate().map(_ => pos);
+  }
+
+  static getRoleFromFenAt(fen: string, coordinates: SquareName): Role {
+    const column = this.width - (coordinates[0].charCodeAt(0) - 97);
+    const row = this.height + 1 - Number(coordinates[1]);
+    const board = this.readFen(fen, this.height, this.width);
+    const role = board.pieces[column + '' + row];
+    return role.toLowerCase() as Role;
   }
 
   static isCapture(prevBoard: Board, board: Board): boolean {
@@ -175,23 +237,6 @@ export abstract class GameFamily extends Variant {
     } else {
       return '';
     }
-  }
-
-  static uci2Notation(move: ExtendedMoveInfo): string {
-    const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
-      board = this.readFen(move.fen, this.height, this.width),
-      prevBoard = this.readFen(move.prevFen, this.height, this.width),
-      prevrole = prevBoard.pieces[parsed.orig],
-      dest = parsed.dest,
-      connector = this.isCapture(prevBoard, board) ? 'x' : this.isDrop(prevBoard, board) ? '*' : '-',
-      role = board.pieces[dest],
-      piece = role[0] === '+' ? role[0] + role[1].toUpperCase() : role[0].toUpperCase(),
-      origin = !this.isDrop(prevBoard, board) && this.isMoveAmbiguous(board, parsed.dest, prevrole) ? parsed.orig : '',
-      promotion = this.promotionSymbol(prevBoard, board, parsed);
-
-    if (promotion == '+') return `${piece.slice(1)}${origin}${connector}${dest}${promotion}`;
-
-    return `${piece}${origin}${connector}${dest}${promotion}`;
   }
 
   static roleToPiece(role: string) {

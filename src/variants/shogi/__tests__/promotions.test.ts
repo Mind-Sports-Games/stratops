@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
-import { makeFen, parseFen } from '../../fen';
-import { MiniShogi } from './MiniShogi';
+import { makeFen, parseFen } from '../../../fen';
+import { MiniShogi } from '../MiniShogi';
 
 test('promoted rook can move as dragon', () => {
   const pos = MiniShogi.fromSetup(parseFen('minishogi')('rbsgk/4p/5/P4/KGSBR[] w - - 0 1').unwrap()).unwrap(); // initial position

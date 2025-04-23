@@ -1,5 +1,15 @@
 import { SquareSet } from './squareSet.js';
-import { ByPlayerIndex, ByRole, Piece, PlayerIndex, PLAYERINDEXES, Role, ROLES, Rules, Square } from './types.js';
+import {
+  type ByPlayerIndex,
+  type ByRole,
+  type Piece,
+  type PlayerIndex,
+  PLAYERINDEXES,
+  type Role,
+  ROLES,
+  type Rules,
+  type Square,
+} from './types.js';
 
 /**
  * Piece positions on a board.

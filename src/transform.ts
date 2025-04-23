@@ -1,5 +1,5 @@
 import { Board } from './board.js';
-import { Setup } from './setup.js';
+import type { Setup } from './setup.js';
 import { SquareSet } from './squareSet.js';
 import { PLAYERINDEXES, ROLES } from './types.js';
 import { defined } from './util.js';

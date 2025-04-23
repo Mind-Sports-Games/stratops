@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals';
 import { between, linesOfActionAttacks, ray, rookAttacks } from './attacks.js';
 import { Board } from './board.js';
 import { SquareSet } from './squareSet.js';
-import { PlayerIndex, Square } from './types.js';
+import type { PlayerIndex, Square } from './types.js';
 import { defined, parseSquare as parseSquareRules } from './util.js';
 
 const parseSquare = parseSquareRules('chess');

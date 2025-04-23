@@ -3,9 +3,18 @@ import { type Context, IllegalSetup, PositionError } from '../../chess';
 import { SquareSet } from '../../squareSet';
 import type { Outcome, PlayerIndex } from '../../types';
 import { opposite } from '../../util';
+import { ExtendedMoveInfo, NotationStyle } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override computeMoveNotation(move: ExtendedMoveInfo): string {
+    return move.uci;
+  }
+
+  static override getNotationStyle(): NotationStyle {
+    return NotationStyle.uci;
+  }
+
   protected override validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
     return Result.ok(undefined);

@@ -1,6 +1,6 @@
-import { Board } from './board.js';
-import { Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
-import { PLAYERINDEXES, ROLES, Tuple } from './types.js';
+import type { Board } from './board.js';
+import type { Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
+import { PLAYERINDEXES, ROLES, type Tuple } from './types.js';
 import { defined } from './util.js';
 
 function rol32(n: number, left: number): number {

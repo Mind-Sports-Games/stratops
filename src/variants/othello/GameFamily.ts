@@ -3,20 +3,11 @@ import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { DropMove, PlayerIndex, Square } from '../../types';
 import { opposite } from '../../util';
-import type { ExtendedMoveInfo } from '../interfaces';
+import { type ExtendedMoveInfo, NotationStyle } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
-  static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
-    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    const boardPart = fen.split(' ')[0].split('[')[0];
-    return boardPart.split(playerIndex === 'p1' ? 'P' : 'p').length - 1;
-  }
-
-  static uci2Notation(move: ExtendedMoveInfo): string {
+  static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) return 'PASS';
 
     const reg = move.uci.match(/[a-zA-Z][1-9@]0?/g) as string[];
@@ -27,6 +18,19 @@ export abstract class GameFamily extends Variant {
     const destPos = dest[0] + newRank;
 
     return `${destPos}`;
+  }
+
+  static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
+    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
+  }
+
+  static override getNotationStyle(): NotationStyle {
+    return NotationStyle.dpo;
+  }
+
+  static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
+    const boardPart = fen.split(' ')[0].split('[')[0];
+    return boardPart.split(playerIndex === 'p1' ? 'P' : 'p').length - 1;
   }
 
   readonly directions2D = [

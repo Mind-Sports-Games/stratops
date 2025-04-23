@@ -1,9 +1,18 @@
 import { Result } from '@badrap/result';
 import { Board } from './board.js';
 import * as fp from './fp.js';
-import { defaultSetup, Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
+import { defaultSetup, Material, type MaterialSide, RemainingChecks, type Setup } from './setup.js';
 import { SquareSet } from './squareSet.js';
-import { FILE_NAMES, Move, Piece, PlayerIndex, PLAYERINDEXES, ROLES, Rules, Square } from './types.js';
+import {
+  FILE_NAMES,
+  type Move,
+  type Piece,
+  type PlayerIndex,
+  PLAYERINDEXES,
+  ROLES,
+  type Rules,
+  type Square,
+} from './types.js';
 import {
   charToRole,
   defined,

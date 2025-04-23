@@ -29,6 +29,7 @@ import { MiniShogi } from './shogi/MiniShogi';
 import { Shogi } from './shogi/Shogi';
 import { Bestemshe } from './togyzkumalak/Bestemshe';
 import { Togyzkumalak } from './togyzkumalak/Togyzkumalak';
+import { ExtendedMoveInfo, NotationStyle } from './types';
 import { Variant } from './Variant';
 import { MiniXiangqi } from './xiangqi/MiniXiangqi';
 import { Xiangqi } from './xiangqi/Xiangqi';

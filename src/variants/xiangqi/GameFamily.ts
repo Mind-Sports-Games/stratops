@@ -2,17 +2,13 @@ import { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { PlayerIndex } from '../../types';
-import type { ExtendedMoveInfo } from '../interfaces';
+import { type ExtendedMoveInfo, NotationStyle } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
-  static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
-    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static uci2Notation(move: ExtendedMoveInfo): string {
+  static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
-      board = this.readFen(move.fen, this.width, this.height),
+      board = this.readFen(move.fen, this.height, this.width),
       role = board.pieces[parsed.dest],
       piece = this.roleToPiece(role),
       // converting to xiangqi from shogi board notation -> ranks: p2=1, p1=10 ; rows: left-right p1 pov, 9-1 for p1, 1-9 p2
@@ -57,6 +53,14 @@ export abstract class GameFamily extends Variant {
     } else {
       return `${piece}${prevFile}${direction}${movement}`;
     }
+  }
+
+  static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
+    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
+  }
+
+  static override getNotationStyle(): NotationStyle {
+    return NotationStyle.wxf;
   }
 
   static roleToPiece(role: string) {
