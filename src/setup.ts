@@ -1,7 +1,7 @@
 import { Board } from './board.js';
-import * as fp from './fp.js';
+import type * as fp from './fp.js';
 import { SquareSet } from './squareSet.js';
-import { Move, PlayerIndex, ROLES, Square } from './types.js';
+import { type Move, type PlayerIndex, ROLES, type Square } from './types.js';
 
 export class MaterialSide {
   'a-piece': number;

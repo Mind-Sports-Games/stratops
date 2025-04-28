@@ -11,23 +11,23 @@ import {
   rookAttacks,
 } from './attacks.js';
 import { Board } from './board.js';
-import * as fp from './fp.js';
-import { Material, RemainingChecks, Setup } from './setup.js';
+import type * as fp from './fp.js';
+import type { Material, RemainingChecks, Setup } from './setup.js';
 import { SquareSet } from './squareSet.js';
 import {
-  ByCastlingSide,
-  ByPlayerIndex,
+  type ByCastlingSide,
+  type ByPlayerIndex,
   CASTLING_SIDES,
-  CastlingSide,
+  type CastlingSide,
   isDrop,
-  Move,
-  NormalMove,
-  Outcome,
-  Piece,
-  PlayerIndex,
+  type Move,
+  type NormalMove,
+  type Outcome,
+  type Piece,
+  type PlayerIndex,
   PLAYERINDEXES,
-  Rules,
-  Square,
+  type Rules,
+  type Square,
 } from './types.js';
 import { defined, kingCastlesTo, opposite, squareRank } from './util.js';
 
@@ -442,7 +442,7 @@ export class Chess extends Position {
     return pos.validate().map(_ => pos);
   }
 
-  clone(): Chess {
+  override clone(): Chess {
     return super.clone() as Chess;
   }
 

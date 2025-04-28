@@ -70,5 +70,3 @@ export * as hash from './hash.js';
 export * as san from './san.js';
 
 export * as transform from './transform.js';
-
-export * as variant from './variant.js';

@@ -19,6 +19,14 @@
     "no-duplicate-imports": "error",
     "eqeqeq": ["error", "smart"],
     "prefer-const": "warn",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "fixStyle": "inline-type-imports",
+        "prefer": "type-imports",
+        "disallowTypeAnnotations": false
+      }
+    ],
     "@typescript-eslint/no-empty-function": ["error", { "allow": ["constructors"] }],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
