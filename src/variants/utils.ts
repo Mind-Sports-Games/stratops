@@ -29,7 +29,6 @@ import { MiniShogi } from './shogi/MiniShogi';
 import { Shogi } from './shogi/Shogi';
 import { Bestemshe } from './togyzkumalak/Bestemshe';
 import { Togyzkumalak } from './togyzkumalak/Togyzkumalak';
-import { ExtendedMoveInfo, NotationStyle } from './types';
 import { Variant } from './Variant';
 import { MiniXiangqi } from './xiangqi/MiniXiangqi';
 import { Xiangqi } from './xiangqi/Xiangqi';
@@ -100,5 +99,7 @@ export function getClassFromRules(rules: Rules): typeof Variant {
       return MiniBreakthrough.getClass();
     case 'abalone':
       return Abalone.getClass();
+    default: // draughts
+      return Variant.getClass();
   }
 }
