@@ -4,9 +4,9 @@ import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import { Outcome, PlayerIndex, Square } from '../../types';
 import { opposite } from '../../util';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class Antichess extends Variant {
+export class Antichess extends GameFamily {
   static override default(): Antichess {
     const pos = super.default();
     pos.castles = Castles.empty();

@@ -2,7 +2,7 @@ import type { Position } from './chess.js';
 import { makeFen, parseFen } from './fen.js';
 import { isDrop, type Move, type Rules, type SquareName } from './types.js';
 import { makeSquare, squareFile } from './util.js';
-import { getClassFromRules } from './variants/utils.js';
+import { variantClass } from './variants/util.js';
 
 export interface ChessgroundDestsOpts {
   chess960?: boolean;
@@ -53,6 +53,7 @@ export const scalachessCharPair = (rules: Rules) => (move: Move): string => {
   }
 };
 
+// @TODO : replace with variantKeyToRules or variantClassFromVariantKey
 export function playstrategyRules(
   variant:
     | 'standard'
@@ -153,6 +154,16 @@ export function playstrategyVariants(
   | 'breakthrough'
   | 'minibreakthrough'
   | 'abalone'
+  | 'international'
+  | 'antidraughts'
+  | 'brkthru'
+  | 'russian'
+  | 'brazilian'
+  | 'pool'
+  | 'portuguese'
+  | 'english'
+  | 'frisian'
+  | 'frysk'
 {
   switch (rules) {
     case 'chess':
@@ -179,6 +190,6 @@ export function playstrategyVariants(
 export const amazonsChessgroundFen = (fen: string): string => {
   // TODO: remove the unwraps
   const setup = parseFen('amazons')(fen).unwrap();
-  const game = getClassFromRules('amazons').fromSetup(setup).unwrap();
+  const game = variantClass('amazons').fromSetup(setup).unwrap();
   return makeFen('amazons')(game.toSetup(), { promoted: true });
 };

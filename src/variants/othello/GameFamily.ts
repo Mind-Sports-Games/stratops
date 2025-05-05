@@ -3,7 +3,7 @@ import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { DropMove, PlayerIndex, Square } from '../../types';
 import { opposite } from '../../util';
-import { type ExtendedMoveInfo, NotationStyle } from '../types';
+import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -24,6 +24,10 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.flipello;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.dpo;
   }
@@ -31,6 +35,13 @@ export abstract class GameFamily extends Variant {
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
     const boardPart = fen.split(' ')[0].split('[')[0];
     return boardPart.split(playerIndex === 'p1' ? 'P' : 'p').length - 1;
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.flipello,
+      VariantKey.flipello10,
+    ];
   }
 
   readonly directions2D = [

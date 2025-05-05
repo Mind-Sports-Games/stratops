@@ -6,9 +6,9 @@ import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import { Outcome, PlayerIndex, Square } from '../../types';
 import { defined } from '../../util';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class RacingKings extends Variant {
+export class RacingKings extends GameFamily {
   static override default(): RacingKings {
     const pos = new this();
     pos.board = Board.racingKings();

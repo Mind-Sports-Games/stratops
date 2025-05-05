@@ -2,9 +2,9 @@ import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { Castles, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class Monster extends Variant {
+export class Monster extends GameFamily {
   static override default(): Monster {
     const pos = new this();
     pos.board = Board.monster();

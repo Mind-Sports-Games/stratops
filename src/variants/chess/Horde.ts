@@ -5,9 +5,9 @@ import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import { Outcome, PlayerIndex, PLAYERINDEXES } from '../../types';
 import { defined, opposite } from '../../util';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class Horde extends Variant {
+export class Horde extends GameFamily {
   static override default(): Horde {
     const pos = new this();
     pos.board = Board.horde();

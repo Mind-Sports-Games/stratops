@@ -3,7 +3,7 @@ import { type Context, IllegalSetup, PositionError } from '../../chess';
 import { SquareSet } from '../../squareSet';
 import type { Outcome, PlayerIndex } from '../../types';
 import { opposite } from '../../util';
-import { ExtendedMoveInfo, NotationStyle } from '../types';
+import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -11,8 +11,19 @@ export abstract class GameFamily extends Variant {
     return move.uci;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.breakthroughtroyka;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.uci;
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.breakthroughtroyka,
+      VariantKey.minibreakthroughtroyka,
+    ];
   }
 
   protected override validate(): Result<undefined, PositionError> {

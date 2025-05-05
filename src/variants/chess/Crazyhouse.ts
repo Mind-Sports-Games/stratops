@@ -5,9 +5,9 @@ import { Material, Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import { PlayerIndex } from '../../types';
 import { defined } from '../../util';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class Crazyhouse extends Variant {
+export class Crazyhouse extends GameFamily {
   static override default(): Crazyhouse {
     const pos = super.default();
     pos.pockets = Material.empty();

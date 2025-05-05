@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 import { GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
-import { getClassFromRules } from '../utils';
+import { variantClass } from '../util';
 import { Variant } from '../Variant';
 
 test('testing e4 maps to 56', () => {
@@ -37,7 +37,7 @@ test('moveFromNotationStyle shogi pawn move', () => {
     prevFen: 'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] w - - 0 1',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('P-56');
 });
 
@@ -49,7 +49,7 @@ test('moveFromNotationStyle shogi Lance move', () => {
     prevFen: 'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[] b - - 0 1',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('L-98');
 });
 
@@ -61,7 +61,7 @@ test('moveFromNotationStyle shogi Knight move', () => {
     prevFen: 'lnsgkgsnl/1r5b1/pppppp1pp/6p2/9/2P6/PP1PPPPPP/LB5R1/1NSGKGSNL[] w - - 0 3',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('N-33');
 });
 
@@ -73,7 +73,7 @@ test('moveFromNotationStyle shogi Rook move', () => {
     prevFen: 'lnsgkgs1l/1r5b1/ppppppnpp/6p2/9/2P6/PP1PPPPPP/LB5R1/1NSGKGSNL[] b - - 5 2',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('R-58');
 });
 
@@ -85,7 +85,7 @@ test('moveFromNotationStyle shogi Silver move', () => {
     prevFen: 'lnsgkgs1l/1r5b1/ppppppnpp/6p2/9/2P6/PP1PPPPPP/LB2R4/1NSGKGSNL[] w - - 6 4',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('S-42');
 });
 
@@ -97,7 +97,7 @@ test('moveFromNotationStyle shogi Gold move', () => {
     prevFen: 'lnsgkg2l/1r3s1b1/ppppppnpp/6p2/9/2P6/PP1PPPPPP/LB2R4/1NSGKGSNL[] b - - 7 3',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('G-48');
 });
 
@@ -109,7 +109,7 @@ test('moveFromNotationStyle shogi King move', () => {
     prevFen: 'lnsgkg2l/1r3s1b1/ppppppnpp/6p2/9/2P6/PP1PPPPPP/LB2RG3/1NSGK1SNL[] w - - 8 5',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('K-62');
 });
 
@@ -121,7 +121,7 @@ test('moveFromNotationStyle shogi Bishop move', () => {
     prevFen: 'lnsg1g2l/1r1k1s1b1/ppppppBpp/6p2/9/2P6/PP1PPPPPP/L3RG3/1NSGK1SNL[N] w - - 1 6',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('B-31');
 });
 
@@ -133,7 +133,7 @@ test('moveFromNotationStyle shogi Dragon move', () => {
     prevFen: 'lnsg1gb1l/1r1k1s1+B1/p1pppp1pp/1p4p2/9/2P6/PP1PPPPPP/L3RG3/1NSGK1SNL[N] b - - 4 6',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('+B-55');
 });
 
@@ -147,7 +147,7 @@ test('moveFromNotationStyle shogi Pawn capture', () => {
     prevFen: 'lnsgkgsnl/1r5b1/pppp1pppp/4p4/4P4/9/PPPP1PPPP/1B5R1/LNSGKGSNL[] b - - 3 2',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('Px55');
 });
 
@@ -159,7 +159,7 @@ test('moveFromNotationStyle shogi Pawn drop', () => {
     prevFen: 'lnsgkgsnl/1r5b1/pppp1pppp/9/9/4R4/PPPP1PPPP/1B7/LNSGKGSNL[Pp] b - - 0 4',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('P*54');
 });
 
@@ -171,7 +171,7 @@ test('moveFromNotationStyle shogi Rook promotion choice yes', () => {
     prevFen: 'lnsg1gsnl/1r3k1b1/pppp1pppp/4R4/9/9/PPPP1PPPP/1B7/LNSGKGSNL[PP] w - - 1 6',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('R-53+');
 });
 
@@ -183,7 +183,7 @@ test('moveFromNotationStyle shogi Rook promotion choice no', () => {
     prevFen: 'lnsg1gsnl/1r3k1b1/pppp1pppp/4R4/9/9/PPPP1PPPP/1B7/LNSGKGSNL[PP] w - - 1 6',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('R-53=');
 });
 
@@ -195,7 +195,7 @@ test('moveFromNotationStyle shogi Dragon moving no promotion', () => {
     prevFen: 'lnsg1gsnl/1r4kb1/pppp+Rpppp/9/9/9/PPPP1PPPP/1B7/LNSGKGSNL[PP] w - - 3 7',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('+Rx63');
 });
 
@@ -207,7 +207,7 @@ test('moveFromNotationStyle shogi Knight drop no promotion', () => {
     prevFen: 'lnsg2s1l/1r2g1kb1/2p+R1p1pp/1p7/p2N5/2P6/PP1P1PNPP/9/L1SGKGS1L[NPPPppb] w - - 1 14',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('N*83');
 });
 
@@ -219,7 +219,7 @@ test('moveFromNotationStyle shogi Lance capture and promotion', () => {
     prevFen: 'lnsg2skl/4g2b1/1rp4p1/1p3+R3/p2N5/2P6/PP1P1PNP1/9/L1SGKGS1L[PPPPPnpppb] b - - 2 21',
   };
 
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('Lx19+');
 });
 
@@ -232,7 +232,7 @@ test('moveFromNotationStyle shogi gold ambiguous', () => {
     fen: 'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B2G2R1/LNSGK1SNL w - 2',
     prevFen: 'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1',
   };
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('G49-58');
 });
 
@@ -243,7 +243,7 @@ test('moveFromNotationStyle shogi Knight ambiguous', () => {
     fen: 'lnsgkgsnl/1r5b1/ppp1+Nppp1/3p4p/3N5/2P3P2/PP1P+pP1PP/1B5R1/L1SGKGS1L w p 14',
     prevFen: 'lnsgkgsnl/1r5b1/ppp2ppp1/3p4p/3N1N3/2P3P2/PP1P+pP1PP/1B5R1/L1SGKGS1L b p 13',
   };
-  const notation = getClassFromRules('shogi').computeMoveNotation(move);
+  const notation = variantClass('shogi').computeMoveNotation(move);
   expect(notation).toBe('N45-53+');
 });
 
@@ -257,7 +257,7 @@ test('moveFromNotationStyle xiangqi Pawn move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('P5+1');
 });
 
@@ -269,7 +269,7 @@ test('moveFromNotationStyle xiangqi knight move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('H2+3');
 });
 
@@ -281,7 +281,7 @@ test('moveFromNotationStyle xiangqi Elephant move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('E3+5');
 });
 
@@ -293,7 +293,7 @@ test('moveFromNotationStyle xiangqi Advisor move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('A6+5');
 });
 
@@ -305,7 +305,7 @@ test('moveFromNotationStyle xiangqi King move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('K5=6');
 });
 
@@ -317,7 +317,7 @@ test('moveFromNotationStyle xiangqi Rook move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('R1+2');
 });
 
@@ -329,7 +329,7 @@ test('moveFromNotationStyle xiangqi Cannon move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('C2+7');
 });
 
@@ -341,7 +341,7 @@ test('moveFromNotationStyle xiangqi Promoted pawn move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('P5=6');
 });
 
@@ -353,7 +353,7 @@ test('moveFromNotationStyle xiangqi 2 pawns in column move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('P+=6');
 });
 
@@ -365,7 +365,7 @@ test('moveFromNotationStyle xiangqi 3 pawns in column move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('17+1');
 });
 
@@ -377,7 +377,7 @@ test('moveFromNotationStyle xiangqi 3 pawns in column sideways move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('27=6');
 });
 
@@ -389,7 +389,7 @@ test('moveFromNotationStyle xiangqi 3 pawns in column p2 move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('17+1');
 });
 
@@ -401,7 +401,7 @@ test('moveFromNotationStyle xiangqi 3 pawns in column p2 sideways move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('27=6');
 });
 
@@ -413,7 +413,7 @@ test('moveFromNotationStyle xiangqi 4 pawns in column p2 move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('47+1');
 });
 
@@ -425,7 +425,7 @@ test('moveFromNotationStyle xiangqi 4 pawns in column p2 sideways move', () => {
     prevFen: '',
   };
 
-  const notation = getClassFromRules('xiangqi').computeMoveNotation(move);
+  const notation = variantClass('xiangqi').computeMoveNotation(move);
   expect(notation).toBe('37=6');
 });
 
@@ -433,14 +433,14 @@ test('moveFromNotationStyle xiangqi 4 pawns in column p2 sideways move', () => {
 test('moveFromNotationStyle oware c1 pos stone from starting', () => {
   const move = { san: '', uci: 'c1f2', fen: 'DDDDDD/DDDDDD 0 0 S', prevFen: 'DDDDDD/DDDDDD 0 0 S' };
 
-  const notation = getClassFromRules('oware').computeMoveNotation(move);
+  const notation = variantClass('oware').computeMoveNotation(move);
   expect(notation).toBe('C');
 });
 
 test('moveFromNotationStyle oware b2 pos stone', () => {
   const move = { san: '', uci: 'b2c1', fen: 'DDDCDD/DDEDDD 0 0 N', prevFen: 'DDDDDD/DDDDDD 0 0 S' };
 
-  const notation = getClassFromRules('oware').computeMoveNotation(move);
+  const notation = variantClass('oware').computeMoveNotation(move);
   expect(notation).toBe('e');
 });
 
@@ -453,7 +453,7 @@ test('moveFromNotationStyle backgammon a2c1 from starting', () => {
     prevFen: '5S,3,3s,1,5s,4,2S/5s,3,3S,1,5S,4,2s[] 3/5 - w 0 0 1',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('35: 13/10');
 });
 
@@ -465,7 +465,7 @@ test('moveFromNotationStyle backgammon a1f2 p2 from starting', () => {
     prevFen: '5S,3,3s,1,5s,4,2S/5s,3,3S,1,5S,4,2s[] 6/6/6/6 - b 0 0 1',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('66: 13/7');
 });
 
@@ -477,7 +477,7 @@ test('moveFromNotationStyle backgammon testing drop S@i2', () => {
     prevFen: '4S,3,3s,1,5s,4,2S/5s,3,3S,1,5S,4,2s[1S] 4/3 - w 0 0 1',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('43: bar/21');
 });
 
@@ -489,7 +489,7 @@ test('moveFromNotationStyle backgammon testing captures', () => {
     prevFen: '5S,3,3s,1,5s,4,2S/4s,1,s,1,3S,1,5S,4,2s[] 6/3 - w 0 0 1',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('63: 13/10*');
 });
 
@@ -501,7 +501,7 @@ test('moveFromNotationStyle backgammon testing captures 2', () => {
     prevFen: '5S,3,3s,1,5s,4,2S/4s,1,s,1,3S,1,5S,4,1s[1s] 3 6 w 0 0 1',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('36: 13/10*');
 });
 
@@ -513,7 +513,7 @@ test('moveFromNotationStyle backgammon testing lift', () => {
     prevFen: '6,15s,5/6,2S,2S,2S,3S,3S,3S[] 3/6 - w 0 0 10',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('36: 6/off');
 });
 
@@ -525,7 +525,7 @@ test('moveFromNotationStyle backgammon testing capture', () => {
     prevFen: '3S,3,3s,1S,4s,3,2s,1S/3s,1S,2,3S,1S,4S,1s,3,2s[1S] 1/1 1/1 b 0 0 1',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('11: 6/5');
 });
 
@@ -537,7 +537,7 @@ test('moveFromNotationStyle backgammon testing capture', () => {
     prevFen: '4S,3,2s,1S,5s,2,1s,1,1S/4s,3,3S,1S,5S,4,2s[1s] 5 6 w',
   };
 
-  const notation = getClassFromRules('backgammon').computeMoveNotation(move);
+  const notation = variantClass('backgammon').computeMoveNotation(move);
   expect(notation).toBe('56: 18/13');
 });
 

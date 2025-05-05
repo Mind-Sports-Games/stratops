@@ -2,8 +2,8 @@ import type { Result } from '@badrap/result';
 import { Board } from '../board';
 import { Chess, type PositionError } from '../chess';
 import type { Setup } from '../setup';
-import type { BoardDimensions, Role, Rules } from '../types';
-import { ExtendedMoveInfo, Key, LexicalUci, NotationStyle, ParsedMove } from './types';
+import { type BoardDimensions, type Role, RULES, type Rules } from '../types';
+import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
 export abstract class Variant extends Chess {
@@ -30,12 +30,20 @@ export abstract class Variant extends Chess {
     return this;
   }
 
+  static getFamily(): GameFamilyKey | undefined {
+    return undefined;
+  }
+
   static getScoreFromFen(_fen: string, _playerIndex: string): number | undefined {
     return undefined;
   }
 
   static getNotationStyle(): NotationStyle {
     return NotationStyle.san;
+  }
+
+  static getVariantKeys(): VariantKey[] {
+    return Object.values(VariantKey);
   }
 
   static parseLexicalUci(uci: string): LexicalUci | undefined {

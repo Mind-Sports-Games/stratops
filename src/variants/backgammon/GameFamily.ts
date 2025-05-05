@@ -2,7 +2,7 @@ import type { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { BoardDimensions, PlayerIndex } from '../../types';
-import { ExtendedMoveInfo, NotationStyle } from '../types';
+import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -74,12 +74,24 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.backgammon;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.bkg;
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
     return +fen.split(' ')[playerIndex === 'p1' ? 4 : 5];
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.backgammon,
+      VariantKey.hyper,
+      VariantKey.nackgammon,
+    ];
   }
 
   static combinedNotation(actionNotations: string[]): string {

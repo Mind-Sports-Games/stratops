@@ -1,9 +1,9 @@
 import { Result } from '@badrap/result';
 import { Castles, PositionError } from '../../chess';
 import { Setup } from '../../setup';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class NoCastling extends Variant {
+export class NoCastling extends GameFamily {
   static override default(): NoCastling {
     const pos = super.default();
     pos.castles = Castles.empty();
