@@ -4,7 +4,7 @@ import { Castles, type PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { isDrop, type Move, type PlayerIndex, Role, SquareName } from '../../types';
 import { opposite } from '../../util';
-import { ExtendedMoveInfo, Key, LexicalUci, NotationStyle, ParsedMove } from '../types';
+import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -34,8 +34,19 @@ export abstract class GameFamily extends Variant {
     return pos;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.shogi;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.usi;
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.minishogi,
+      VariantKey.shogi,
+    ];
   }
 
   static override parseLexicalUci(uci: string): LexicalUci | undefined {

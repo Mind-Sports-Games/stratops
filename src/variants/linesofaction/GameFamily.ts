@@ -4,7 +4,7 @@ import { type Context, IllegalSetup, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import type { Outcome, PlayerIndex } from '../../types';
-import { ExtendedMoveInfo, NotationStyle } from '../types';
+import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -16,8 +16,19 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.loa;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.uci;
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.linesOfAction,
+      VariantKey.scrambledEggs,
+    ];
   }
 
   protected override validate(): Result<undefined, PositionError> {

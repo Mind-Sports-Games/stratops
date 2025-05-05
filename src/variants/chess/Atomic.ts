@@ -5,9 +5,9 @@ import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Square } from '../../types';
 import { defined, opposite } from '../../util';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class Atomic extends Variant {
+export class Atomic extends GameFamily {
   static override default(): Atomic {
     return super.default() as Atomic;
   }

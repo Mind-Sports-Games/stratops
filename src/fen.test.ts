@@ -6,7 +6,7 @@ import { defaultSetup } from './setup.js';
 import { SquareSet } from './squareSet.js';
 import type { Piece } from './types.js';
 import { parseSquare } from './util.js';
-import { getClassFromRules } from './variants/utils.js';
+import { variantClass } from './variants/util.js';
 
 test('make board fen', () => {
   expect(makeBoardFen('chess')(Board.default())).toEqual(INITIAL_BOARD_FEN);
@@ -107,7 +107,7 @@ test.each([
   '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1 ½g1j1',
 ])('amazons fen for chessground', fen => {
   const setup = parseFen('amazons')(fen).unwrap();
-  const game = getClassFromRules('amazons').fromSetup(setup).unwrap();
+  const game = variantClass('amazons').fromSetup(setup).unwrap();
   const j1 = parseSquare('amazons')('j1');
   expect(j1 !== undefined).toBeTruthy();
   const pieceOrUndef = game.board.get(j1 as number);

@@ -321,6 +321,16 @@ export const RULES = [
   'breakthrough',
   'minibreakthrough',
   'abalone',
+  'international',
+  'antidraughts',
+  'brkthru',
+  'russian',
+  'brazilian',
+  'pool',
+  'portuguese',
+  'english',
+  'frisian',
+  'frysk',
 ] as const;
 
 export type Rules = typeof RULES[number];

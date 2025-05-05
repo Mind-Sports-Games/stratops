@@ -1,9 +1,9 @@
 import type { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class Chess extends Variant {
+export class Chess extends GameFamily {
   static override default(): Chess {
     return super.default() as Chess;
   }

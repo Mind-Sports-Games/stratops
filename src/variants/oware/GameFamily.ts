@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { PlayerIndex } from '../../types';
-import { ExtendedMoveInfo, NotationStyle } from '../types';
+import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -25,12 +25,22 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.oware;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.man;
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number {
     return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2] ?? 0;
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.oware,
+    ];
   }
 
   static nextAsciiLetter(letter: string, n: number): string {

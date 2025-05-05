@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { PlayerIndex } from '../../types';
-import { type ExtendedMoveInfo, NotationStyle } from '../types';
+import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -59,8 +59,19 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.xiangqi;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.wxf;
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.minixiangqi,
+      VariantKey.xiangqi,
+    ];
   }
 
   static roleToPiece(role: string) {

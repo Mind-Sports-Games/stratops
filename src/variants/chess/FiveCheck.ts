@@ -2,9 +2,9 @@ import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import { RemainingChecks, Setup } from '../../setup';
 import { Outcome, PlayerIndex, PLAYERINDEXES } from '../../types';
-import { Variant } from '../Variant';
+import { GameFamily } from './GameFamily';
 
-export class FiveCheck extends Variant {
+export class FiveCheck extends GameFamily {
   static override default(): FiveCheck {
     const pos = super.default();
     pos.remainingChecks = RemainingChecks.fiveCheck();

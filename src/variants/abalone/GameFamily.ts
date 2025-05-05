@@ -2,7 +2,14 @@ import { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { PlayerIndex } from '../../types';
-import { type ExtendedMoveInfo, LegacyNotationBoard, NotationStyle, type ParsedMove } from '../types';
+import {
+  type ExtendedMoveInfo,
+  GameFamilyKey,
+  LegacyNotationBoard,
+  NotationStyle,
+  type ParsedMove,
+  VariantKey,
+} from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -35,12 +42,24 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getFamily(): GameFamilyKey | undefined {
+    return GameFamilyKey.abalone;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.abl;
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
     return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2];
+  }
+
+  static override getVariantKeys(): VariantKey[] {
+    return [
+      VariantKey.backgammon,
+      VariantKey.hyper,
+      VariantKey.nackgammon,
+    ];
   }
 
   static diffAbaloneBoard(board: LegacyNotationBoard, prevBoard: LegacyNotationBoard): [string[], string[]] {
