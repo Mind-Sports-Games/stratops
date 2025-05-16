@@ -33,6 +33,8 @@ import { International } from './draughts/International';
 import { Pool } from './draughts/Pool';
 import { Portuguese } from './draughts/Portuguese';
 import { Russian } from './draughts/Russian';
+import { GameFamily as DameoGameFamily } from './dameo/GameFamily';
+import { Dameo } from './dameo/Dameo';
 import { GameFamily as GoGameFamily } from './go/GameFamily';
 import { Go13x13 } from './go/Go13x13';
 import { Go19x19 } from './go/Go19x19';
@@ -143,6 +145,8 @@ export function variantClass(rules: Rules): typeof Variant {
       return Frisian.getClass();
     case 'frysk':
       return Frysk.getClass();
+    case 'dameo':
+      return Dameo.getClass();
     default:
       return Variant.getClass();
   }
@@ -241,6 +245,8 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'frisian';
     case VariantKey.frysk:
       return 'frysk';
+    case VariantKey.dameo:
+      return 'dameo';
     default:
       return 'chess';
   }
@@ -252,6 +258,8 @@ export function gameFamilyClass(gameFamilyKey?: GameFamilyKey): typeof Variant {
       return AbaloneGameFamily.getClass();
     case GameFamilyKey.draughts:
       return DraughtsGameFamily.getClass();
+    case GameFamilyKey.dameo:
+      return DameoGameFamily.getClass();
     case GameFamilyKey.chess:
       return ChessGameFamily.getClass();
     case GameFamilyKey.loa:

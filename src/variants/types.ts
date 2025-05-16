@@ -97,6 +97,7 @@ export enum GameFamilyKey {
   go = 'go',
   backgammon = 'backgammon',
   abalone = 'abalone',
+  dameo = 'dameo',
 }
 
 export enum VariantKey {
@@ -145,4 +146,5 @@ export enum VariantKey {
   fromPositionDraughts = 'fromPositionDraughts',
   frisian = 'frisian',
   frysk = 'frysk',
+  dameo = 'dameo',
 }
