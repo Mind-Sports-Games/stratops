@@ -13,6 +13,14 @@ export class Xiangqi extends GameFamily {
     return this;
   }
 
+  static override getEmptyBoardFen(): string {
+    return '9/9/9/9/9/9/9/9/9/9';
+  }
+
+  static override getInitialBoardFen(): string {
+    return 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR';
+  }
+
   protected constructor() {
     super('xiangqi');
   }

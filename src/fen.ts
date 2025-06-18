@@ -25,6 +25,10 @@ import {
   squareFile,
 } from './util.js';
 import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
+import { Breakthrough } from './variants/breakthrough/Breakthrough.js';
+import { MiniBreakthrough } from './variants/breakthrough/MiniBreakthrough.js';
+import { LinesOfAction } from './variants/linesofaction/LinesOfAction.js';
+import { ScrambledEggs } from './variants/linesofaction/ScrambledEggs.js';
 
 const O = fp.Option;
 const R = fp.Result;
@@ -564,6 +568,7 @@ export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, Fe
 
 // ------------------------------------------------------------------------------
 // Regular fen parsing
+// @Note: ideally, these FEN parsers should be moved to the respective variant files
 export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   if (rules === 'oware' || rules === 'togyzkumalak' || rules === 'bestemshe') {
     return parseMancalaFen(rules)(fen);
@@ -577,8 +582,128 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (rules === 'abalone') {
     return parseAbaloneFen(rules)(fen);
   }
+  if (rules === 'breakthrough') {
+    return parseBreakthroughFen(fen);
+  }
+  if (rules === 'minibreakthrough') {
+    return parseMiniBreakthroughFen(fen);
+  }
+  if (rules === 'linesofaction') {
+    return parseLoAFen(fen);
+  }
+  if (rules === 'scrambledeggs') {
+    return parseScrambledEggsFen(fen);
+  }
 
   return parseDefaultFen(rules)(fen);
+};
+
+const parseBreakthroughFen = (fen: string): Result<Setup, FenError> => {
+  let [boardPart, ...parts] = fen.split(' ');
+
+  // fallback to variant's initial FEN in case of unexpected format
+  if (parts.length !== 5) {
+    [boardPart, ...parts] = fen.split(Breakthrough.getInitialFen());
+  }
+
+  return fp
+    .resultZip([
+      parseBoardFen('breakthrough')(boardPart),
+      parsePlayerTurn('w', 'b')(parts[0]),
+      parseHalfMoves(parts[3]),
+      parseFullMoves(parts[4]),
+    ])
+    .map(([board, turn, halfmoves, fullmoves]) => ({
+      board,
+      turn,
+      halfmoves,
+      fullmoves,
+      epSquare: undefined,
+      pockets: undefined,
+      remainingChecks: undefined,
+      unmovedRooks: SquareSet.empty(),
+    }));
+};
+
+const parseMiniBreakthroughFen = (fen: string): Result<Setup, FenError> => {
+  let [boardPart, ...parts] = fen.split(' ');
+
+  // fallback to variant's initial FEN in case of unexpected format
+  if (parts.length !== 5) {
+    [boardPart, ...parts] = fen.split(MiniBreakthrough.getInitialFen());
+  }
+
+  return fp
+    .resultZip([
+      parseBoardFen('minibreakthrough')(boardPart),
+      parsePlayerTurn('w', 'b')(parts[0]),
+      parseHalfMoves(parts[3]),
+      parseFullMoves(parts[4]),
+    ])
+    .map(([board, turn, halfmoves, fullmoves]) => ({
+      board,
+      turn,
+      halfmoves,
+      fullmoves,
+      epSquare: undefined,
+      pockets: undefined,
+      remainingChecks: undefined,
+      unmovedRooks: SquareSet.empty(),
+    }));
+};
+
+const parseLoAFen = (fen: string): Result<Setup, FenError> => {
+  let [boardPart, ...parts] = fen.split(' ');
+
+  // fallback to variant's initial FEN in case of unexpected format
+  if (parts.length !== 5) {
+    [boardPart, ...parts] = fen.split(LinesOfAction.getInitialFen());
+  }
+
+  return fp
+    .resultZip([
+      parseBoardFen('linesofaction')(boardPart),
+      parsePlayerTurn('w', 'b')(parts[0]),
+      parseHalfMoves(parts[3]),
+      parseFullMoves(parts[4]),
+    ])
+    .map(([board, turn, halfmoves, fullmoves]) => ({
+      board,
+      turn,
+      halfmoves,
+      fullmoves,
+      epSquare: undefined,
+      pockets: undefined,
+      remainingChecks: undefined,
+      unmovedRooks: SquareSet.empty(),
+    }));
+};
+
+const parseScrambledEggsFen = (fen: string): Result<Setup, FenError> => {
+  let [boardPart, ...parts] = fen.split(' ');
+
+  // fallback to variant's initial FEN in case of unexpected format
+  if (parts.length !== 5) {
+    [boardPart, ...parts] = fen.split(ScrambledEggs.getInitialFen());
+  }
+
+  return fp
+    .resultZip([
+      parseBoardFen('linesofaction')(boardPart),
+      parsePlayerTurn('w', 'b')(parts[0]),
+      parseHalfMoves(parts[3]),
+      parseFullMoves(parts[4]),
+    ])
+    .map(([board, turn, halfmoves, fullmoves]) => ({
+      board,
+      turn,
+      halfmoves,
+      fullmoves,
+      epSquare: undefined,
+      pockets: undefined,
+      remainingChecks: undefined,
+      unmovedRooks: SquareSet.empty(),
+    }));
 };
 
 interface FenOpts {

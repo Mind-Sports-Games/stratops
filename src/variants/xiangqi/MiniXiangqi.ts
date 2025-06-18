@@ -13,6 +13,14 @@ export class MiniXiangqi extends GameFamily {
     return this;
   }
 
+  static override getEmptyBoardFen(): string {
+    return '7/7/7/7/7/7/7';
+  }
+
+  static override getInitialBoardFen(): string {
+    return 'rcnkncr/p1ppp1p/7/7/7/P1PPP1P/RCNKNCR';
+  }
+
   protected constructor() {
     super('minixiangqi');
   }

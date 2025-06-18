@@ -27,6 +27,14 @@ export class Monster extends GameFamily {
     return this;
   }
 
+  static override getInitialBoardFen(): string {
+    return 'rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3';
+  }
+
+  static override getInitialEpd(): string {
+    return `${this.getInitialBoardFen()} w kq -`;
+  }
+
   protected constructor() {
     super('monster');
   }

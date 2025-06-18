@@ -9,6 +9,10 @@ export class Breakthrough extends GameFamily {
     return this;
   }
 
+  static override getInitialBoardFen(): string {
+    return 'pppppppp/pppppppp/8/8/8/8/PPPPPPPP/PPPPPPPP';
+  }
+
   protected constructor() {
     super('breakthrough');
   }

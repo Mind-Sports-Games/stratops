@@ -22,8 +22,29 @@ export abstract class Variant extends Chess {
     return pos;
   }
 
+  static emptyBoard(): Board {
+    const pos = Board.empty('chess');
+    return pos;
+  }
+
   static getBoardDimensions(): BoardDimensions {
     return { files: this.width, ranks: this.height };
+  }
+
+  static getEmptyBoardFen(): string {
+    return '8/8/8/8/8/8/8/8';
+  }
+
+  static getInitialBoardFen(): string {
+    return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+  }
+
+  static getInitialEpd(): string {
+    return `${this.getInitialBoardFen()} w - -`;
+  }
+
+  static getInitialFen(): string {
+    return `${this.getInitialEpd()} 0 1`;
   }
 
   static getClass() {

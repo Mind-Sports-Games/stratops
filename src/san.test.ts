@@ -3,8 +3,8 @@ import { Chess } from './chess.js';
 import { makeFen, parseFen } from './fen.js';
 import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san.js';
 import { parseUci as parseUciRules } from './util.js';
-import { Antichess } from './variants/chess/Antichess';
-import { Crazyhouse } from './variants/chess/Crazyhouse';
+import { Antichess } from './variants/chess/Antichess.js';
+import { Crazyhouse } from './variants/chess/Crazyhouse.js';
 
 const sanVariation = makeSanVariation('chess');
 const parseSan = parseSanRules('chess');

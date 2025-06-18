@@ -33,6 +33,14 @@ export class RacingKings extends GameFamily {
     return this;
   }
 
+  static override getInitialBoardFen(): string {
+    return '8/8/8/8/8/8/krbnNBRK/qrbnNBRQ';
+  }
+
+  static override getInitialEpd(): string {
+    return `${this.getInitialBoardFen()} w - -`;
+  }
+
   protected constructor() {
     super('racingkings');
   }

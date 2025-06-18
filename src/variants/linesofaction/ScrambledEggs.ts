@@ -9,6 +9,10 @@ export class ScrambledEggs extends GameFamily {
     return this;
   }
 
+  static override getInitialBoardFen(): string {
+    return '1lLlLlL1/L6l/l6L/L6l/l6L/L6l/l6L/1LlLlLl1';
+  }
+
   protected constructor() {
     super('scrambledeggs');
   }

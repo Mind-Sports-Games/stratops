@@ -28,6 +28,10 @@ export abstract class GameFamily extends Variant {
     return GameFamilyKey.flipello;
   }
 
+  static override getInitialEpd(): string {
+    return `${this.getInitialBoardFen()} b - -`;
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.dpo;
   }

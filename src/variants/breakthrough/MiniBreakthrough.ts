@@ -13,6 +13,13 @@ export class MiniBreakthrough extends GameFamily {
     return this;
   }
 
+  static override getEmptyBoardFen(): string {
+    return '5/5/5/5/5';
+  }
+  static override getInitialBoardFen(): string {
+    return 'ppppp/ppppp/5/PPPPP/PPPPP';
+  }
+
   protected constructor() {
     super('minibreakthrough');
   }

@@ -9,6 +9,10 @@ export class LinesOfAction extends GameFamily {
     return this;
   }
 
+  static override getInitialBoardFen(): string {
+    return '1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1';
+  }
+
   protected constructor() {
     super('linesofaction');
   }

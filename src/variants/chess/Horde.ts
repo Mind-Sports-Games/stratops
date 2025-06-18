@@ -30,6 +30,14 @@ export class Horde extends GameFamily {
     return this;
   }
 
+  static override getInitialBoardFen(): string {
+    return 'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP';
+  }
+
+  static override getInitialEpd(): string {
+    return `${this.getInitialBoardFen()} w kq -`;
+  }
+
   protected constructor() {
     super('horde');
   }

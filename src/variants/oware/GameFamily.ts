@@ -34,7 +34,7 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number {
-    return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2] ?? 0;
+    return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2];
   }
 
   static override getVariantKeys(): VariantKey[] {

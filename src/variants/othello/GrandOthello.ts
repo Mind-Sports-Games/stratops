@@ -13,6 +13,14 @@ export class GrandOthello extends GameFamily {
     return this;
   }
 
+  static override getEmptyBoardFen(): string {
+    return '10/10/10/10/10/10/10/10/10/10';
+  }
+
+  static override getInitialBoardFen(): string {
+    return '10/10/10/10/4pP4/4Pp4/10/10/10/10/PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp';
+  }
+
   protected constructor() {
     super('flipello10');
   }
