@@ -2,11 +2,13 @@ import { Result } from '@badrap/result';
 import { Castles, Context, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import { Outcome, PlayerIndex, Square } from '../../types';
+import { Outcome, PlayerIndex, Rules, Square } from '../../types';
 import { opposite } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class Antichess extends GameFamily {
+  static override rules: Rules = 'antichess';
+
   static override default(): Antichess {
     const pos = super.default();
     pos.castles = Castles.empty();

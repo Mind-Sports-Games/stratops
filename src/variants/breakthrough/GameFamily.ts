@@ -7,12 +7,10 @@ import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../t
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.breakthroughtroyka;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.uci;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.breakthroughtroyka;
   }
 
   static override getNotationStyle(): NotationStyle {

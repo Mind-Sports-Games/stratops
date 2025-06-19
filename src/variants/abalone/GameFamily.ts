@@ -13,6 +13,8 @@ import {
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.abalone;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const reg = move.uci.match(/[a-i][1-9]/g) as string[],
       parsed = this.parseUciToAbl(move.uci),
@@ -40,10 +42,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.abalone;
   }
 
   static override getNotationStyle(): NotationStyle {

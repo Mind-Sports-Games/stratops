@@ -1,13 +1,14 @@
 import type { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import type { BoardDimensions } from '../../types';
+import type { BoardDimensions, Rules } from '../../types';
 import { defined } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class Amazons extends GameFamily {
   static override height: BoardDimensions['ranks'] = 10;
   static override width: BoardDimensions['files'] = 10;
+  static override rules: Rules = 'amazons';
 
   static override default(): Amazons {
     const pos = super.default();

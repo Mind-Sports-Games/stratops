@@ -2,9 +2,7 @@ import { GameFamilyKey, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.chess;
-  }
+  static override family: GameFamilyKey = GameFamilyKey.chess;
 
   static override getVariantKeys(): VariantKey[] {
     return [

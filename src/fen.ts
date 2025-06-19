@@ -250,7 +250,7 @@ type BoardAndPocketStrings = {
   pockets?: string;
 };
 // Extracts the board and pocket portions of the string
-const boardAndPocketStrings = (rules: Rules) => (boardPart: string): Result<BoardAndPocketStrings, FenError> => {
+export const boardAndPocketStrings = (rules: Rules) => (boardPart: string): Result<BoardAndPocketStrings, FenError> => {
   const { ranks } = dimensionsForRules(rules);
   if (boardPart.endsWith(']')) {
     const pocketStart = boardPart.indexOf('[');
@@ -276,7 +276,7 @@ type BoardAndOptPockets = {
   board: Board;
   pockets?: Material;
 };
-const parseBoardAndOptPockets =
+export const parseBoardAndOptPockets =
   (rules: Rules) => (boardAndPockets: BoardAndPocketStrings): Result<BoardAndOptPockets, FenError> =>
     parseBoardFen(rules)(boardAndPockets.board).chain(board =>
       defined(boardAndPockets.pockets)
@@ -301,21 +301,22 @@ const parseBoardAndPockets = (rules: Rules) => (boardAndPockets: string): Result
     R.map(([board, pockets]) => ({ board, pockets })),
   );
 
-const parsePlayerTurn = (p1Char = 'w', p2Char = 'b') => (turnPart: fp.Option<string>): Result<PlayerIndex, FenError> =>
-  fp.pipe(
-    turnPart,
-    O.fold(
-      (turnPart: string) =>
-        turnPart.toLowerCase() === p1Char.toLowerCase()
-          ? Result.ok('p1')
-          : turnPart.toLowerCase() === p2Char.toLowerCase()
-          ? Result.ok('p2')
-          : Result.err(fenErr(InvalidFen.Turn)()),
-      () => Result.ok('p1'),
-    ),
-  );
+export const parsePlayerTurn =
+  (p1Char = 'w', p2Char = 'b') => (turnPart: fp.Option<string>): Result<PlayerIndex, FenError> =>
+    fp.pipe(
+      turnPart,
+      O.fold(
+        (turnPart: string) =>
+          turnPart.toLowerCase() === p1Char.toLowerCase()
+            ? Result.ok('p1')
+            : turnPart.toLowerCase() === p2Char.toLowerCase()
+            ? Result.ok('p2')
+            : Result.err(fenErr(InvalidFen.Turn)()),
+        () => Result.ok('p1'),
+      ),
+    );
 
-const parseMoves =
+export const parseMoves =
   (min: number, def: number) => (err: () => Error) => (part: fp.Option<string>): Result<number, FenError> =>
     fp.pipe(
       part,
@@ -331,10 +332,10 @@ const parseMoves =
       ),
     );
 
-const parseHalfMoves = (part: fp.Option<string>): Result<number, FenError> =>
+export const parseHalfMoves = (part: fp.Option<string>): Result<number, FenError> =>
   parseMoves(0, 0)(fenErr(InvalidFen.Halfmoves))(part);
 
-const parseFullMoves = (part: fp.Option<string>): Result<number, FenError> =>
+export const parseFullMoves = (part: fp.Option<string>): Result<number, FenError> =>
   parseMoves(1, 1)(fenErr(InvalidFen.Fullmoves))(part);
 
 const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<number, FenError> =>
@@ -344,7 +345,7 @@ const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
 const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
 const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
 
-const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
+export const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
   fp.pipe(
     part,
     O.filter(part => part !== '-'),
@@ -354,7 +355,7 @@ const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Op
     ),
   );
 
-const parseLastMove = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Move>, FenError> =>
+export const parseLastMove = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Move>, FenError> =>
   fp.pipe(
     part,
     O.filter(part => part.includes('½')),

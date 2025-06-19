@@ -1,13 +1,14 @@
 import { Result } from '@badrap/result';
 import { IllegalSetup, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { BoardDimensions } from '../../types';
+import { BoardDimensions, Rules } from '../../types';
 import { defined } from '../../util.js';
 import { GameFamily } from './GameFamily';
 
 export class Abalone extends GameFamily {
   static override height: BoardDimensions['ranks'] = 9;
   static override width: BoardDimensions['files'] = 9;
+  static override rules: Rules = 'abalone';
 
   static override default(): Abalone {
     const pos = super.default();

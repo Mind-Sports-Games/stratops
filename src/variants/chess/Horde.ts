@@ -3,11 +3,13 @@ import { Board } from '../../board';
 import { Castles, Context, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import { Outcome, PlayerIndex, PLAYERINDEXES } from '../../types';
+import { Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
 import { defined, opposite } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class Horde extends GameFamily {
+  static override rules: Rules = 'horde';
+
   static override default(): Horde {
     const pos = new this();
     pos.board = Board.horde();
@@ -28,6 +30,14 @@ export class Horde extends GameFamily {
 
   static override getClass() {
     return this;
+  }
+
+  static override getInitialBoardFen(): string {
+    return 'rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP';
+  }
+
+  static override getInitialEpd(): string {
+    return `w kq -`;
   }
 
   protected constructor() {

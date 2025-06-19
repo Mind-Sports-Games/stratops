@@ -151,8 +151,8 @@ export function playstrategyVariants(
   | 'backgammon'
   | 'hyper'
   | 'nackgammon'
-  | 'breakthrough'
-  | 'minibreakthrough'
+  | 'breakthroughtroyka'
+  | 'minibreakthroughtroyka'
   | 'abalone'
   | 'international'
   | 'antidraughts'
@@ -182,6 +182,10 @@ export function playstrategyVariants(
       return 'linesOfAction';
     case 'scrambledeggs':
       return 'scrambledEggs';
+    case 'breakthrough':
+      return 'breakthroughtroyka';
+    case 'minibreakthrough':
+      return 'minibreakthroughtroyka';
     default:
       return rules;
   }

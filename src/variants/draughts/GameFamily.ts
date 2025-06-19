@@ -6,10 +6,7 @@ import { Variant } from '../Variant';
 export abstract class GameFamily extends Variant {
   static override height: BoardDimensions['ranks'] = 10;
   static override width: BoardDimensions['files'] = 10;
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.draughts;
-  }
+  static override family: GameFamilyKey = GameFamilyKey.draughts;
 
   static override getVariantKeys(): VariantKey[] {
     return [

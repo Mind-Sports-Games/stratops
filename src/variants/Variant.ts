@@ -1,14 +1,29 @@
-import type { Result } from '@badrap/result';
+import { Result } from '@badrap/result';
 import { Board } from '../board';
 import { Chess, type PositionError } from '../chess';
+import {
+  boardAndPocketStrings,
+  FenError,
+  InvalidFen,
+  parseBoardAndOptPockets,
+  parseCastlingFen,
+  parseFenSquare,
+  parseFullMoves,
+  parseHalfMoves,
+  parseLastMove,
+  parseRemainingChecksOpt,
+} from '../fen';
+import * as fp from '../fp';
 import type { Setup } from '../setup';
-import { type BoardDimensions, type Role, RULES, type Rules } from '../types';
+import { type BoardDimensions, PlayerIndex, type Role, RULES, type Rules } from '../types';
 import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
 export abstract class Variant extends Chess {
   static height: BoardDimensions['ranks'] = 8;
   static width: BoardDimensions['files'] = 8;
+  static rules: Rules = 'chess';
+  static family: GameFamilyKey = GameFamilyKey.chess;
 
   static computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.san[0] === 'P' ? move.san.slice(1) : move.san;
@@ -22,16 +37,45 @@ export abstract class Variant extends Chess {
     return pos;
   }
 
+  static emptyBoard(): Board {
+    const pos = Board.empty('chess');
+    return pos;
+  }
+
   static getBoardDimensions(): BoardDimensions {
     return { files: this.width, ranks: this.height };
   }
 
-  static getClass() {
-    return this;
+  static getEmptyBoardFen(): string {
+    return '8/8/8/8/8/8/8/8';
   }
 
-  static getFamily(): GameFamilyKey | undefined {
-    return undefined;
+  static getInitialBoardFen(): string {
+    return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+  }
+
+  static getEmptyFen(): string {
+    return `${this.getEmptyBoardFen()} ${this.getEmptyEpd()} ${this.getInitialMovesFen()}`;
+  }
+
+  static getInitialEpd(): string {
+    return 'w - -';
+  }
+
+  static getEmptyEpd(): string {
+    return `w - -`;
+  }
+
+  static getInitialMovesFen(): string {
+    return '0 1';
+  }
+
+  static getInitialFen(): string {
+    return `${this.getInitialBoardFen()} ${this.getInitialEpd()} ${this.getInitialMovesFen()}`;
+  }
+
+  static getClass() {
+    return this;
   }
 
   static getScoreFromFen(_fen: string, _playerIndex: string): number | undefined {
@@ -71,6 +115,60 @@ export abstract class Variant extends Chess {
       to: pos[1],
       promotion,
     };
+  }
+
+  static parseFen(fen: string): Result<Setup, FenError> {
+    const [boardPart, ...originalParts] = fen.split(' ');
+    const lastMoveParts = originalParts.filter(f => f.includes('½'));
+    const parts = originalParts.filter(f => !f.includes('½'));
+
+    if (parts.length > 6) {
+      return Result.err(new FenError(InvalidFen.Fen));
+    }
+
+    const hasEarlyRemainingChecks = parts.length > 3 ? parts[3].includes('+') : false;
+
+    // Board and pockets
+    return boardAndPocketStrings(this.rules)(boardPart)
+      .chain(parseBoardAndOptPockets(this.rules))
+      .chain(({ board, pockets }) => {
+        return fp
+          .resultZip([
+            fp.pipe(this.parsePlayerTurn(parts[0])),
+            parseCastlingFen(board)(parts[1]),
+            parseFenSquare(this.rules)(parts[2]),
+            parseRemainingChecksOpt(hasEarlyRemainingChecks ? parts[3] : parts[5]),
+            parseHalfMoves(hasEarlyRemainingChecks ? parts[4] : parts[3]),
+            parseFullMoves(hasEarlyRemainingChecks ? parts[5] : parts[4]),
+            parseLastMove(this.rules)(lastMoveParts[0]),
+          ])
+          .map(([turn, unmovedRooks, epSquare, remainingChecks, halfmoves, fullmoves, lastMove]) => ({
+            board,
+            pockets,
+            turn,
+            unmovedRooks,
+            remainingChecks,
+            epSquare,
+            halfmoves,
+            fullmoves: Math.max(1, fullmoves),
+            lastMove,
+          }));
+      });
+  }
+
+  static parsePlayerTurn(turnPart: fp.Option<string>, p1Char = 'w', p2Char = 'b'): Result<PlayerIndex, FenError> {
+    return fp.pipe(
+      turnPart,
+      fp.Option.fold(
+        (turnPart: string) =>
+          turnPart.toLowerCase() === p1Char.toLowerCase()
+            ? Result.ok('p1')
+            : turnPart.toLowerCase() === p2Char.toLowerCase()
+            ? Result.ok('p2')
+            : Result.err(new FenError(InvalidFen.Turn)),
+        () => Result.ok('p1'),
+      ),
+    );
   }
 
   static parseUciToUsi(uci: string, files: number, ranks: number): ParsedMove {

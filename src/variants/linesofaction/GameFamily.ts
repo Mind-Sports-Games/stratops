@@ -8,6 +8,8 @@ import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../t
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.loa;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.uci;
   }
@@ -16,8 +18,12 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.loa;
+  static override getInitialEpd(): string {
+    return 'b - -';
+  }
+
+  static override getEmptyEpd(): string {
+    return `b - -`;
   }
 
   static override getNotationStyle(): NotationStyle {

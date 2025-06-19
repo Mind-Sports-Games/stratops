@@ -1,5 +1,7 @@
 import { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
+import { FenError, InvalidFen } from '../../fen';
+import * as fp from '../../fp';
 import type { Setup } from '../../setup';
 import type { DropMove, PlayerIndex, Square } from '../../types';
 import { opposite } from '../../util';
@@ -7,6 +9,8 @@ import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from 
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.flipello;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) return 'PASS';
 
@@ -24,8 +28,12 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.flipello;
+  static override getInitialEpd(): string {
+    return `b - -`;
+  }
+
+  static override getEmptyEpd(): string {
+    return `b - -`;
   }
 
   static override getNotationStyle(): NotationStyle {

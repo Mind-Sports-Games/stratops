@@ -3,11 +3,13 @@ import { kingAttacks } from '../../attacks';
 import { Context, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Square } from '../../types';
+import { Outcome, Piece, PlayerIndex, PLAYERINDEXES, Rules, Square } from '../../types';
 import { defined, opposite } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class Atomic extends GameFamily {
+  static override rules: Rules = 'atomic';
+
   static override default(): Atomic {
     return super.default() as Atomic;
   }

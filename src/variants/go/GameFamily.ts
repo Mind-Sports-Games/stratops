@@ -6,6 +6,8 @@ import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from 
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.go;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) {
       if (move.uci == 'pass') return 'PASS';
@@ -21,10 +23,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.go;
   }
 
   static override getNotationStyle(): NotationStyle {

@@ -6,16 +6,14 @@ import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../t
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.amazons;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.uci[0] === 'P' ? move.uci.slice(1) : move.uci;
   }
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.amazons;
   }
 
   static override getNotationStyle(): NotationStyle {

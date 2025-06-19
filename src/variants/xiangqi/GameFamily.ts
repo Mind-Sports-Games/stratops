@@ -6,6 +6,8 @@ import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from 
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.xiangqi;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
       board = this.readFen(move.fen, this.height, this.width),
@@ -57,10 +59,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.xiangqi;
   }
 
   static override getNotationStyle(): NotationStyle {

@@ -8,6 +8,8 @@ import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, Parsed
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.shogi;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
       board = this.readFen(move.fen, this.height, this.width),
@@ -32,10 +34,6 @@ export abstract class GameFamily extends Variant {
     pos.halfmoves = 0;
     pos.fullmoves = 1;
     return pos;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.shogi;
   }
 
   static override getNotationStyle(): NotationStyle {

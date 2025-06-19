@@ -2,9 +2,12 @@ import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { Castles, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
+import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class Monster extends GameFamily {
+  static override rules: Rules = 'monster';
+
   static override default(): Monster {
     const pos = new this();
     pos.board = Board.monster();
@@ -25,6 +28,14 @@ export class Monster extends GameFamily {
 
   static override getClass() {
     return this;
+  }
+
+  static override getInitialBoardFen(): string {
+    return 'rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/4K3';
+  }
+
+  static override getInitialEpd(): string {
+    return `w kq -`;
   }
 
   protected constructor() {

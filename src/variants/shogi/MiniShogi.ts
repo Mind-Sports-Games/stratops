@@ -2,13 +2,14 @@ import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import type { BoardDimensions, Move, Role } from '../../types';
+import type { BoardDimensions, Move, Role, Rules } from '../../types';
 import { charToRole, defined, parseSquare } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class MiniShogi extends GameFamily {
   static override height: BoardDimensions['ranks'] = 5;
   static override width: BoardDimensions['files'] = 5;
+  static override rules: Rules = 'minishogi';
 
   static override default(): MiniShogi {
     return super.defaultBoard(new this()) as MiniShogi;
