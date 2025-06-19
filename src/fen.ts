@@ -25,10 +25,6 @@ import {
   squareFile,
 } from './util.js';
 import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
-import { Breakthrough } from './variants/breakthrough/Breakthrough.js';
-import { MiniBreakthrough } from './variants/breakthrough/MiniBreakthrough.js';
-import { LinesOfAction } from './variants/linesofaction/LinesOfAction.js';
-import { ScrambledEggs } from './variants/linesofaction/ScrambledEggs.js';
 
 const O = fp.Option;
 const R = fp.Result;

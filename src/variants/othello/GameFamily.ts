@@ -1,12 +1,12 @@
 import { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
+import { FenError, InvalidFen } from '../../fen';
+import * as fp from '../../fp';
 import type { Setup } from '../../setup';
 import type { DropMove, PlayerIndex, Square } from '../../types';
 import { opposite } from '../../util';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
-import { FenError, InvalidFen } from '../../fen';
-import * as fp from '../../fp';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.flipello;

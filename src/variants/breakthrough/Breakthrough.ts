@@ -3,7 +3,7 @@ import { GameFamily } from './GameFamily';
 
 export class Breakthrough extends GameFamily {
   static override rules: Rules = 'breakthrough';
-  
+
   static override default(): Breakthrough {
     return super.defaultBoard(new this()) as Breakthrough;
   }

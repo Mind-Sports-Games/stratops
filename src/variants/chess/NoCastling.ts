@@ -1,8 +1,8 @@
 import { Result } from '@badrap/result';
 import { Castles, PositionError } from '../../chess';
 import { Setup } from '../../setup';
-import { GameFamily } from './GameFamily';
 import { Rules } from '../../types';
+import { GameFamily } from './GameFamily';
 
 export class NoCastling extends GameFamily {
   static override rules: Rules = 'nocastling';

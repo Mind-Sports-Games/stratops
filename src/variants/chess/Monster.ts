@@ -2,8 +2,8 @@ import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { Castles, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
-import { GameFamily } from './GameFamily';
 import { Rules } from '../../types';
+import { GameFamily } from './GameFamily';
 
 export class Monster extends GameFamily {
   static override rules: Rules = 'monster';
