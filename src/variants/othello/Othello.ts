@@ -1,6 +1,9 @@
+import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class Othello extends GameFamily {
+  static override rules: Rules = 'flipello';
+  
   static override default(): Othello {
     return super.defaultBoard(new this()) as Othello;
   }

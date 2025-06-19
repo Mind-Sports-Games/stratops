@@ -1,12 +1,13 @@
 import type { Result } from '@badrap/result';
 import type { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import type { BoardDimensions } from '../../types';
+import type { BoardDimensions, Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class Shogi extends GameFamily {
   static override height: BoardDimensions['ranks'] = 9;
   static override width: BoardDimensions['files'] = 9;
+  static override rules: Rules = 'shogi';
 
   static override default(): Shogi {
     return super.defaultBoard(new this()) as Shogi;

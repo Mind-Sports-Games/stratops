@@ -6,6 +6,8 @@ import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../t
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
+  static override family: GameFamilyKey = GameFamilyKey.togyzkumalak;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const reg = move.uci.match(/[a-z][1-2]/g) as string[];
     const orig = reg[0];
@@ -30,10 +32,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.togyzkumalak;
   }
 
   static override getNotationStyle(): NotationStyle {

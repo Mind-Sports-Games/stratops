@@ -1,10 +1,12 @@
 import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import { RemainingChecks, Setup } from '../../setup';
-import { Outcome, PlayerIndex, PLAYERINDEXES } from '../../types';
+import { Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class ThreeCheck extends GameFamily {
+  static override rules: Rules = '3check';
+
   static override default(): ThreeCheck {
     const pos = super.default();
     pos.remainingChecks = RemainingChecks.default();

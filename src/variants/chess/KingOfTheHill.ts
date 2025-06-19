@@ -2,10 +2,12 @@ import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import { Outcome, PlayerIndex, PLAYERINDEXES } from '../../types';
+import { Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class KingOfTheHill extends GameFamily {
+  static override rules: Rules = 'kingofthehill';
+
   static override default(): KingOfTheHill {
     return super.default();
   }

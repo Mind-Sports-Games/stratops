@@ -3,11 +3,13 @@ import { between } from '../../attacks';
 import { Context, IllegalSetup, PositionError } from '../../chess';
 import { Material, Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import { PlayerIndex } from '../../types';
+import { PlayerIndex, Rules } from '../../types';
 import { defined } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class Crazyhouse extends GameFamily {
+  static override rules: Rules = 'crazyhouse';
+
   static override default(): Crazyhouse {
     const pos = super.default();
     pos.pockets = Material.empty();

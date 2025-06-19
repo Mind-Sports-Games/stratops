@@ -4,11 +4,13 @@ import { Board } from '../../board';
 import { Castles, Context, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import { Outcome, PlayerIndex, Square } from '../../types';
+import { Outcome, PlayerIndex, Rules, Square } from '../../types';
 import { defined } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class RacingKings extends GameFamily {
+  static override rules: Rules = 'racingkings';
+
   static override default(): RacingKings {
     const pos = new this();
     pos.board = Board.racingKings();
@@ -38,7 +40,7 @@ export class RacingKings extends GameFamily {
   }
 
   static override getInitialEpd(): string {
-    return `${this.getInitialBoardFen()} w - -`;
+    return `w - -`;
   }
 
   protected constructor() {

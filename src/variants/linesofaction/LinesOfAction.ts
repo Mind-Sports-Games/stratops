@@ -1,6 +1,9 @@
+import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class LinesOfAction extends GameFamily {
+  static override rules: Rules = 'linesofaction';
+
   static override default(): LinesOfAction {
     return super.defaultBoard(new this()) as LinesOfAction;
   }

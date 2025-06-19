@@ -3,8 +3,11 @@ import { Board } from '../../board';
 import { Castles, IllegalSetup, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { GameFamily } from './GameFamily';
+import { Rules } from '../../types';
 
 export class Monster extends GameFamily {
+  static override rules: Rules = 'monster';
+
   static override default(): Monster {
     const pos = new this();
     pos.board = Board.monster();
@@ -32,7 +35,7 @@ export class Monster extends GameFamily {
   }
 
   static override getInitialEpd(): string {
-    return `${this.getInitialBoardFen()} w kq -`;
+    return `w kq -`;
   }
 
   protected constructor() {

@@ -8,6 +8,7 @@ import { Variant } from '../Variant';
 export abstract class GameFamily extends Variant {
   static override height: BoardDimensions['ranks'] = 2;
   static override width: BoardDimensions['files'] = 12;
+  static override family: GameFamilyKey = GameFamilyKey.backgammon;
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     let isLift = false; // using this instead of changing the regex
@@ -72,10 +73,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getFamily(): GameFamilyKey | undefined {
-    return GameFamilyKey.backgammon;
   }
 
   static override getNotationStyle(): NotationStyle {
