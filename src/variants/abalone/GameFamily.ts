@@ -23,10 +23,10 @@ export abstract class GameFamily extends Variant {
       board = this.readAbaloneFen(move.fen, this.height, this.width),
       prevBoard = this.readAbaloneFen(move.prevFen, this.height, this.width),
       keyDiffs = this.diffAbaloneBoard(board, prevBoard),
-      isPush = new Set(keyDiffs[0].concat(keyDiffs[1])).size != keyDiffs[0].concat(keyDiffs[1]).length,
+      isPush = new Set(keyDiffs[0].concat(keyDiffs[1])).size !== keyDiffs[0].concat(keyDiffs[1]).length,
       oppPushedTo = keyDiffs[1].filter(k => k !== dest),
       isCapture =
-        move.fen.split(' ')[1] + move.fen.split(' ')[2] != move.prevFen.split(' ')[1] + move.prevFen.split(' ')[2],
+        move.fen.split(' ')[1] + move.fen.split(' ')[2] !== move.prevFen.split(' ')[1] + move.prevFen.split(' ')[2],
       is3v2Capture = isCapture && !this.isOnEdgeAbaloneBoard(dest);
 
     const destNotation = isPush
@@ -68,19 +68,19 @@ export abstract class GameFamily extends Variant {
 
   static findEdgeFromAbaloneMove(orig: string, dest: string): string {
     // same letter (\)
-    if (orig[0] == dest[0]) {
+    if (orig[0] === dest[0]) {
       if (parseInt(orig[1]) > parseInt(dest[1])) {
         return orig[0] + Math.max(orig[0].charCodeAt(0) - 96 - 4, 1).toString();
       } else return orig[0] + Math.min(orig[0].charCodeAt(0) - 96 + 4, 9).toString();
     }
     // same number (-)
-    if (orig[1] == dest[1]) {
+    if (orig[1] === dest[1]) {
       if (orig[0].charCodeAt(0) > dest[0].charCodeAt(0)) {
         return String.fromCharCode(Math.max(parseInt(orig[1]) + 96 - 4, 97)) + orig[1];
       } else return String.fromCharCode(Math.min(parseInt(orig[1]) + 96 + 4, 105)) + orig[1];
     }
     // other direction (/)
-    if (Math.abs(parseInt(dest[1]) + dest[0].charCodeAt(0) - (parseInt(orig[1]) + orig[0].charCodeAt(0))) % 2 == 0) {
+    if (Math.abs(parseInt(dest[1]) + dest[0].charCodeAt(0) - (parseInt(orig[1]) + orig[0].charCodeAt(0))) % 2 === 0) {
       if (parseInt(orig[1]) + orig[0].charCodeAt(0) > parseInt(dest[1]) + dest[0].charCodeAt(0)) {
         return String.fromCharCode(dest[0].charCodeAt(0) - 1) + (parseInt(dest[1]) - 1).toString();
       } else return String.fromCharCode(dest[0].charCodeAt(0) + 1) + (parseInt(dest[1]) + 1).toString();
@@ -90,10 +90,10 @@ export abstract class GameFamily extends Variant {
 
   static isOnEdgeAbaloneBoard(dest: string): boolean {
     return (
-      dest[0] == 'a'
-      || dest[0] == 'i'
-      || dest[1] == '1'
-      || dest[1] == '9'
+      dest[0] === 'a'
+      || dest[0] === 'i'
+      || dest[1] === '1'
+      || dest[1] === '9'
       || ['b6', 'c7', 'd8', 'f2', 'g3', 'h4'].includes(dest)
     );
   }
@@ -127,7 +127,7 @@ export abstract class GameFamily extends Variant {
       .forEach((row, y) => {
         let x = Math.max(files - y - 4, 1);
         row.split('').forEach(v => {
-          if (v == '~') return;
+          if (v === '~') return;
           const nb = parseInt(v, 10);
           if (nb) x += nb;
           else {

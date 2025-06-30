@@ -5,20 +5,20 @@ import {type BoardDimensions, type Rules} from '../../types';
 import {defined} from '../../util.js';
 import {GameFamily} from './GameFamily';
 
-export class Abalone extends GameFamily {
-	static override height: BoardDimensions['ranks'] = 9;
-	static override width: BoardDimensions['files'] = 9;
-	static override rules: Rules = 'abalone';
+export class GrandAbalone extends GameFamily {
+	static override height: BoardDimensions['ranks'] = 11;
+	static override width: BoardDimensions['files'] = 11;
+	static override rules: Rules = 'grandabalone';
 	
-	static override default(): Abalone {
+	static override default(): GrandAbalone {
 		const pos = super.default();
-		return pos as Abalone;
+		return pos as GrandAbalone;
 	}
 	
-	static override fromSetup(setup: Setup): Result<Abalone, PositionError> {
+	static override fromSetup(setup: Setup): Result<GrandAbalone, PositionError> {
 		return super.fromSetup(setup).map(v => {
 			if (defined(setup.lastMove)) v.play(setup.lastMove);
-			return v as Abalone;
+			return v as GrandAbalone;
 		});
 	}
 	
@@ -26,12 +26,12 @@ export class Abalone extends GameFamily {
 		return this;
 	}
 	
-	override clone(): Abalone {
-		return super.clone() as Abalone;
+	override clone(): GrandAbalone {
+		return super.clone() as GrandAbalone;
 	}
 	
 	protected constructor() {
-		super('abalone');
+		super('grandabalone');
 	}
 	
 	protected override validate(): Result<undefined, PositionError> {
