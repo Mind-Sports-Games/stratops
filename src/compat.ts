@@ -89,8 +89,8 @@ export function playstrategyRules(
     | 'nackgammon'
     | 'breakthroughtroyka'
     | 'minibreakthroughtroyka'
-    | 'abalone',
-    | 'grandabalone',
+    | 'abalone'
+    | 'grandabalone'
 ): Rules {
   switch (variant) {
     case 'standard':
