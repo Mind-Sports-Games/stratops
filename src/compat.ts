@@ -90,6 +90,7 @@ export function playstrategyRules(
     | 'breakthroughtroyka'
     | 'minibreakthroughtroyka'
     | 'abalone',
+    | 'grandabalone',
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -154,6 +155,7 @@ export function playstrategyVariants(
   | 'breakthroughtroyka'
   | 'minibreakthroughtroyka'
   | 'abalone'
+  | 'grandabalone'
   | 'international'
   | 'antidraughts'
   | 'brkthru'

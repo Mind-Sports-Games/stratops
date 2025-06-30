@@ -568,14 +568,11 @@ export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, Fe
 export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   if (rules === 'oware' || rules === 'togyzkumalak' || rules === 'bestemshe') {
     return parseMancalaFen(rules)(fen);
-  }
-  if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
+  } else if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
     return parseGoFen(rules)(fen);
-  }
-  if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
+  } else if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
     return parseBackgammonFen(rules)(fen);
-  }
-  if (rules === 'abalone') {
+  } else if (rules === 'abalone' || rules === 'grandabalone') {
     return parseAbaloneFen(rules)(fen);
   }
 
