@@ -2,7 +2,7 @@ import { Result } from '@badrap/result';
 
 import { Board } from '../../board';
 import { charToPiece, FenError, InvalidFen } from '../../fen';
-import { Rules } from '../../types';
+import { type Rules } from '../../types';
 
 /*
 9 -              &  \' (  )  *

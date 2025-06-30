@@ -5,7 +5,7 @@ import type { PlayerIndex } from '../../types';
 import {
   type ExtendedMoveInfo,
   GameFamilyKey,
-  LegacyNotationBoard,
+  type LegacyNotationBoard,
   NotationStyle,
   type ParsedMove,
   VariantKey,
