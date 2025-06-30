@@ -7,6 +7,7 @@ import { GameFamily } from './GameFamily';
 
 export class Monster extends GameFamily {
   static override rules: Rules = 'monster';
+  static override standardInitialPosition: boolean = false;
 
   static override default(): Monster {
     const pos = new this();

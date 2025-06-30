@@ -25,6 +25,9 @@ export abstract class Variant extends Chess {
   static rules: Rules = 'chess';
   static family: GameFamilyKey = GameFamilyKey.chess;
 
+  // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
+  static standardInitialPosition: boolean = true;
+
   static computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.san[0] === 'P' ? move.san.slice(1) : move.san;
   }

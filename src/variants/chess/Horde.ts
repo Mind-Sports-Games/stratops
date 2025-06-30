@@ -9,6 +9,7 @@ import { GameFamily } from './GameFamily';
 
 export class Horde extends GameFamily {
   static override rules: Rules = 'horde';
+  static override standardInitialPosition: boolean = false;
 
   static override default(): Horde {
     const pos = new this();
