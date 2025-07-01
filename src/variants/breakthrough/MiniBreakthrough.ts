@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
+import { PositionError } from '../../chess';
 import { BoardDimensions, PLAYERINDEXES, Rules } from '../../types';
 import { GameFamily } from './GameFamily';
-import { PositionError } from '../../chess';
 
 export class MiniBreakthrough extends GameFamily {
   static override height: BoardDimensions['ranks'] = 5;
