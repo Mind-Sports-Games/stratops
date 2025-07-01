@@ -25,6 +25,7 @@ import {
   squareFile,
 } from './util.js';
 import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
+import {hasPrevPlayer} from "./variants/abalone/util";
 
 const O = fp.Option;
 const R = fp.Result;
@@ -49,6 +50,7 @@ export enum InvalidFen {
   RemainingChecks = 'ERR_REMAINING_CHECKS',
   Halfmoves = 'ERR_HALFMOVES',
   Fullmoves = 'ERR_FULLMOVES',
+  PliesRemainingThisTurn = 'ERR_PLIESREMAINING',
   PlayerScore = 'ERR_PLAYER_SCORE',
   PlayerCaptures = 'ERR_PLAYER_CAPTURES',
   PassCount = 'ERR_PASS_COUNT',
@@ -338,6 +340,9 @@ export const parseHalfMoves = (part: fp.Option<string>): Result<number, FenError
 export const parseFullMoves = (part: fp.Option<string>): Result<number, FenError> =>
   parseMoves(1, 1)(fenErr(InvalidFen.Fullmoves))(part);
 
+export const parsePliesRemainingThisTurn = (part: fp.Option<string>): Result<number, FenError> =>
+  parseMoves(0, 0)(fenErr(InvalidFen.PliesRemainingThisTurn))(part);
+
 const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<number, FenError> =>
   fp.pipe(part, O.flatMap(parseSmallUint), O.toResult(err));
 
@@ -400,10 +405,10 @@ const parseMancalaFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
 const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...parts] = fen.split(' ');
 
-  if (parts.length !== 5) {
+  if (parts.length < 5) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
-
+  
   return fp
     .resultZip([
       parseAbaloneBoardFen(rules)(boardPart),
@@ -411,14 +416,16 @@ const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
       parseScore(parts[1]),
       parsePlayerTurn('b', 'w')(parts[2]),
       parseFullMoves(parts[3]),
+      parsePliesRemainingThisTurn(parts.length < 6? undefined: parts[5])
     ])
-    .map(([board, p1Captures, p2Captures, turn, fullmoves]) => ({
+    .map(([board, p1Captures, p2Captures, turn, fullmoves, pliesRemainingThisTurn]) => ({
       ...defaultSetup(),
       board,
       p1Captures,
       p2Captures,
       turn,
       fullmoves,
+      pliesRemainingThisTurn
     }));
 };
 
