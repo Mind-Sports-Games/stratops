@@ -1,4 +1,6 @@
-import { Rules } from '../../types';
+import { Result } from '@badrap/result';
+import { PositionError } from '../../chess';
+import { Piece, PLAYERINDEXES, Rules, Square } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class Othello extends GameFamily {

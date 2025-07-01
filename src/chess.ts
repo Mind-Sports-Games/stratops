@@ -439,7 +439,7 @@ export class Chess extends Position {
     pos.remainingChecks = undefined;
     pos.halfmoves = setup.halfmoves;
     pos.fullmoves = setup.fullmoves;
-    return pos.validate().map(_ => pos);
+    return pos.validate().map(_ => pos) as Result<Chess, PositionError>;
   }
 
   override clone(): Chess {

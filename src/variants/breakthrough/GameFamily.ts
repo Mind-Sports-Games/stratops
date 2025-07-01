@@ -24,11 +24,6 @@ export abstract class GameFamily extends Variant {
     ];
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    return Result.ok(undefined);
-  }
-
   override outcome(ctx?: Context): Outcome | undefined {
     const variantOutcome = this.variantOutcome(ctx);
     if (variantOutcome) return variantOutcome;

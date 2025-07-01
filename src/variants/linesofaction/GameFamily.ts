@@ -1,6 +1,6 @@
 import { Result } from '@badrap/result';
 import { kingAttacks } from '../../attacks';
-import { type Context, IllegalSetup, PositionError } from '../../chess';
+import { type Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import type { Outcome, PlayerIndex } from '../../types';
@@ -35,12 +35,6 @@ export abstract class GameFamily extends Variant {
       VariantKey.linesOfAction,
       VariantKey.scrambledEggs,
     ];
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    // TODO: maybe do some more validation of the position
-    return Result.ok(undefined);
   }
 
   override clone(): GameFamily {

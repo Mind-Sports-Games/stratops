@@ -9,11 +9,11 @@ export class KingOfTheHill extends GameFamily {
   static override rules: Rules = 'kingofthehill';
 
   static override default(): KingOfTheHill {
-    return super.default();
+    return super.default() as KingOfTheHill;
   }
 
   static override fromSetup(setup: Setup): Result<KingOfTheHill, PositionError> {
-    return super.fromSetup(setup);
+    return super.fromSetup(setup) as Result<KingOfTheHill, PositionError>;
   }
 
   static override getClass() {

@@ -43,12 +43,6 @@ export class Monster extends GameFamily {
     super('monster');
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    // TODO: maybe do some more validation of the position
-    return Result.ok(undefined);
-  }
-
   override clone(): Monster {
     return super.clone() as Monster;
   }

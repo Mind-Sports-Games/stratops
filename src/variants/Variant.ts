@@ -1,6 +1,6 @@
 import { Result } from '@badrap/result';
 import { Board } from '../board';
-import { Chess, type PositionError } from '../chess';
+import { Chess, IllegalSetup, PositionError } from '../chess';
 import {
   boardAndPocketStrings,
   FenError,
@@ -15,7 +15,7 @@ import {
 } from '../fen';
 import * as fp from '../fp';
 import type { Setup } from '../setup';
-import { type BoardDimensions, PlayerIndex, type Role, RULES, type Rules } from '../types';
+import { type BoardDimensions, PlayerIndex, PLAYERINDEXES, type Role, RULES, type Rules } from '../types';
 import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
@@ -242,6 +242,38 @@ export abstract class Variant extends Chess {
 
   protected constructor(game: Rules) {
     super(game);
+  }
+
+  protected override validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+
+    let player1HasPieces = false;
+    let player2HasPieces = false;
+    for (const square of this.board.occupied) {
+      const piece = this.board.get(square);
+      if (piece?.playerIndex === PLAYERINDEXES[0]) {
+        player1HasPieces = true;
+      }
+      if (piece?.playerIndex === PLAYERINDEXES[1]) {
+        player2HasPieces = true;
+      }
+      if (player1HasPieces && player2HasPieces) {
+        break;
+      }
+    }
+    if (!player1HasPieces) {
+      return Result.err(new PositionError(IllegalSetup.Empty));
+    }
+    if (!player2HasPieces) {
+      return Result.err(new PositionError(IllegalSetup.Empty));
+    }
+
+    return this.validateVariant();
+  }
+
+  // @Note: override this method in subclasses to implement variant-specific validation logic.
+  protected validateVariant(): Result<undefined, PositionError> {
+    return Result.ok(undefined);
   }
 
   override clone(): Variant {

@@ -10,13 +10,13 @@ export class ThreeCheck extends GameFamily {
   static override default(): ThreeCheck {
     const pos = super.default();
     pos.remainingChecks = RemainingChecks.default();
-    return pos;
+    return pos as ThreeCheck;
   }
 
   static override fromSetup(setup: Setup): Result<ThreeCheck, PositionError> {
     return super.fromSetup(setup).map(pos => {
       pos.remainingChecks = setup.remainingChecks ? setup.remainingChecks.clone() : RemainingChecks.default();
-      return pos;
+      return pos as ThreeCheck;
     });
   }
 

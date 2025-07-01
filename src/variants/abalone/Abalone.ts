@@ -33,10 +33,4 @@ export class Abalone extends GameFamily {
   protected constructor() {
     super('abalone');
   }
-
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-
-    return Result.ok(undefined);
-  }
 }

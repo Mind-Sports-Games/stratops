@@ -286,10 +286,6 @@ export abstract class GameFamily extends Variant {
     return pawnRanks;
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    return Result.ok(undefined);
-  }
-
   override clone(): GameFamily {
     return super.clone() as GameFamily;
   }
