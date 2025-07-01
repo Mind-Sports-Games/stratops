@@ -24,25 +24,6 @@ export class GrandOthello extends GameFamily {
     return '10/10/10/10/4pP4/4Pp4/10/10/10/10/PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp';
   }
 
-  override readonly initialPieces: Record<Square, Piece> = {
-    44: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[0],
-    } as Piece,
-    45: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[1],
-    } as Piece,
-    54: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[1],
-    } as Piece,
-    55: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[0],
-    } as Piece,
-  };
-
   protected constructor() {
     super('flipello10');
   }

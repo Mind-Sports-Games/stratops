@@ -61,39 +61,6 @@ export abstract class GameFamily extends Variant {
     [1, -1],
   ];
 
-  readonly initialPieces: Record<Square, Piece> = {
-    27: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[0],
-    } as Piece,
-    28: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[1],
-    } as Piece,
-    35: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[1],
-    } as Piece,
-    36: {
-      role: `p-piece`,
-      playerIndex: PLAYERINDEXES[0],
-    } as Piece,
-  };
-
-  protected override validateVariant(): Result<undefined, PositionError> {
-    for (const [squareStr, expectedPiece] of Object.entries(this.initialPieces)) {
-      const square = parseInt(squareStr, 10) as Square;
-      const actualPiece = this.board.get(square);
-      if (actualPiece?.playerIndex !== expectedPiece.playerIndex || actualPiece?.role !== expectedPiece.role) {
-        return Result.err(
-          new PositionError(`Invalid initial piece at ${square}: expected ${expectedPiece}, found ${actualPiece}`),
-        );
-      }
-    }
-
-    return Result.ok(undefined);
-  }
-
   override isStalemate(): boolean {
     return false;
   }

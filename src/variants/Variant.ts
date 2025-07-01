@@ -246,28 +246,6 @@ export abstract class Variant extends Chess {
 
   protected override validate(): Result<undefined, PositionError> {
     if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-
-    let player1HasPieces = false;
-    let player2HasPieces = false;
-    for (const square of this.board.occupied) {
-      const piece = this.board.get(square);
-      if (piece?.playerIndex === PLAYERINDEXES[0]) {
-        player1HasPieces = true;
-      }
-      if (piece?.playerIndex === PLAYERINDEXES[1]) {
-        player2HasPieces = true;
-      }
-      if (player1HasPieces && player2HasPieces) {
-        break;
-      }
-    }
-    if (!player1HasPieces) {
-      return Result.err(new PositionError(IllegalSetup.Empty));
-    }
-    if (!player2HasPieces) {
-      return Result.err(new PositionError(IllegalSetup.Empty));
-    }
-
     return this.validateVariant();
   }
 

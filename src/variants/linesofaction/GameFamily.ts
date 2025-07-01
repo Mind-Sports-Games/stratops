@@ -1,6 +1,6 @@
 import { Result } from '@badrap/result';
 import { kingAttacks } from '../../attacks';
-import { type Context, PositionError } from '../../chess';
+import { type Context, IllegalSetup, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import type { Outcome, PlayerIndex } from '../../types';

@@ -191,3 +191,18 @@ test('breakthrough wins', () => {
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });
+
+test('minibreakthrough wins', () => {
+  const variantKey = 'minibreakthrough';
+  let pos = variantClass(variantKey).fromSetup(
+    parseFen(variantKey)('5/ppppp/5/PPPPP/p4 w - - 0 1').unwrap(),
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+
+  pos = variantClass(variantKey).fromSetup(
+    parseFen(variantKey)('P4/ppppp/5/PPPPP/5 w - - 0 1').unwrap(),
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+});
