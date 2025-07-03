@@ -241,5 +241,4 @@ test('grand othello wins', () => {
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
-
 });
