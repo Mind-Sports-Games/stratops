@@ -1,6 +1,4 @@
-import { Result } from '@badrap/result';
-import { PositionError } from '../../chess';
-import { type BoardDimensions, type Piece, PLAYERINDEXES, type Rules, type Square } from '../../types';
+import { type BoardDimensions, type Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class GrandOthello extends GameFamily {

@@ -138,31 +138,45 @@ test('atomic king exploded', () => {
 });
 
 test('lines of action wins', () => {
-  let pos = variantClass('linesofaction').fromSetup(parseFen('chess')('1LLLLLL1/8/8/8/8/8/8/8 b - - 0 1').unwrap())
+  let pos = variantClass('linesofaction').fromSetup(
+    parseFen('linesofaction')('1LLLLLL1/8/8/8/8/8/8/8 b - - 0 1').unwrap(),
+  )
     .unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 
   pos = variantClass('linesofaction').fromSetup(
-    parseFen('chess')('1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 b - - 0 1').unwrap(),
+    parseFen('linesofaction')('1LLLLLL1/l6l/l6l/l6l/l6l/l6l/l6l/1LLLLLL1 b - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
   pos = variantClass('linesofaction').fromSetup(
-    parseFen('chess')('8/l6l/l6l/l6l/l6l/l6l/l6l/8 b - - 0 1').unwrap(),
+    parseFen('linesofaction')('8/l6l/l6l/l6l/l6l/l6l/l6l/8 b - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(false);
   expect(pos.isVariantEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
 
-  pos = variantClass('linesofaction').fromSetup(parseFen('chess')('8/l7/l7/l7/l7/l7/l7/8 b - - 0 1').unwrap())
+  pos = variantClass('linesofaction').fromSetup(parseFen('linesofaction')('8/l7/l7/l7/l7/l7/l7/8 b - - 0 1').unwrap())
     .unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.isVariantEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+
+  pos = variantClass('linesofaction').fromSetup(parseFen('linesofaction')('8/3l4/8/3L4/1L6/8/8/8 b - - 0 1').unwrap())
+    .unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.isVariantEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+
+  pos = variantClass('linesofaction').fromSetup(parseFen('linesofaction')('8/8/3l4/2L5/1L6/8/8/8 b - - 0 1').unwrap())
+    .unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.isVariantEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: undefined });
 });
 
 test('breakthrough wins', () => {
@@ -205,4 +219,38 @@ test('minibreakthrough wins', () => {
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+});
+
+test('othello wins', () => {
+  const variantKey = 'flipello';
+
+  let pos = variantClass(variantKey).fromSetup(
+    parseFen(variantKey)('pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp w - - 0 1').unwrap(),
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+
+  pos = variantClass(variantKey).fromSetup(
+    parseFen(variantKey)('P7/8/8/8/8/8/8/8 b - - 0 1').unwrap(),
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+});
+
+test('grand othello wins', () => {
+  const variantKey = 'flipello10';
+
+  let pos = variantClass(variantKey).fromSetup(
+    parseFen(variantKey)(
+      'pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp w - - 0 1',
+    ).unwrap(),
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+
+  pos = variantClass(variantKey).fromSetup(
+    parseFen(variantKey)('P9/10/10/10/10/10/10/10/10/10 w - - 0 1').unwrap(),
+  ).unwrap();
+  expect(pos.isEnd()).toBe(true);
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });

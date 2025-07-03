@@ -1,6 +1,6 @@
-import { Result } from '@badrap/result';
-import { PositionError } from '../../chess';
-import { PLAYERINDEXES, Rules } from '../../types';
+import { Context } from '../../chess';
+import { SquareSet } from '../../squareSet';
+import { Outcome, Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class Breakthrough extends GameFamily {
@@ -29,33 +29,16 @@ export class Breakthrough extends GameFamily {
     return false;
   }
 
-  // protected override validateVariant(): Result<undefined, PositionError> {
-  //   const topRowSquares = Array.from({ length: 8 }, (_, i) => 56 + i);
-  //   const bottomRowSquares = Array.from({ length: 8 }, (_, i) => i);
-  //   for (const square of topRowSquares) {
-  //     const piece = this.board.get(square);
-  //     if (piece?.playerIndex === PLAYERINDEXES[0]) {
-  //       return Result.err(
-  //         new PositionError(
-  //           `Player 1 has a piece on the top row at square ${square}`,
-  //         ),
-  //       );
-  //     }
-  //   }
-
-  //   for (const square of bottomRowSquares) {
-  //     const piece = this.board.get(square);
-  //     if (piece?.playerIndex === PLAYERINDEXES[1]) {
-  //       return Result.err(
-  //         new PositionError(
-  //           `Player 2 has a piece on the bottom row at square ${square}`,
-  //         ),
-  //       );
-  //     }
-  //   }
-
-  //   return Result.ok(undefined);
-  // }
+  override variantOutcome(ctx?: Context): Outcome | undefined {
+    if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
+    const goalP1 = SquareSet.fromRank64((this.constructor as typeof GameFamily).height - 1);
+    const goalP2 = SquareSet.fromRank64(0);
+    const p2InGoal = this.board.pieces('p2', 'p-piece').intersects(goalP2);
+    const p1InGoal = this.board.pieces('p1', 'p-piece').intersects(goalP1);
+    if (p2InGoal && !p1InGoal) return { winner: 'p2' };
+    if (p1InGoal && !p2InGoal) return { winner: 'p1' };
+    return { winner: undefined }; // @Note : this should not happen
+  }
 
   protected constructor() {
     super('breakthrough');

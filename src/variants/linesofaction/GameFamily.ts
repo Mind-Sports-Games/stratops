@@ -68,8 +68,9 @@ export abstract class GameFamily extends Variant {
       return { winner: 'p1' };
     } else if (!p1Wins && p2Wins) {
       return { winner: 'p2' };
-    } else {
-      return undefined;
+    } else if (p1Wins && p2Wins) {
+      return { winner: undefined }; // Draw, both players connected
     }
+    return undefined;
   }
 }

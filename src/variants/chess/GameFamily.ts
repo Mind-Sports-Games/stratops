@@ -1,9 +1,9 @@
 import { Result } from '@badrap/result';
+import { IllegalSetup, PositionError } from '../../chess';
+import { SquareSet } from '../../squareSet';
+import { defined, opposite } from '../../util';
 import { GameFamilyKey, VariantKey } from '../types';
 import { Variant } from '../Variant';
-import { IllegalSetup, PositionError } from '../../chess';
-import { defined, opposite } from '../../util';
-import { SquareSet } from '../../squareSet';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.chess;
