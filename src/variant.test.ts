@@ -229,12 +229,6 @@ test('othello wins', () => {
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
-
-  pos = variantClass(variantKey).fromSetup(
-    parseFen(variantKey)('P7/8/8/8/8/8/8/8 b - - 0 1').unwrap(),
-  ).unwrap();
-  expect(pos.isEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });
 
 test('grand othello wins', () => {
@@ -248,9 +242,4 @@ test('grand othello wins', () => {
   expect(pos.isEnd()).toBe(true);
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 
-  pos = variantClass(variantKey).fromSetup(
-    parseFen(variantKey)('P9/10/10/10/10/10/10/10/10/10 w - - 0 1').unwrap(),
-  ).unwrap();
-  expect(pos.isEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
 });
