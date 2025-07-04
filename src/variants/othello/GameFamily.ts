@@ -12,10 +12,6 @@ export abstract class GameFamily extends Variant {
     p1: 'black',
     p2: 'white',
   };
-  static override playersChars: Record<PlayerIndex, string> = {
-    p1: 'b',
-    p2: 'w',
-  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) return 'PASS';

@@ -28,10 +28,6 @@ export abstract class Variant extends Chess {
     p1: 'white',
     p2: 'black',
   };
-  static playersChars: Record<PlayerIndex, string> = {
-    p1: 'w',
-    p2: 'b',
-  };
 
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
   static standardInitialPosition: boolean = true;
@@ -172,9 +168,9 @@ export abstract class Variant extends Chess {
       turnPart,
       fp.Option.fold(
         (turnPart: string) =>
-          turnPart.toLowerCase() === this.playersChars.p1.toLowerCase()
+          turnPart.toLowerCase() === this.playersColors.p1.charAt(0).toLowerCase()
             ? Result.ok('p1')
-            : turnPart.toLowerCase() === this.playersChars.p2.toLowerCase()
+            : turnPart.toLowerCase() === this.playersColors.p2.charAt(0).toLowerCase()
             ? Result.ok('p2')
             : Result.err(new FenError(InvalidFen.Turn)),
         () => Result.ok('p1'),

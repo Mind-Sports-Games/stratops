@@ -13,10 +13,6 @@ export abstract class GameFamily extends Variant {
     p1: 'black',
     p2: 'white',
   };
-  static override playersChars: Record<PlayerIndex, string> = {
-    p1: 'b',
-    p2: 'w',
-  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
