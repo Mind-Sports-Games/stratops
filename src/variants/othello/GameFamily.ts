@@ -1,5 +1,7 @@
 import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
+import { FenError, InvalidFen } from '../../fen';
+import * as fp from '../../fp';
 import type { Setup } from '../../setup';
 import { type DropMove, Outcome, type Piece, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
 import { opposite } from '../../util';
@@ -52,6 +54,25 @@ export abstract class GameFamily extends Variant {
       VariantKey.flipello,
       VariantKey.flipello10,
     ];
+  }
+
+  static override parsePlayerTurn(
+    turnPart: fp.Option<string>,
+    p1Char = 'b',
+    p2Char = 'w',
+  ): Result<PlayerIndex, FenError> {
+    return fp.pipe(
+      turnPart,
+      fp.Option.fold(
+        (turnPart: string) =>
+          turnPart.toLowerCase() === p1Char.toLowerCase()
+            ? Result.ok('p1')
+            : turnPart.toLowerCase() === p2Char.toLowerCase()
+            ? Result.ok('p2')
+            : Result.err(new FenError(InvalidFen.Turn)),
+        () => Result.ok('p1'),
+      ),
+    );
   }
 
   readonly directions2D = [
