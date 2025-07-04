@@ -490,6 +490,19 @@ export const makeGoFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): strin
   ].join(' ');
 };
 
+export const makeOthelloFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string => {
+  return [
+    makeBoardFen(rules)(setup.board, opts) + (setup.pockets
+      ? `[${makePockets(rules)(setup.pockets)}]`
+      : '/PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp'),
+    playerTurn(setup),
+    '-',
+    '-',
+    int(setup.passCount),
+    int(setup.fullmoves),
+  ].join(' ');
+};
+
 // ------------------------------------------------------------------------------
 // Backgammon fens
 export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
@@ -742,6 +755,9 @@ const chessVariantFenParts = (rules: Rules) => (setup: Setup, opts?: FenOpts): s
 export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string => {
   if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
     return makeGoFen(rules)(setup, opts);
+  }
+  if (rules === 'flipello' || rules === 'flipello10') {
+    return makeOthelloFen(rules)(setup, opts);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
