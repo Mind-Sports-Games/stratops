@@ -224,7 +224,7 @@ test('minibreakthrough wins', () => {
 test('othello wins', () => {
   const variantKey = 'flipello';
 
-  let pos = variantClass(variantKey).fromSetup(
+  const pos = variantClass(variantKey).fromSetup(
     parseFen(variantKey)('pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp w - - 0 1').unwrap(),
   ).unwrap();
   expect(pos.isEnd()).toBe(true);
@@ -234,7 +234,7 @@ test('othello wins', () => {
 test('grand othello wins', () => {
   const variantKey = 'flipello10';
 
-  let pos = variantClass(variantKey).fromSetup(
+  const pos = variantClass(variantKey).fromSetup(
     parseFen(variantKey)(
       'pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp w - - 0 1',
     ).unwrap(),
