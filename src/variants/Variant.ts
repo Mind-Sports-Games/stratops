@@ -24,6 +24,10 @@ export abstract class Variant extends Chess {
   static width: BoardDimensions['files'] = 8;
   static rules: Rules = 'chess';
   static family: GameFamilyKey = GameFamilyKey.chess;
+  static playersColors: Record<PlayerIndex, string> = {
+    p1: 'white',
+    p2: 'black',
+  };
 
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
   static standardInitialPosition: boolean = true;

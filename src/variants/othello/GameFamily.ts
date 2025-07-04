@@ -8,6 +8,10 @@ import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.flipello;
+  static override playersColors: Record<PlayerIndex, string> = {
+    p1: 'black',
+    p2: 'white',
+  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) return 'PASS';
