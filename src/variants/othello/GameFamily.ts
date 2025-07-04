@@ -61,18 +61,7 @@ export abstract class GameFamily extends Variant {
     p1Char = 'b',
     p2Char = 'w',
   ): Result<PlayerIndex, FenError> {
-    return fp.pipe(
-      turnPart,
-      fp.Option.fold(
-        (turnPart: string) =>
-          turnPart.toLowerCase() === p1Char.toLowerCase()
-            ? Result.ok('p1')
-            : turnPart.toLowerCase() === p2Char.toLowerCase()
-            ? Result.ok('p2')
-            : Result.err(new FenError(InvalidFen.Turn)),
-        () => Result.ok('p1'),
-      ),
-    );
+    return super.parsePlayerTurn(turnPart, p1Char, p2Char);
   }
 
   readonly directions2D = [
