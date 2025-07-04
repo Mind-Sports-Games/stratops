@@ -1,7 +1,5 @@
 import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
-import { FenError, InvalidFen } from '../../fen';
-import * as fp from '../../fp';
 import type { Setup } from '../../setup';
 import { type DropMove, Outcome, type Piece, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
 import { opposite } from '../../util';
@@ -13,6 +11,10 @@ export abstract class GameFamily extends Variant {
   static override playersColors: Record<PlayerIndex, string> = {
     p1: 'black',
     p2: 'white',
+  };
+  static override playersChars: Record<PlayerIndex, string> = {
+    p1: 'b',
+    p2: 'w',
   };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
@@ -54,14 +56,6 @@ export abstract class GameFamily extends Variant {
       VariantKey.flipello,
       VariantKey.flipello10,
     ];
-  }
-
-  static override parsePlayerTurn(
-    turnPart: fp.Option<string>,
-    p1Char = 'b',
-    p2Char = 'w',
-  ): Result<PlayerIndex, FenError> {
-    return super.parsePlayerTurn(turnPart, p1Char, p2Char);
   }
 
   readonly directions2D = [

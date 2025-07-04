@@ -1,8 +1,6 @@
 import { Result } from '@badrap/result';
 import { kingAttacks } from '../../attacks';
 import { type Context, PositionError } from '../../chess';
-import { FenError, InvalidFen } from '../../fen';
-import * as fp from '../../fp';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import type { Outcome, PlayerIndex } from '../../types';
@@ -14,6 +12,10 @@ export abstract class GameFamily extends Variant {
   static override playersColors: Record<PlayerIndex, string> = {
     p1: 'black',
     p2: 'white',
+  };
+  static override playersChars: Record<PlayerIndex, string> = {
+    p1: 'b',
+    p2: 'w',
   };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
@@ -41,14 +43,6 @@ export abstract class GameFamily extends Variant {
       VariantKey.linesOfAction,
       VariantKey.scrambledEggs,
     ];
-  }
-
-  static override parsePlayerTurn(
-    turnPart: fp.Option<string>,
-    p1Char = 'b',
-    p2Char = 'w',
-  ): Result<PlayerIndex, FenError> {
-    return super.parsePlayerTurn(turnPart, p1Char, p2Char);
   }
 
   override clone(): GameFamily {

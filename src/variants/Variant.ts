@@ -28,6 +28,10 @@ export abstract class Variant extends Chess {
     p1: 'white',
     p2: 'black',
   };
+  static playersChars: Record<PlayerIndex, string> = {
+    p1: 'w',
+    p2: 'b',
+  };
 
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
   static standardInitialPosition: boolean = true;
@@ -163,14 +167,14 @@ export abstract class Variant extends Chess {
       });
   }
 
-  static parsePlayerTurn(turnPart: fp.Option<string>, p1Char = 'w', p2Char = 'b'): Result<PlayerIndex, FenError> {
+  static parsePlayerTurn(turnPart: fp.Option<string>): Result<PlayerIndex, FenError> {
     return fp.pipe(
       turnPart,
       fp.Option.fold(
         (turnPart: string) =>
-          turnPart.toLowerCase() === p1Char.toLowerCase()
+          turnPart.toLowerCase() === this.playersChars.p1.toLowerCase()
             ? Result.ok('p1')
-            : turnPart.toLowerCase() === p2Char.toLowerCase()
+            : turnPart.toLowerCase() === this.playersChars.p2.toLowerCase()
             ? Result.ok('p2')
             : Result.err(new FenError(InvalidFen.Turn)),
         () => Result.ok('p1'),
