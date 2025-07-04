@@ -1,4 +1,4 @@
-import type { BoardDimensions, Rules } from '../../types';
+import { type BoardDimensions, type Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class GrandOthello extends GameFamily {

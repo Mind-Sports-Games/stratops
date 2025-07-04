@@ -1,6 +1,6 @@
 import { Result } from '@badrap/result';
 import { Board } from '../board';
-import { Chess, type PositionError } from '../chess';
+import { Chess, IllegalSetup, PositionError } from '../chess';
 import {
   boardAndPocketStrings,
   FenError,
@@ -15,7 +15,7 @@ import {
 } from '../fen';
 import * as fp from '../fp';
 import type { Setup } from '../setup';
-import { type BoardDimensions, PlayerIndex, type Role, RULES, type Rules } from '../types';
+import { type BoardDimensions, PlayerIndex, PLAYERINDEXES, type Role, RULES, type Rules } from '../types';
 import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
@@ -24,6 +24,13 @@ export abstract class Variant extends Chess {
   static width: BoardDimensions['files'] = 8;
   static rules: Rules = 'chess';
   static family: GameFamilyKey = GameFamilyKey.chess;
+  static playersColors: Record<PlayerIndex, string> = {
+    p1: 'white',
+    p2: 'black',
+  };
+
+  // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
+  static standardInitialPosition: boolean = true;
 
   static computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.san[0] === 'P' ? move.san.slice(1) : move.san;
@@ -156,14 +163,14 @@ export abstract class Variant extends Chess {
       });
   }
 
-  static parsePlayerTurn(turnPart: fp.Option<string>, p1Char = 'w', p2Char = 'b'): Result<PlayerIndex, FenError> {
+  static parsePlayerTurn(turnPart: fp.Option<string>): Result<PlayerIndex, FenError> {
     return fp.pipe(
       turnPart,
       fp.Option.fold(
         (turnPart: string) =>
-          turnPart.toLowerCase() === p1Char.toLowerCase()
+          turnPart.toLowerCase() === this.playersColors.p1.charAt(0).toLowerCase()
             ? Result.ok('p1')
-            : turnPart.toLowerCase() === p2Char.toLowerCase()
+            : turnPart.toLowerCase() === this.playersColors.p2.charAt(0).toLowerCase()
             ? Result.ok('p2')
             : Result.err(new FenError(InvalidFen.Turn)),
         () => Result.ok('p1'),
@@ -239,6 +246,16 @@ export abstract class Variant extends Chess {
 
   protected constructor(game: Rules) {
     super(game);
+  }
+
+  protected override validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+    return this.validateVariant();
+  }
+
+  // @Note: override this method in subclasses to implement variant-specific validation logic.
+  protected validateVariant(): Result<undefined, PositionError> {
+    return Result.ok(undefined);
   }
 
   override clone(): Variant {
