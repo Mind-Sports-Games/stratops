@@ -9,7 +9,7 @@ import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.shogi;
-  static override playersColors: Record<PlayerIndex, string> = {
+  static override playerColors: Record<PlayerIndex, string> = {
     p1: 'black',
     p2: 'white',
   };

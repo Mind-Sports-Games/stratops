@@ -1,16 +1,24 @@
 import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { type DropMove, Outcome, type Piece, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
+import { type DropMove, Outcome, PlayerFENChar, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
 import { opposite } from '../../util';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.flipello;
-  static override playersColors: Record<PlayerIndex, string> = {
+  static override playerColors: Record<PlayerIndex, string> = {
     p1: 'black',
     p2: 'white',
+  };
+  static override playerFENChars: Record<PlayerIndex, PlayerFENChar> = {
+    p1: 'w',
+    p2: 'b',
+  };
+  static override playerCharsIndexes: Record<PlayerFENChar, PlayerIndex> = {
+    w: 'p1',
+    b: 'p2',
   };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
@@ -31,11 +39,11 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getInitialEpd(): string {
-    return `b - -`;
+    return `w - -`;
   }
 
   static override getEmptyEpd(): string {
-    return `b - -`;
+    return `w - -`;
   }
 
   static override getNotationStyle(): NotationStyle {

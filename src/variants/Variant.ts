@@ -15,7 +15,7 @@ import {
 } from '../fen';
 import * as fp from '../fp';
 import type { Setup } from '../setup';
-import { type BoardDimensions, PlayerIndex, PLAYERINDEXES, type Role, RULES, type Rules } from '../types';
+import { type BoardDimensions, PlayerFENChar, PlayerIndex, type Role, type Rules } from '../types';
 import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
@@ -24,9 +24,18 @@ export abstract class Variant extends Chess {
   static width: BoardDimensions['files'] = 8;
   static rules: Rules = 'chess';
   static family: GameFamilyKey = GameFamilyKey.chess;
-  static playersColors: Record<PlayerIndex, string> = {
+  static playerColors: Record<PlayerIndex, string> = {
     p1: 'white',
     p2: 'black',
+  };
+  static playerFENChars: Record<PlayerIndex, PlayerFENChar> = {
+    p1: 'w',
+    p2: 'b',
+  };
+  // playerFENChars map reversed, for convenience
+  static playerCharsIndexes: Record<PlayerFENChar, PlayerIndex> = {
+    w: 'p1',
+    b: 'p2',
   };
 
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
@@ -168,9 +177,9 @@ export abstract class Variant extends Chess {
       turnPart,
       fp.Option.fold(
         (turnPart: string) =>
-          turnPart.toLowerCase() === this.playersColors.p1.charAt(0).toLowerCase()
+          turnPart.toLowerCase() === this.playerFENChars['p1'].charAt(0).toLowerCase()
             ? Result.ok('p1')
-            : turnPart.toLowerCase() === this.playersColors.p2.charAt(0).toLowerCase()
+            : turnPart.toLowerCase() === this.playerFENChars['p2'].charAt(0).toLowerCase()
             ? Result.ok('p2')
             : Result.err(new FenError(InvalidFen.Turn)),
         () => Result.ok('p1'),
