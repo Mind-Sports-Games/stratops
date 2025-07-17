@@ -16,11 +16,6 @@ export abstract class GameFamily extends Variant {
     p1: 'w',
     p2: 'b',
   };
-  static override playerCharsIndexes: Record<PlayerFENChar, PlayerIndex> = {
-    w: 'p1',
-    b: 'p2',
-  };
-
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) return 'PASS';
 

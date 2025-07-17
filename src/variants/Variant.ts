@@ -32,11 +32,6 @@ export abstract class Variant extends Chess {
     p1: 'w',
     p2: 'b',
   };
-  // playerFENChars map reversed, for convenience
-  static playerCharsIndexes: Record<PlayerFENChar, PlayerIndex> = {
-    w: 'p1',
-    b: 'p2',
-  };
 
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
   static standardInitialPosition: boolean = true;
