@@ -9,9 +9,9 @@ import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.shogi;
-  static override playersColors: Record<PlayerIndex, string> = {
-    p1: 'black',
-    p2: 'white',
+  static override playerColors: Record<PlayerIndex, string> = {
+    p1: 'sente', // 先手; "earlier move"
+    p2: 'gote', // 後手; "later move"
   };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {

@@ -3,15 +3,19 @@ import { kingAttacks } from '../../attacks';
 import { type Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import type { Outcome, PlayerIndex } from '../../types';
+import type { Outcome, PlayerFENChar, PlayerIndex } from '../../types';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.loa;
-  static override playersColors: Record<PlayerIndex, string> = {
+  static override playerColors: Record<PlayerIndex, string> = {
     p1: 'black',
     p2: 'white',
+  };
+  static override playerFENChars: Record<PlayerIndex, PlayerFENChar> = {
+    p1: 'w',
+    p2: 'b',
   };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
@@ -20,14 +24,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getInitialEpd(): string {
-    return 'b - -';
-  }
-
-  static override getEmptyEpd(): string {
-    return `b - -`;
   }
 
   static override getNotationStyle(): NotationStyle {
