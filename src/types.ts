@@ -67,7 +67,7 @@ export const PLAYERINDEXES = ['p1', 'p2'] as const;
 
 export type PlayerIndex = typeof PLAYERINDEXES[number];
 
-export const PLAYERFENCHARS = ['w', 'b'] as const;
+export const PLAYERFENCHARS = ['w', 'b', 'S', 'N'] as const;
 
 export type PlayerFENChar = typeof PLAYERFENCHARS[number];
 
