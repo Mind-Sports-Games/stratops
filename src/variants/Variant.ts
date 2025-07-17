@@ -70,11 +70,11 @@ export abstract class Variant extends Chess {
   }
 
   static getInitialEpd(): string {
-    return 'w - -';
+    return `${this.playerFENChars['p1']} - -`;
   }
 
   static getEmptyEpd(): string {
-    return `w - -`;
+    return `${this.playerFENChars['p1']} - -`;
   }
 
   static getInitialMovesFen(): string {

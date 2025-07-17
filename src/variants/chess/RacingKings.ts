@@ -40,10 +40,6 @@ export class RacingKings extends GameFamily {
     return '8/8/8/8/8/8/krbnNBRK/qrbnNBRQ';
   }
 
-  static override getInitialEpd(): string {
-    return `w - -`;
-  }
-
   protected constructor() {
     super('racingkings');
   }

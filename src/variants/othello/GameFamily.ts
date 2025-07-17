@@ -16,6 +16,7 @@ export abstract class GameFamily extends Variant {
     p1: 'w',
     p2: 'b',
   };
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (!move.uci.includes('@')) return 'PASS';
 
@@ -31,14 +32,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getInitialEpd(): string {
-    return `w - -`;
-  }
-
-  static override getEmptyEpd(): string {
-    return `w - -`;
   }
 
   static override getNotationStyle(): NotationStyle {

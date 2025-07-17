@@ -26,14 +26,6 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
-  static override getInitialEpd(): string {
-    return 'w - -';
-  }
-
-  static override getEmptyEpd(): string {
-    return `w - -`;
-  }
-
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.uci;
   }
