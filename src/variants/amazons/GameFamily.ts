@@ -26,7 +26,7 @@ export abstract class GameFamily extends Variant {
 
   static override getVariantKeys(): VariantKey[] {
     return [
-      VariantKey.amazons
+      VariantKey.amazons,
     ];
   }
 
