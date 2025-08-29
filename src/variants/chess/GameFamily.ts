@@ -8,6 +8,10 @@ import { Variant } from '../Variant';
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.chess;
 
+  static override getInitialEpd(): string {
+    return `${this.playerFENChars['p1']} KQkq -`;
+  }
+
   static override getVariantKeys(): VariantKey[] {
     return [
       VariantKey.standard,
