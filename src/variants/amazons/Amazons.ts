@@ -22,6 +22,10 @@ export class Amazons extends GameFamily {
     });
   } // TODO: override toSetup to include half move.
 
+  static override getInitialBoardFen(): string {
+    return '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp]';
+  }
+
   static override getClass() {
     return this;
   }

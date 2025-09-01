@@ -16,15 +16,17 @@ export abstract class GameFamily extends Variant {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
 
+  static override getEmptyBoardFen(): string {
+    return '10/10/10/10/10/10/10/10/10/10';
+  }
+
   static override getNotationStyle(): NotationStyle {
     return NotationStyle.uci;
   }
 
   static override getVariantKeys(): VariantKey[] {
     return [
-      VariantKey.backgammon,
-      VariantKey.hyper,
-      VariantKey.nackgammon,
+      VariantKey.amazons,
     ];
   }
 
