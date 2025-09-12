@@ -4,6 +4,8 @@ import { SquareSet } from './squareSet.js';
 import { PLAYERINDEXES, ROLES } from './types.js';
 import { defined } from './util.js';
 
+// Note: none of these functions are used anywhere outside the test files.
+
 export function flipVertical(s: SquareSet): SquareSet {
   return s.bswap64();
 }

@@ -235,6 +235,41 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     return board;
   }
 
+  static minixiangqi(): Board {
+    const board = new Board('minixiangqi');
+    board.clear(); // more suitable for any non-standard chess variant
+
+    // let's place elements explicitly for clarity
+    board['r-piece'] = SquareSet.empty().with(0).with(6);
+    board['c-piece'] = SquareSet.empty().with(1).with(5);
+    board['n-piece'] = SquareSet.empty().with(2).with(4);
+    board['k-piece'] = SquareSet.empty().with(3);
+    board['p-piece'] = SquareSet.empty().with(7).with(9).with(10).with(11).with(13);
+    // Note: a refacto will take place, overriding methods like union() or minus()
+    // in the appropriate variant file, to automatically pad the sets to the board size,
+    // without adding "WH" to the method name, or these 7,7.
+    board.p1 = board['r-piece']
+      .unionWH(board['c-piece'], 7, 7)
+      .unionWH(board['n-piece'], 7, 7)
+      .unionWH(board['k-piece'], 7, 7)
+      .unionWH(board['p-piece'], 7, 7);
+
+    board['r-piece'] = board['r-piece'].with(42).with(48);
+    board['c-piece'] = board['c-piece'].with(43).with(47);
+    board['n-piece'] = board['n-piece'].with(44).with(46);
+    board['k-piece'] = board['k-piece'].with(45);
+    board['p-piece'] = board['p-piece'].with(35).with(37).with(38).with(39).with(41);
+    board.p2 = board['r-piece'].minusWH(board.p1, 7, 7)
+      .unionWH(board['c-piece'].minusWH(board.p1, 7, 7), 7, 7)
+      .unionWH(board['n-piece'].minusWH(board.p1, 7, 7), 7, 7)
+      .unionWH(board['k-piece'].minusWH(board.p1, 7, 7), 7, 7)
+      .unionWH(board['p-piece'].minusWH(board.p1, 7, 7), 7, 7);
+
+    board.occupied = board.p1.unionWH(board.p2, 7, 7);
+
+    return board;
+  }
+
   /**
    * Resets all pieces to the default starting position for standard chess.
    */

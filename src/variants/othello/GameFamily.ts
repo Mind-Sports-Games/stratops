@@ -172,7 +172,7 @@ export abstract class GameFamily extends Variant {
     return false;
   }
 
-  // @Note : for now we do not need to correctly determine the winner, isVariantEnd only is used to determine if the game is over or not from board editor page
+  // Note : for now we do not need to correctly determine the winner, isVariantEnd only is used to determine if the game is over or not from board editor page
   override variantOutcome(ctx?: Context): Outcome | undefined {
     if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
 

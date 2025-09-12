@@ -82,6 +82,12 @@ const ANTI_DIAG_RANGE = tabulate(sq => {
   return (shift >= 0 ? diag.shl64(shift) : diag.shr64(-shift)).without(sq);
 });
 
+// Note:
+// The hyperbola quintessence algorithm relies on the specific bitboard geometry of an 8x8 chessboard,
+// where ranks, files, and diagonals are aligned in memory and can be manipulated efficiently with bitwise operations.
+// For boards of other sizes (e.g., 7x7, 9x10), the board geometry does not match the memory layout,
+// so these bit tricks do not work and hyperbola quintessence cannot be applied.
+// For non-8x8 boards, explicit ray traversal must be used instead.
 function hyperbola(bit: SquareSet, range: SquareSet, occupied: SquareSet): SquareSet {
   let forward = occupied.intersect(range);
   let reverse = forward.bswap64(); // Assumes no more than 1 bit per rank
@@ -113,11 +119,155 @@ export function bishopAttacks(square: Square, occupied: SquareSet): SquareSet {
 }
 
 /**
+ * Computes all squares attacked by a bishop from a given square on a generic board of size `width` × `height`.
+ *
+ * The function traverses all four diagonals from the starting square,
+ * adding each square to the attack set until the first obstacle is encountered.
+ * The ray stops at the first occupied square in each direction.
+ *
+ * This function does not distinguish between allied and enemy pieces:
+ * all occupied squares block the ray and are included in the attack set.
+ * To filter out allied pieces, use `.diffWH(allies, width, height)` on the result.
+ *
+ * @param square - The starting square (where the bishop is located).
+ * @param occupied - A SquareSet of all occupied squares on the board.
+ * @param width - The board width.
+ * @param height - The board height.
+ * @returns A SquareSet of all squares attacked along the diagonals, considering obstacles.
+ */
+export function bishopAttacksWH(square: Square, occupied: SquareSet, width = 8, height = 8): SquareSet {
+  const rank = Math.floor(square / width);
+  const file = square % width;
+  let result = SquareSet.empty();
+
+  for (let r = rank - 1, f = file - 1; r >= 0 && f >= 0; r--, f--) {
+    const sq = r * width + f;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+  for (let r = rank - 1, f = file + 1; r >= 0 && f < width; r--, f++) {
+    const sq = r * width + f;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+  for (let r = rank + 1, f = file - 1; r < height && f >= 0; r++, f--) {
+    const sq = r * width + f;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+  for (let r = rank + 1, f = file + 1; r < height && f < width; r++, f++) {
+    const sq = r * width + f;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+
+  return result;
+}
+
+/**
  * Gets squares attacked or defended by a rook on `square`, given `occupied`
  * squares.
  */
 export function rookAttacks(square: Square, occupied: SquareSet): SquareSet {
   return fileAttacks(square, occupied).xor(rankAttacks(square, occupied));
+}
+
+/**
+ * Computes all squares attacked by a rook from a given square on a generic board of size `width` × `height`.
+ *
+ * The function traverses the file and rank from the starting square,
+ * adding each square to the attack set until the first obstacle is encountered in each direction.
+ * The ray stops at the first occupied square in each direction.
+ *
+ * This function does not distinguish between allied and enemy pieces:
+ * all occupied squares block the ray and are included in the attack set.
+ * To filter out allied pieces, use `.diffWH(allies, width, height)` on the result.
+ *
+ * @param square - The starting square (where the rook is located).
+ * @param occupied - A SquareSet of all occupied squares on the board.
+ * @param width - The board width.
+ * @param height - The board height.
+ * @returns A SquareSet of all squares attacked along the file and rank, considering obstacles.
+ */
+export function rookAttacksWH(square: Square, occupied: SquareSet, width = 8, height = 8): SquareSet {
+  return fileAttacksWH(square, occupied, width, height).padWH(width, height).xor(
+    rankAttacksWH(square, occupied, width).padWH(width, height),
+  );
+}
+
+/**
+ * Computes all squares attacked by a piece moving along a file
+ * from a given square on a generic board of size `width` × `height`.
+ *
+ * The function traverses the file above and below the starting square,
+ * adding each square to the attack set until the first obstacle is encountered.
+ * The ray stops at the first occupied square in each direction.
+ *
+ * This function does not distinguish between allied and enemy pieces:
+ * all occupied squares block the ray and are included in the attack set.
+ * To filter out allied pieces, use `.diffWH(allies, width, height)` on the result.
+ *
+ * @param square - The starting square (where the piece is located).
+ * @param occupied - A SquareSet of all occupied squares on the board.
+ * @param width - The board width.
+ * @param height - The board height.
+ * @returns A SquareSet of all squares attacked along the file, considering obstacles.
+ */
+export function fileAttacksWH(square: Square, occupied: SquareSet, width = 8, height = 8): SquareSet {
+  const file = square % width;
+  const rank = Math.floor(square / width);
+
+  let result = SquareSet.empty();
+
+  for (let r = rank - 1; r >= 0; r--) {
+    const sq = r * width + file;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+  for (let r = rank + 1; r < height; r++) {
+    const sq = r * width + file;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+
+  return result;
+}
+
+/**
+ * Computes all squares attacked by a piece moving along a rank
+ * from a given square on a generic board of size `width` × `height`.
+ *
+ * The function traverses the rank to the left and right of the starting square,
+ * adding each square to the attack set until the first obstacle is encountered.
+ * The ray stops at the first occupied square in each direction.
+ *
+ * This function does not distinguish between allied and enemy pieces:
+ * all occupied squares block the ray and are included in the attack set.
+ * To filter out allied pieces, use `.diffWH(allies, width, height)` on the result.
+ *
+ * @param square - The starting square (where the piece is located).
+ * @param occupied - A SquareSet of all occupied squares on the board.
+ * @param width - The board width.
+ * @returns A SquareSet of all squares attacked along the rank, considering obstacles.
+ */
+export function rankAttacksWH(square: Square, occupied: SquareSet, width = 8): SquareSet {
+  const rank = Math.floor(square / width);
+  const file = square % width;
+
+  let result = SquareSet.empty();
+
+  for (let f = file - 1; f >= 0; f--) {
+    const sq = rank * width + f;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+  for (let f = file + 1; f < width; f++) {
+    const sq = rank * width + f;
+    result = result.with(sq);
+    if (occupied.has(sq)) break;
+  }
+
+  return result;
 }
 
 /**

@@ -2,7 +2,7 @@ import type { BoardDimensions } from '../../types';
 import { GameFamilyKey, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
-// @Note: nothing is implemented for Draughts yet.
+// Note: nothing is implemented for Draughts yet.
 export abstract class GameFamily extends Variant {
   static override height: BoardDimensions['ranks'] = 10;
   static override width: BoardDimensions['files'] = 10;
