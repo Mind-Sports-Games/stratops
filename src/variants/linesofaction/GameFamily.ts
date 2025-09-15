@@ -1,14 +1,22 @@
 import { Result } from '@badrap/result';
 import { kingAttacks } from '../../attacks';
-import { type Context, IllegalSetup, PositionError } from '../../chess';
+import { type Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import type { Outcome, PlayerIndex } from '../../types';
+import type { Outcome, PlayerFENChar, PlayerIndex } from '../../types';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.loa;
+  static override playerColors: Record<PlayerIndex, string> = {
+    p1: 'black',
+    p2: 'white',
+  };
+  static override playerFENChars: Record<PlayerIndex, PlayerFENChar> = {
+    p1: 'w',
+    p2: 'b',
+  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.uci;
@@ -16,14 +24,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getInitialEpd(): string {
-    return 'b - -';
-  }
-
-  static override getEmptyEpd(): string {
-    return `b - -`;
   }
 
   static override getNotationStyle(): NotationStyle {
@@ -35,12 +35,6 @@ export abstract class GameFamily extends Variant {
       VariantKey.linesOfAction,
       VariantKey.scrambledEggs,
     ];
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    // TODO: maybe do some more validation of the position
-    return Result.ok(undefined);
   }
 
   override clone(): GameFamily {
@@ -74,8 +68,9 @@ export abstract class GameFamily extends Variant {
       return { winner: 'p1' };
     } else if (!p1Wins && p2Wins) {
       return { winner: 'p2' };
-    } else {
-      return undefined;
+    } else if (p1Wins && p2Wins) {
+      return { winner: undefined }; // Draw, both players connected
     }
+    return undefined;
   }
 }

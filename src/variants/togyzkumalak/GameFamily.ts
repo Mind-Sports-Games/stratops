@@ -71,10 +71,6 @@ export abstract class GameFamily extends Variant {
     return false;
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    return Result.ok(undefined);
-  }
-
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }

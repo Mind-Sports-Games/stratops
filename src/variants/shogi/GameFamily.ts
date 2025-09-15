@@ -9,6 +9,10 @@ import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.shogi;
+  static override playerColors: Record<PlayerIndex, string> = {
+    p1: 'sente', // 先手; "earlier move"
+    p2: 'gote', // 後手; "later move"
+  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
@@ -284,10 +288,6 @@ export abstract class GameFamily extends Variant {
       }
     });
     return pawnRanks;
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    return Result.ok(undefined);
   }
 
   override clone(): GameFamily {

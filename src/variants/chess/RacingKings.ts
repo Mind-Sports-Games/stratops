@@ -10,6 +10,7 @@ import { GameFamily } from './GameFamily';
 
 export class RacingKings extends GameFamily {
   static override rules: Rules = 'racingkings';
+  static override standardInitialPosition: boolean = false;
 
   static override default(): RacingKings {
     const pos = new this();
@@ -40,7 +41,7 @@ export class RacingKings extends GameFamily {
   }
 
   static override getInitialEpd(): string {
-    return `w - -`;
+    return `${this.playerFENChars['p1']} - -`;
   }
 
   protected constructor() {

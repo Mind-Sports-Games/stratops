@@ -31,6 +31,7 @@ pnpm run prepare --watch
 ```sh
 pnpm run test --watch
 pnpm run test src/squareSet --watch
+pnpm run test variant.test
 ```
 
 ### Before committing

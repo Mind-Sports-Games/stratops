@@ -28,12 +28,6 @@ export abstract class GameFamily extends Variant {
     ];
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-
-    return Result.ok(undefined);
-  }
-
   override clone(): GameFamily {
     return super.clone() as GameFamily;
   }

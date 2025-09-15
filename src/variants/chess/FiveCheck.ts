@@ -10,13 +10,13 @@ export class FiveCheck extends GameFamily {
   static override default(): FiveCheck {
     const pos = super.default();
     pos.remainingChecks = RemainingChecks.fiveCheck();
-    return pos;
+    return pos as FiveCheck;
   }
 
   static override fromSetup(setup: Setup): Result<FiveCheck, PositionError> {
     return super.fromSetup(setup).map(pos => {
       pos.remainingChecks = setup.remainingChecks ? setup.remainingChecks.clone() : RemainingChecks.fiveCheck();
-      return pos;
+      return pos as FiveCheck;
     });
   }
 

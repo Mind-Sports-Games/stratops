@@ -13,6 +13,10 @@ export class NoCastling extends GameFamily {
     return pos as NoCastling;
   }
 
+  static override getInitialEpd(): string {
+    return `${this.playerFENChars['p1']} - -`;
+  }
+
   static override fromSetup(setup: Setup): Result<NoCastling, PositionError> {
     return super.fromSetup(setup).map(pos => {
       pos.castles = Castles.empty();

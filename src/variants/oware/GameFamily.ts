@@ -45,10 +45,6 @@ export abstract class GameFamily extends Variant {
     return String.fromCharCode(letter.charCodeAt(0) + n);
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    return Result.ok(undefined);
-  }
-
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }

@@ -26,6 +26,10 @@ export class Antichess extends GameFamily {
     return this;
   }
 
+  static override getInitialEpd(): string {
+    return `${this.playerFENChars['p1']} - -`;
+  }
+
   protected constructor() {
     super('antichess');
   }

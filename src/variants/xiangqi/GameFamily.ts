@@ -7,6 +7,10 @@ import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.xiangqi;
+  static override playerColors: Record<PlayerIndex, string> = {
+    p1: 'red',
+    p2: 'black',
+  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
@@ -108,10 +112,6 @@ export abstract class GameFamily extends Variant {
       }
     });
     return pawnRanks;
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    return Result.ok(undefined);
   }
 
   override clone(): GameFamily {

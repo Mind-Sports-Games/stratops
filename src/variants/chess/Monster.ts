@@ -7,6 +7,7 @@ import { GameFamily } from './GameFamily';
 
 export class Monster extends GameFamily {
   static override rules: Rules = 'monster';
+  static override standardInitialPosition: boolean = false;
 
   static override default(): Monster {
     const pos = new this();
@@ -40,12 +41,6 @@ export class Monster extends GameFamily {
 
   protected constructor() {
     super('monster');
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    // TODO: maybe do some more validation of the position
-    return Result.ok(undefined);
   }
 
   override clone(): Monster {
