@@ -1,9 +1,9 @@
-import {Result} from '@badrap/result';
-import {IllegalSetup, PositionError} from '../../chess';
 import type {Setup} from '../../setup';
 import {type BoardDimensions, type Rules} from '../../types';
 import {defined} from '../../util.js';
 import {GameFamily} from './GameFamily';
+import {type Result} from "@badrap/result";
+import {type PositionError} from "../../chess";
 
 export class GrandAbalone extends GameFamily {
 	static override height: BoardDimensions['ranks'] = 11;
@@ -32,11 +32,5 @@ export class GrandAbalone extends GameFamily {
 	
 	protected constructor() {
 		super('grandabalone');
-	}
-	
-	protected override validate(): Result<undefined, PositionError> {
-		if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-		
-		return Result.ok(undefined);
 	}
 }
