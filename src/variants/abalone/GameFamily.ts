@@ -15,7 +15,7 @@ import { Variant } from '../Variant';
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.abalone;
 
-  static override computeMoveNotation(move: ExtendedMoveInfo): string {
+  static override computeMoveNotation(move: ExtendedMoveInfo): string {//FIXME
     const reg = move.uci.match(/[a-i][1-9]/g) as string[],
       parsed = this.parseUciToAbl(move.uci),
       orig = reg[0],
