@@ -25,7 +25,7 @@ import {
   squareFile,
 } from './util.js';
 import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
-import {hasPrevPlayer} from "./variants/abalone/util";
+import { hasPrevPlayer } from './variants/abalone/util';
 
 const O = fp.Option;
 const R = fp.Result;
@@ -408,7 +408,7 @@ const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (parts.length < 5) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
-  
+
   return fp
     .resultZip([
       parseAbaloneBoardFen(rules)(boardPart),
@@ -416,7 +416,7 @@ const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
       parseScore(parts[1]),
       parsePlayerTurn('b', 'w')(parts[2]),
       parseFullMoves(parts[3]),
-      parsePliesRemainingThisTurn(parts.length < 6? undefined: parts[5])
+      parsePliesRemainingThisTurn(parts.length < 6 ? undefined : parts[5]),
     ])
     .map(([board, p1Captures, p2Captures, turn, fullmoves, pliesRemainingThisTurn]) => ({
       ...defaultSetup(),
@@ -425,7 +425,7 @@ const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
       p2Captures,
       turn,
       fullmoves,
-      pliesRemainingThisTurn
+      pliesRemainingThisTurn,
     }));
 };
 

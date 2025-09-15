@@ -1,6 +1,7 @@
 import type { Rules } from '../types';
 import { Abalone } from './abalone/Abalone';
 import { GameFamily as AbaloneGameFamily } from './abalone/GameFamily';
+import { GrandAbalone } from './abalone/GrandAbalone';
 import { Amazons } from './amazons/Amazons';
 import { GameFamily as AmazonsGameFamily } from './amazons/GameFamily';
 import { Backgammon } from './backgammon/Backgammon';
@@ -56,7 +57,6 @@ import { Variant } from './Variant';
 import { GameFamily as XiangqiGameFamily } from './xiangqi/GameFamily';
 import { MiniXiangqi } from './xiangqi/MiniXiangqi';
 import { Xiangqi } from './xiangqi/Xiangqi';
-import {GrandAbalone} from "./abalone/GrandAbalone";
 
 export function variantClass(rules: Rules): typeof Variant {
   switch (rules) {
