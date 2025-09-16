@@ -579,7 +579,6 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (rules === 'abalone') {
     return parseAbaloneFen(rules)(fen);
   }
-
   return parseDefaultFen(rules)(fen);
 };
 
