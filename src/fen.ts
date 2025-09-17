@@ -535,6 +535,8 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
     }));
 };
 
+// TODO Dameo add fen parsing
+
 // ------------------------------------------------------------------------------
 // Default fens
 export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
@@ -591,7 +593,6 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (rules === 'abalone') {
     return parseAbaloneFen(rules)(fen);
   }
-
   return parseDefaultFen(rules)(fen);
 };
 
