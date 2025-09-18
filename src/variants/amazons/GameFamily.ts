@@ -22,9 +22,7 @@ export abstract class GameFamily extends Variant {
 
   static override getVariantKeys(): VariantKey[] {
     return [
-      VariantKey.backgammon,
-      VariantKey.hyper,
-      VariantKey.nackgammon,
+      VariantKey.amazons,
     ];
   }
 
