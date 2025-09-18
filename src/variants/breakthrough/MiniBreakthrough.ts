@@ -50,7 +50,7 @@ export class MiniBreakthrough extends GameFamily {
     const p1InGoal = goalP1.some(square => this.board.get(square)?.playerIndex === PLAYERINDEXES[0]);
     if (p2InGoal && !p1InGoal) return { winner: 'p2' };
     if (p1InGoal && !p2InGoal) return { winner: 'p1' };
-    return { winner: undefined }; // @Note : this should not happen
+    return { winner: undefined }; // Note : this should not happen
   }
 
   protected constructor() {

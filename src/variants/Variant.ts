@@ -257,7 +257,7 @@ export abstract class Variant extends Chess {
     return this.validateVariant();
   }
 
-  // @Note: override this method in subclasses to implement variant-specific validation logic.
+  // Note: override this method in subclasses to implement variant-specific validation logic.
   protected validateVariant(): Result<undefined, PositionError> {
     return Result.ok(undefined);
   }

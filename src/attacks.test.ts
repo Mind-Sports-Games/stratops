@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { between, linesOfActionAttacks, ray, rookAttacks } from './attacks.js';
+import { between, bishopAttacksWH, linesOfActionAttacks, ray, rookAttacks, rookAttacksWH } from './attacks.js';
 import { Board } from './board.js';
 import { SquareSet } from './squareSet.js';
 import type { PlayerIndex, Square } from './types.js';
@@ -141,4 +141,95 @@ test('lines-of-action third move generation', () => {
       .reduce((range, square) => range.with(square), SquareSet.empty());
     expect(attacks).toEqual(targetSet);
   });
+});
+
+test('minixiangqi rook attacks', () => {
+  const rook = SquareSet.empty().with(24);
+  const allies = SquareSet.empty().with(22).with(26);
+  const enemies = SquareSet.empty().with(10).with(38);
+  const occupied = rook.unionWH(allies, 7, 7).unionWH(enemies, 7, 7);
+  /*
+    . . . . . . .
+    . . . E . . .
+    . . . . . . .
+    . A . R . A .
+    . . . . . . .
+    . . . E . . .
+    . . . . . . .
+  */
+  const attacks = rookAttacksWH(24, occupied, 7, 7).diffWH(allies, 7, 7);
+  expect(attacks.toStringWH(7, 7)).toEqual(
+      '. . . . . . .\n' +
+      '. . . X . . .\n'
+    + '. . . X . . .\n'
+    + '. . X . X . .\n'
+    + '. . . X . . .\n'
+    + '. . . X . . .\n'
+    + '. . . . . . .\n',
+  );
+});
+
+test('shogi rook attacks', () => {
+  const rook = SquareSet.empty().with(0);
+  const allies = SquareSet.empty().with(4).with(7).with(36);
+  const enemies = SquareSet.empty().with(8).with(18);
+  const occupied = rook.unionWH(allies, 9, 10).unionWH(enemies, 9, 10);
+  /*
+    R . . . A . . A E
+    . . . . . . . . .
+    E . . . . . . . .
+    . . . . . . . . .
+    A . . . . . . . .
+    . . . . . . . . .
+    . . . . . . . . .
+    . . . . . . . . .
+    . . . . . . . . .
+    . . . . . . . . .
+  */
+
+  const attacks = rookAttacksWH(0, occupied, 9, 10).diffWH(allies, 9, 10);
+  expect(attacks.toStringWH(9, 10)).toEqual(
+      '. X X X . . . . .\n'
+    + 'X . . . . . . . .\n'
+    + 'X . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n',
+  );
+});
+
+test('shogi bishop attacks', () => {
+  const bishop = SquareSet.empty().with(41);
+  const allies = SquareSet.empty().with(21).with(71);
+  const enemies = SquareSet.empty().with(33).with(81);
+  const occupied = bishop.unionWH(allies, 9, 10).unionWH(enemies, 9, 10);
+  /*
+    . . . . . . . . .
+    . . . . . . . . .
+    . . . A . . . . .
+    . . . . . . E . .
+    . . . . . B . . .
+    . . . . . . . . .
+    . . . . . . . . .
+    . . . . . . . . A
+    . . . . . . . . .
+    E . . . . . . . .
+  */
+  const attacks = bishopAttacksWH(41, occupied, 9, 10).diffWH(allies, 9, 10);
+  expect(attacks.toStringWH(9, 10)).toEqual(
+      '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . X . X . .\n'
+    + '. . . . . . . . .\n'
+    + '. . . . X . X . .\n'
+    + '. . . X . . . X .\n'
+    + '. . X . . . . . .\n'
+    + '. X . . . . . . .\n'
+    + 'X . . . . . . . .\n',
+  );
 });
