@@ -1,5 +1,5 @@
 import { Result } from '@badrap/result';
-import { IllegalSetup, PositionError } from '../../chess';
+import { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { PlayerIndex } from '../../types';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';

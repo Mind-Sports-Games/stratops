@@ -1,6 +1,6 @@
 import { Result } from '@badrap/result';
 import { Board } from '../../board';
-import { Castles, IllegalSetup, PositionError } from '../../chess';
+import { Castles, PositionError } from '../../chess';
 import { Setup } from '../../setup';
 import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
