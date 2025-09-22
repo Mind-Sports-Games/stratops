@@ -41,6 +41,7 @@
     "node": ">=20.19.4 <=22.19.0",
     "pnpm": "^10.17.0"
   },
+  "packageManager": "pnpm@10.17.0",
   "pnpm": {
     "onlyBuiltDependencies": ["dprint"]
   },
