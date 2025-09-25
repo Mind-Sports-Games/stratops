@@ -7,6 +7,7 @@ import { opposite } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class Antichess extends GameFamily {
+  static override allowCastling: boolean = false;
   static override rules: Rules = 'antichess';
 
   static override default(): Antichess {

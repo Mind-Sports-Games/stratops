@@ -32,7 +32,13 @@ export abstract class Variant extends Chess {
     p1: 'w',
     p2: 'b',
   };
-
+  static allowCastling: boolean = false;
+  static allowEnPassant(): boolean {
+    return (
+      typeof (this as any).fixFenForEp === 'function'
+      && typeof (this as any).getEnPassantOptions === 'function'
+    );
+  }
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
   static standardInitialPosition: boolean = true;
 
