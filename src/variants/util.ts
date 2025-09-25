@@ -41,7 +41,9 @@ import { GameFamily as LinesOfActionGameFamily } from './linesofaction/GameFamil
 import { LinesOfAction } from './linesofaction/LinesOfAction';
 import { ScrambledEggs } from './linesofaction/ScrambledEggs';
 import { GameFamily as OthelloGameFamily } from './othello/GameFamily';
+import { AntiOthello } from './othello/AntiOthello';
 import { GrandOthello } from './othello/GrandOthello';
+import { OctagonOthello } from './othello/OctagonOthello';
 import { Othello } from './othello/Othello';
 import { GameFamily as OwareGameFamily } from './oware/GameFamily';
 import { Oware } from './oware/Oware';
@@ -97,6 +99,10 @@ export function variantClass(rules: Rules): typeof Variant {
       return Othello.getClass();
     case 'flipello10':
       return GrandOthello.getClass();
+    case 'antiflipello':
+      return AntiOthello.getClass();
+    case 'octagonflipello':
+      return OctagonOthello.getClass();
     case 'amazons':
       return Amazons.getClass();
     case 'oware':
@@ -194,6 +200,10 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'flipello';
     case VariantKey.flipello10:
       return 'flipello10';
+    case VariantKey.antiflipello:
+      return 'antiflipello';
+    case VariantKey.octagonflipello:
+      return 'octagonflipello';
     case VariantKey.amazons:
       return 'amazons';
     case VariantKey.breakthroughtroyka:

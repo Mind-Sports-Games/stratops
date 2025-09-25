@@ -47,6 +47,8 @@ export abstract class GameFamily extends Variant {
     return [
       VariantKey.flipello,
       VariantKey.flipello10,
+      VariantKey.antiflipello,
+      VariantKey.octagonflipello
     ];
   }
 
