@@ -5,6 +5,7 @@ import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
 export class NoCastling extends GameFamily {
+  static override allowCastling: boolean = false;
   static override rules: Rules = 'nocastling';
 
   static override default(): NoCastling {

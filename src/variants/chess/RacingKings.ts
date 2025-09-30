@@ -9,6 +9,10 @@ import { defined } from '../../util';
 import { GameFamily } from './GameFamily';
 
 export class RacingKings extends GameFamily {
+  static override allowCastling: boolean = false;
+  static override allowEnPassant(): boolean {
+    return false;
+  }
   static override rules: Rules = 'racingkings';
   static override standardInitialPosition: boolean = false;
 
