@@ -24,7 +24,7 @@ export abstract class GameFamily extends Variant {
     const dest = reg[1];
 
     // convert into flipello notation - a1 is top left for first player (not bottom left)
-    const newRank = 9 - parseInt(dest.slice(1));
+    const newRank = GameFamily.height + 1 - parseInt(dest.slice(1));
     const destPos = dest[0] + newRank;
 
     return `${destPos}`;
