@@ -3,7 +3,7 @@ import { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { type DropMove, Outcome, PlayerFENChar, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
 import { opposite } from '../../util';
-import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
+import { GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {

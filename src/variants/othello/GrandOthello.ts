@@ -1,5 +1,6 @@
 import { type BoardDimensions, type Rules } from '../../types';
 import { GameFamily } from './GameFamily';
+import { type ExtendedMoveInfo } from '../types';
 
 export class GrandOthello extends GameFamily {
   static override height: BoardDimensions['ranks'] = 10;

@@ -1,5 +1,6 @@
 import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
+import { type ExtendedMoveInfo } from '../types';
 
 export class Othello extends GameFamily {
   static override rules: Rules = 'flipello';
