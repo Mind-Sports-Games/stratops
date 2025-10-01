@@ -17,19 +17,6 @@ export abstract class GameFamily extends Variant {
     p2: 'b',
   };
 
-  static override computeMoveNotation(move: ExtendedMoveInfo): string {
-    if (!move.uci.includes('@')) return 'PASS';
-
-    const reg = move.uci.match(/[a-zA-Z][1-9@]0?/g) as string[];
-    const dest = reg[1];
-
-    // convert into flipello notation - a1 is top left for first player (not bottom left)
-    const newRank = GameFamily.height + 1 - parseInt(dest.slice(1));
-    const destPos = dest[0] + newRank;
-
-    return `${destPos}`;
-  }
-
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
   }
