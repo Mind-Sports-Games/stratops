@@ -2,11 +2,11 @@ import { Rules } from '../../types';
 import { type ExtendedMoveInfo } from '../types';
 import { GameFamily } from './GameFamily';
 
-export class Othello extends GameFamily {
-  static override rules: Rules = 'flipello';
+export class AntiOthello extends GameFamily {
+  static override rules: Rules = 'antiflipello';
 
-  static override default(): Othello {
-    return super.defaultBoard(new this()) as Othello;
+  static override default(): AntiOthello {
+    return super.defaultBoard(new this()) as AntiOthello;
   }
 
   static override getClass() {
@@ -31,6 +31,6 @@ export class Othello extends GameFamily {
   }
 
   protected constructor() {
-    super('flipello');
+    super('antiflipello');
   }
 }

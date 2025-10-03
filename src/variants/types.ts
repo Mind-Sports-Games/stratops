@@ -121,6 +121,8 @@ export enum VariantKey {
   minixiangqi = 'minixiangqi',
   flipello = 'flipello',
   flipello10 = 'flipello10',
+  antiflipello = 'antiflipello',
+  octagonflipello = 'octagonflipello',
   amazons = 'amazons',
   breakthroughtroyka = 'breakthroughtroyka',
   minibreakthroughtroyka = 'minibreakthroughtroyka',
