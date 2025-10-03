@@ -1,4 +1,5 @@
-import { type BoardDimensions, type ExtendedMoveInfo, type Rules } from '../../types';
+import { type BoardDimensions, type Rules } from '../../types';
+import { type ExtendedMoveInfo } from '../types';
 import { GameFamily } from './GameFamily';
 
 export class OctagonOthello extends GameFamily {

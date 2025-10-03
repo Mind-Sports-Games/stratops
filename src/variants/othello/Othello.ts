@@ -1,4 +1,5 @@
-import { type ExtendedMoveInfo, Rules } from '../../types';
+import { Rules } from '../../types';
+import { type ExtendedMoveInfo } from '../types';
 import { GameFamily } from './GameFamily';
 
 export class Othello extends GameFamily {
