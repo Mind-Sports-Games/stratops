@@ -2,7 +2,7 @@ import {Result} from '@badrap/result';
 import {IllegalSetup, PositionError} from '../../chess';
 import type {Setup} from '../../setup';
 import type {PlayerIndex} from '../../types';
-import {type ExtendedMoveInfo, GameFamilyKey, type LegacyNotationBoard, NotationStyle, VariantKey,} from '../types';
+import {type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey,} from '../types';
 import {Variant} from '../Variant';
 import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, includes, key2pos, matchKeys, MoveNotation, mult, norm, type Pos, pos2key, sub} from "./util";
 import {Board} from "../../board";
@@ -98,18 +98,17 @@ export abstract class GameFamily extends Variant {
 		const board = this.readThisFen_board(move.prevFen);
 		
 		if (board.isOk) {
-			const m = this.uciToMove(move.uci), from = m[0];
-			
-			const c = board.value.get(this.getFenIndex(from));
+			const m = this.uciToMove(move.uci), from = m[0],
+				c = board.value.get(this.getFenIndex(from));
 			
 			if (c !== undefined) {
-				let to = m[1], vect = sub(to, from);
-				
+				let to = m[1];
+				const vect = sub(to, from);
 				let n = norm(vect);
 				
 				if (n > 0) {
-					let uvect = div(n, vect);
-					const neighVectors = getNeighVectors();
+					const uvect = div(n, vect),
+						neighVectors = getNeighVectors();
 					
 					if (includes(neighVectors, uvect)) {// In-line move
 						let sep = '';
