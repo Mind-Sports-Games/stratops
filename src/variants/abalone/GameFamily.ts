@@ -225,28 +225,6 @@ export abstract class GameFamily extends Variant {
 		]);
 	}
 	
-	protected static readThisFen_board_legacy(fen: string): LegacyNotationBoard {//TODO delete?
-		const res: LegacyNotationBoard = {
-				pieces: {},
-				wMoved: fen.split(' ')[3] === 'b',
-			},
-			cells: Pos[] = this.getCellList();
-		
-		let k = 0;
-		for (let i = 0; i < fen.length; i++) {
-			const c = fen[i];
-			if (c === ' ') break;
-			else if (c !== '/') {
-				const steps = parseInt(c);
-				
-				if (steps > 0) k += steps;
-				else res.pieces[pos2key(cells[k++])] = c;
-			}
-		}
-		
-		return res;
-	}
-	
 	protected static readThisFen_board(fen: string): Result<Board, FenError> {
 		const board = Board.empty(this.rules),
 			cells = this.getCellList();
