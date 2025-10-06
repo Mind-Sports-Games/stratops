@@ -345,9 +345,9 @@ export const parsePliesRemainingThisTurn = (part: fp.Option<string>): Result<num
 const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<number, FenError> =>
   fp.pipe(part, O.flatMap(parseSmallUint), O.toResult(err));
 
-const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
-const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
-const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
+export const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
+export const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
+export const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
 
 export const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
   fp.pipe(
