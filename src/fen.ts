@@ -1,10 +1,29 @@
-import {Result} from '@badrap/result';
-import {Board} from './board.js';
+import { Result } from '@badrap/result';
+import { Board } from './board.js';
 import * as fp from './fp.js';
-import {defaultSetup, Material, type MaterialSide, RemainingChecks, type Setup} from './setup.js';
-import {SquareSet} from './squareSet.js';
-import {FILE_NAMES, type Move, type Piece, type PlayerIndex, PLAYERINDEXES, ROLES, type Rules, type Square,} from './types.js';
-import {charToRole, defined, dimensionsForRules, makeSquare, makeUci, parseSquare, parseUci, roleToChar, squareFile,} from './util.js';
+import { defaultSetup, Material, type MaterialSide, RemainingChecks, type Setup } from './setup.js';
+import { SquareSet } from './squareSet.js';
+import {
+	FILE_NAMES,
+	type Move,
+	type Piece,
+	type PlayerIndex,
+	PLAYERINDEXES,
+	ROLES,
+	type Rules,
+	type Square,
+} from './types.js';
+import {
+	charToRole,
+	defined,
+	dimensionsForRules,
+	makeSquare,
+	makeUci,
+	parseSquare,
+	parseUci,
+	roleToChar,
+	squareFile,
+} from './util.js';
 import {GameFamily as AbaloneGameFamily} from "./variants/abalone/GameFamily";
 
 const O = fp.Option;
@@ -38,8 +57,7 @@ export enum InvalidFen {
 	BackgammonScore = 'ERR_BACKGAMMON_SCORE',
 }
 
-export class FenError extends Error {
-}
+export class FenError extends Error {}
 
 const fenErr = (err: InvalidFen) => () => new FenError(err);
 
@@ -53,17 +71,17 @@ function nthIndexOf(haystack: string, needle: string, n: number): number {
 }
 
 function parseSmallUint(str: string): fp.Option<number> {
-	return /^\d{1,4}$/.test(str)? parseInt(str, 10): undefined;
+	return /^\d{1,4}$/.test(str) ? parseInt(str, 10) : undefined;
 }
 
 export function charToPiece(ch: string): Piece | undefined {
 	const role = charToRole(ch);
-	return role && {role, playerIndex: ch.toLowerCase() === ch? 'p2': 'p1'};
+	return role && { role, playerIndex: ch.toLowerCase() === ch ? 'p2' : 'p1' };
 }
 
 export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board, FenError> => {
 	const board = Board.empty(rules);
-	const {ranks, files} = dimensionsForRules(rules);
+	const { ranks, files } = dimensionsForRules(rules);
 	let rank = ranks - 1;
 	let file = 0;
 	if (!COMMA_FEN_RULES.includes(rules)) {
@@ -96,10 +114,10 @@ export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board
 					}
 				} else {
 					if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
-					const square = file + rank*files;
+					const square = file + rank * files;
 					const isShogiPromotion = (rules === 'shogi' || rules === 'minishogi') && c === '+'
 						&& i + 1 < boardPart.length;
-					const pieceChar = isShogiPromotion? c + boardPart[i + 1]: c;
+					const pieceChar = isShogiPromotion ? c + boardPart[i + 1] : c;
 					if (isShogiPromotion) {
 						++i;
 					}
@@ -119,7 +137,7 @@ export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board
 			for (const f of r.split(',')) {
 				if (isNaN(+f)) {
 					if (file >= files || rank < 0) return Result.err(new FenError(InvalidFen.Board));
-					const square = file + rank*files;
+					const square = file + rank * files;
 					const count = f.slice(0, -1);
 					const role = f.substring(f.length - 1).toLowerCase();
 					const playerIndex = MANCALA_FEN_VARIANT.includes(rules)
@@ -151,13 +169,13 @@ export const parseBoardFen = (rules: Rules) => (boardPart: string): Result<Board
 
 export const parsePockets = (rules: Rules) => (pocketPart: string): Result<Material, FenError> => {
 	// TODO: What would the limit need to be for us right now?
-	if (pocketPart.length > 64*4) return Result.err(new FenError(InvalidFen.Pockets));
+	if (pocketPart.length > 64 * 4) return Result.err(new FenError(InvalidFen.Pockets));
 	const pockets = Material.empty();
 	if (COMMA_FEN_RULES.includes(rules)) {
 		for (const p of pocketPart.split(',')) {
 			const count = p.slice(0, -1);
 			const role = p.substring(p.length - 1).toLowerCase();
-			const playerIndex = p.substring(p.length - 1) === role? 'p2': 'p1';
+			const playerIndex = p.substring(p.length - 1) === role ? 'p2' : 'p1';
 			const piece = {
 				role: `${role}${count}-piece`,
 				playerIndex: playerIndex,
@@ -186,7 +204,7 @@ export const parseCastlingFen = (board: Board) => (castlingPart: fp.Option<strin
 				}
 				for (const c of castlingPart) {
 					const lower = c.toLowerCase();
-					const playerIndex = c === lower? 'p2': 'p1';
+					const playerIndex = c === lower ? 'p2' : 'p1';
 					const backrank = SquareSet.backrank64(playerIndex).intersect(board[playerIndex]);
 					let candidates: Iterable<Square>;
 					if (lower === 'q') candidates = backrank;
@@ -234,7 +252,7 @@ type BoardAndPocketStrings = {
 };
 // Extracts the board and pocket portions of the string
 export const boardAndPocketStrings = (rules: Rules) => (boardPart: string): Result<BoardAndPocketStrings, FenError> => {
-	const {ranks} = dimensionsForRules(rules);
+	const { ranks } = dimensionsForRules(rules);
 	if (boardPart.endsWith(']')) {
 		const pocketStart = boardPart.indexOf('[');
 		if (pocketStart === -1) return Result.err(new FenError(InvalidFen.Fen));
@@ -245,7 +263,7 @@ export const boardAndPocketStrings = (rules: Rules) => (boardPart: string): Resu
 	} else {
 		const pocketStart = nthIndexOf(boardPart, '/', ranks - 1);
 		if (pocketStart === -1) {
-			return Result.ok({board: boardPart});
+			return Result.ok({ board: boardPart });
 		} else {
 			return Result.ok({
 				board: boardPart.substr(0, pocketStart),
@@ -263,8 +281,8 @@ export const parseBoardAndOptPockets =
 	(rules: Rules) => (boardAndPockets: BoardAndPocketStrings): Result<BoardAndOptPockets, FenError> =>
 		parseBoardFen(rules)(boardAndPockets.board).chain(board =>
 			defined(boardAndPockets.pockets)
-				? parsePockets(rules)(boardAndPockets.pockets).map(pockets => ({board, pockets}))
-				: Result.ok({board})
+				? parsePockets(rules)(boardAndPockets.pockets).map(pockets => ({ board, pockets }))
+				: Result.ok({ board })
 		);
 
 type BoardAndPockets = {
@@ -275,13 +293,13 @@ const parseBoardAndPockets = (rules: Rules) => (boardAndPockets: string): Result
 	fp.pipe(
 		boardAndPockets,
 		boardAndPocketStrings(rules),
-		R.flatMap(({board, pockets}) =>
+		R.flatMap(({ board, pockets }) =>
 			R.zip([
 				parseBoardFen(rules)(board),
 				fp.pipe(pockets, O.flatMapErr(parsePockets(rules), fenErr(InvalidFen.Pockets))),
 			])
 		),
-		R.map(([board, pockets]) => ({board, pockets})),
+		R.map(([board, pockets]) => ({ board, pockets })),
 	);
 
 export const parsePlayerTurn =
@@ -327,9 +345,9 @@ export const parsePliesRemainingThisTurn = (part: fp.Option<string>): Result<num
 const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<number, FenError> =>
 	fp.pipe(part, O.flatMap(parseSmallUint), O.toResult(err));
 
-export const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
-export const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
-export const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
+const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
+const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
+const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
 
 export const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
 	fp.pipe(
@@ -429,7 +447,7 @@ const parseGoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
 			parsePassCount(parts[7]),
 			parseFullMoves(parts[8]),
 		])
-		.map(([{board, pockets}, turn, ko, p1Score, p2Score, p1Captures, p2Captures, komi, passCount, fullmoves]) => ({
+		.map(([{ board, pockets }, turn, ko, p1Score, p2Score, p1Captures, p2Captures, komi, passCount, fullmoves]) => ({
 			...defaultSetup(),
 			board,
 			pockets,
@@ -447,7 +465,7 @@ const parseGoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
 
 export const makeGoFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string => {
 	return [
-		makeBoardFen(rules)(setup.board, opts) + (setup.pockets? `[${makePockets(rules)(setup.pockets)}]`: ''),
+		makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
 		playerTurn(setup),
 		fp.pipe(
 			setup.ko,
@@ -496,7 +514,7 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
 			parseScore(parts[4]),
 			parseFullMoves(parts[5]),
 		])
-		.map(([{board, pockets}, unusedDice, usedDice, turn, p1Score, p2Score, fullmoves]) => ({
+		.map(([{ board, pockets }, unusedDice, usedDice, turn, p1Score, p2Score, fullmoves]) => ({
 			...defaultSetup(),
 			board,
 			pockets,
@@ -520,20 +538,20 @@ export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, Fe
 		return Result.err(new FenError(InvalidFen.Fen));
 	}
 	
-	const hasEarlyRemainingChecks = parts.length > 3? parts[3].includes('+'): false;
+	const hasEarlyRemainingChecks = parts.length > 3 ? parts[3].includes('+') : false;
 	
 	// Board and pockets
 	return boardAndPocketStrings(rules)(boardPart)
 		.chain(parseBoardAndOptPockets(rules))
-		.chain(({board, pockets}) => {
+		.chain(({ board, pockets }) => {
 			return fp
 				.resultZip([
 					fp.pipe(parts[0], parsePlayerTurn()),
 					parseCastlingFen(board)(parts[1]),
 					parseFenSquare(rules)(parts[2]),
-					parseRemainingChecksOpt(hasEarlyRemainingChecks? parts[3]: parts[5]),
-					parseHalfMoves(hasEarlyRemainingChecks? parts[4]: parts[3]),
-					parseFullMoves(hasEarlyRemainingChecks? parts[5]: parts[4]),
+					parseRemainingChecksOpt(hasEarlyRemainingChecks ? parts[3] : parts[5]),
+					parseHalfMoves(hasEarlyRemainingChecks ? parts[4] : parts[3]),
+					parseFullMoves(hasEarlyRemainingChecks ? parts[5] : parts[4]),
 					parseLastMove(rules)(lastMoveParts[0]),
 				])
 				.map(([turn, unmovedRooks, epSquare, remainingChecks, halfmoves, fullmoves, lastMove]) => ({
@@ -596,22 +614,22 @@ export const makeCFPiece = (rules: Rules) => (piece: Piece, endOfRank: boolean):
 			? letter.toUpperCase()
 			: letter;
 	const count = piece.role.split('-')[0].substring(1);
-	return count + roleLetter + (endOfRank? '': ',');
+	return count + roleLetter + (endOfRank ? '' : ',');
 };
 
 export const makeBoardFen = (rules: Rules) => (board: Board, opts?: FenOpts): string => {
-	const {ranks, files} = dimensionsForRules(rules);
+	const { ranks, files } = dimensionsForRules(rules);
 	let fen = '';
 	let empty = 0;
 	for (let rank: number = ranks - 1; rank >= 0; rank--) {
 		for (let file = 0; file < files; file++) {
-			const square = file + rank*files;
+			const square = file + rank * files;
 			const piece = board.get(square);
 			if (!piece) empty++;
 			else {
 				if (empty > 0) {
 					fen += empty;
-					fen += COMMA_FEN_RULES.includes(rules)? ',': '';
+					fen += COMMA_FEN_RULES.includes(rules) ? ',' : '';
 					empty = 0;
 				}
 				fen += COMMA_FEN_RULES.includes(rules)
@@ -639,7 +657,7 @@ export function makeCommaFenPocket(material: MaterialSide, playerIndex: PlayerIn
 	return ROLES.map(role => {
 		const r = role.split('-')[0];
 		const count = r.slice(1);
-		const rp = playerIndex === 'p1'? r.substring(0, 1).toUpperCase(): r.substring(0, 1);
+		const rp = playerIndex === 'p1' ? r.substring(0, 1).toUpperCase() : r.substring(0, 1);
 		return (count + rp).repeat(material[role]);
 	}).join('');
 }
@@ -664,12 +682,12 @@ export const makeCastlingFen = (rules: Rules) => (board: Board, unmovedRooks: Sq
 		const candidates = board.pieces(playerIndex, 'r-piece').intersect(backrank);
 		for (const rook of unmovedRooks.intersect(candidates).reversed()) {
 			if (!shredder && rook === candidates.first() && rook < king) {
-				fen += playerIndex === 'p1'? 'Q': 'q';
+				fen += playerIndex === 'p1' ? 'Q' : 'q';
 			} else if (!shredder && rook === candidates.last() && king < rook) {
-				fen += playerIndex === 'p1'? 'K': 'k';
+				fen += playerIndex === 'p1' ? 'K' : 'k';
 			} else {
 				const file = FILE_NAMES[squareFile(rules)(rook)];
-				fen += playerIndex === 'p1'? file.toUpperCase(): file;
+				fen += playerIndex === 'p1' ? file.toUpperCase() : file;
 			}
 		}
 	}
@@ -679,7 +697,6 @@ export const makeCastlingFen = (rules: Rules) => (board: Board, unmovedRooks: Sq
 export function makeRemainingChecks(checks: RemainingChecks): string {
 	return `${checks.p1}+${checks.p2}`;
 }
-
 export function mancalaScore(northScore: number | undefined, southScore: number | undefined): string {
 	if (!northScore) northScore = 0;
 	if (!southScore) southScore = 0;
@@ -692,7 +709,6 @@ export function playerScores(p1Score: fp.Option<number>, p2Score: fp.Option<numb
 	const withDefault = fp.Option.unwrapOr(0);
 	return `${withDefault(p1Score)} ${withDefault(p2Score)}`;
 }
-
 export function backgammonDice(unusedDice: fp.Option<string>, usedDice: fp.Option<string>): string {
 	const withDefault = fp.Option.unwrapOr('-');
 	return `${withDefault(unusedDice)} ${withDefault(usedDice)}`;
@@ -700,26 +716,26 @@ export function backgammonDice(unusedDice: fp.Option<string>, usedDice: fp.Optio
 
 const owareMancalaFenParts = (setup: Setup): string[] => [
 	mancalaScore(setup.northScore, setup.southScore),
-	setup.turn === 'p1'? 'S': 'N',
+	setup.turn === 'p1' ? 'S' : 'N',
 	`${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
 ];
 
 const backgammonFenParts = (setup: Setup): string[] => [
 	backgammonDice(setup.unusedDice, setup.usedDice),
-	setup.turn === 'p1'? 'w': 'b',
+	setup.turn === 'p1' ? 'w' : 'b',
 	playerScores(setup.p1Score, setup.p2Score),
 	`${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
 ];
 
-const playerTurn = (setup: Setup): string => (setup.turn === 'p1'? 'w': 'b');
+const playerTurn = (setup: Setup): string => (setup.turn === 'p1' ? 'w' : 'b');
 
 export const makeLastMove = (rules: Rules) => (move: Move): string => `½${makeUci(rules)(move)}`;
 
 const chessVariantFenParts = (rules: Rules) => (setup: Setup, opts?: FenOpts): string[] => [
 	playerTurn(setup),
 	makeCastlingFen(rules)(setup.board, setup.unmovedRooks, opts),
-	defined(setup.epSquare)? makeSquare(rules)(setup.epSquare): '-',
-	...(setup.remainingChecks? [makeRemainingChecks(setup.remainingChecks)]: []),
+	defined(setup.epSquare) ? makeSquare(rules)(setup.epSquare) : '-',
+	...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks)] : []),
 	...(opts?.epd
 		? []
 		: [`${Math.max(0, Math.min(setup.halfmoves, 9999))}`, `${Math.max(1, Math.min(setup.fullmoves, 9999))}`]),
@@ -733,12 +749,12 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
 		return makeOthelloFen(rules)(setup, opts);
 	}
 	return [
-		makeBoardFen(rules)(setup.board, opts) + (setup.pockets? `[${makePockets(rules)(setup.pockets)}]`: ''),
+		makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
 		...(MANCALA_FEN_VARIANT.includes(rules)
 			? owareMancalaFenParts(setup)
 			: rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon'
 				? backgammonFenParts(setup)
 				: chessVariantFenParts(rules)(setup, opts)),
-		...(rules === 'amazons' && setup.lastMove? [makeLastMove(rules)(setup.lastMove)]: []),
+		...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
 	].join(' ');
 };
