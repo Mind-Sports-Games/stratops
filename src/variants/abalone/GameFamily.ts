@@ -1,156 +1,278 @@
-import { Result } from '@badrap/result';
-import { IllegalSetup, PositionError } from '../../chess';
-import type { Setup } from '../../setup';
-import type { PlayerIndex } from '../../types';
-import {
-  type ExtendedMoveInfo,
-  GameFamilyKey,
-  type LegacyNotationBoard,
-  NotationStyle,
-  type ParsedMove,
-  VariantKey,
-} from '../types';
-import { Variant } from '../Variant';
+import {Result} from '@badrap/result';
+import {IllegalSetup, PositionError} from '../../chess';
+import type {Setup} from '../../setup';
+import type {PlayerIndex} from '../../types';
+import {type ExtendedMoveInfo, GameFamilyKey, type LegacyNotationBoard, NotationStyle, VariantKey,} from '../types';
+import {Variant} from '../Variant';
+import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, includes, key2pos, matchKeys, MoveNotation, mult, norm, type Pos, pos2key, sub} from "./util";
+import {Board} from "../../board";
+import {charToPiece, FenError, InvalidFen, parseFullMoves, parsePlayerTurn, parsePliesRemainingThisTurn, parseScore} from "../../fen";
+import * as fp from "../../fp";
+import {variantKeyToRules} from "../util";
+import {Abalone} from "./Abalone";
+import {GrandAbalone} from "./GrandAbalone";
 
 export abstract class GameFamily extends Variant {
-  static override family: GameFamilyKey = GameFamilyKey.abalone;
-
-  static override computeMoveNotation(move: ExtendedMoveInfo): string { // FIXME
-    const reg = move.uci.match(/[a-i][1-9]/g) as string[],
-      parsed = this.parseUciToAbl(move.uci),
-      orig = reg[0],
-      dest = reg[1],
-      board = this.readAbaloneFen(move.fen, this.height, this.width),
-      prevBoard = this.readAbaloneFen(move.prevFen, this.height, this.width),
-      keyDiffs = this.diffAbaloneBoard(board, prevBoard),
-      isPush = new Set(keyDiffs[0].concat(keyDiffs[1])).size !== keyDiffs[0].concat(keyDiffs[1]).length,
-      oppPushedTo = keyDiffs[1].filter(k => k !== dest),
-      isCapture =
-        move.fen.split(' ')[1] + move.fen.split(' ')[2] !== move.prevFen.split(' ')[1] + move.prevFen.split(' ')[2],
-      is3v2Capture = isCapture && !this.isOnEdgeAbaloneBoard(dest);
-
-    const destNotation = isPush
-      ? isCapture
-        ? is3v2Capture
-          ? this.parseUCISquareToAbl(this.findEdgeFromAbaloneMove(orig, dest))
-          : parsed.dest
-        : this.parseUCISquareToAbl(oppPushedTo[0])
-      : parsed.dest;
-
-    return `${parsed.orig}${isCapture ? 'x' : ''}${destNotation}`;
-  }
-
-  static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
-    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getNotationStyle(): NotationStyle {
-    return NotationStyle.abl;
-  }
-
-  static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2];
-  }
-
-  static override getVariantKeys(): VariantKey[] {
-    return [
-      VariantKey.backgammon,
-      VariantKey.hyper,
-      VariantKey.nackgammon,
-    ];
-  }
-
-  static diffAbaloneBoard(board: LegacyNotationBoard, prevBoard: LegacyNotationBoard): [string[], string[]] {
-    const turnPlayerChanges = Object.keys(prevBoard.pieces).filter(k => prevBoard.pieces[k] !== board.pieces[k]);
-    const oppChanges = Object.keys(board.pieces).filter(k => prevBoard.pieces[k] !== board.pieces[k]);
-    return [turnPlayerChanges, oppChanges];
-  }
-
-  static findEdgeFromAbaloneMove(orig: string, dest: string): string {
-    // same letter (\)
-    if (orig[0] === dest[0]) {
-      if (parseInt(orig[1]) > parseInt(dest[1])) {
-        return orig[0] + Math.max(orig[0].charCodeAt(0) - 96 - 4, 1).toString();
-      } else return orig[0] + Math.min(orig[0].charCodeAt(0) - 96 + 4, 9).toString();
-    }
-    // same number (-)
-    if (orig[1] === dest[1]) {
-      if (orig[0].charCodeAt(0) > dest[0].charCodeAt(0)) {
-        return String.fromCharCode(Math.max(parseInt(orig[1]) + 96 - 4, 97)) + orig[1];
-      } else return String.fromCharCode(Math.min(parseInt(orig[1]) + 96 + 4, 105)) + orig[1];
-    }
-    // other direction (/)
-    if (Math.abs(parseInt(dest[1]) + dest[0].charCodeAt(0) - (parseInt(orig[1]) + orig[0].charCodeAt(0))) % 2 === 0) {
-      if (parseInt(orig[1]) + orig[0].charCodeAt(0) > parseInt(dest[1]) + dest[0].charCodeAt(0)) {
-        return String.fromCharCode(dest[0].charCodeAt(0) - 1) + (parseInt(dest[1]) - 1).toString();
-      } else return String.fromCharCode(dest[0].charCodeAt(0) + 1) + (parseInt(dest[1]) + 1).toString();
-    }
-    return 'a1';
-  }
-
-  static isOnEdgeAbaloneBoard(dest: string): boolean {
-    return (
-      dest[0] === 'a'
-      || dest[0] === 'i'
-      || dest[1] === '1'
-      || dest[1] === '9'
-      || ['b6', 'c7', 'd8', 'f2', 'g3', 'h4'].includes(dest)
-    );
-  }
-
-  static parseUCISquareToAbl(str: string): string | undefined {
-    if (str.length > 2) return;
-    const numberPart = 1 + Math.abs(str.charCodeAt(0) - 'a'.charCodeAt(0));
-    const letterPart = String.fromCharCode(parseInt(str.slice(1)) + 96);
-    return letterPart.toString() + numberPart.toString();
-  }
-
-  static parseUciToAbl(uci: string): ParsedMove {
-    const reg = uci.match(/[a-i][1-9]/g) as string[];
-    return {
-      orig: this.parseUCISquareToAbl(reg[0])!,
-      dest: this.parseUCISquareToAbl(reg[1])!,
-    };
-  }
-
-  static readAbaloneFen(fen: string, ranks: number, files: number) {
-    const parts = fen.split(' '),
-      board: LegacyNotationBoard = {
-        pieces: {},
-        wMoved: parts[3] === 'b',
-      };
-
-    parts[0]
-      .split('[')[0]
-      .split('/')
-      .slice(0, ranks)
-      .forEach((row, y) => {
-        let x = Math.max(files - y - 4, 1);
-        row.split('').forEach(v => {
-          if (v === '~') return;
-          const nb = parseInt(v, 10);
-          if (nb) x += nb;
-          else {
-            board.pieces[`${String.fromCharCode(x + 96)}${files - y}`] = v;
-            x++;
-          }
-        });
-      });
-
-    return board;
-  }
-
-  override clone(): GameFamily {
-    return super.clone() as GameFamily;
-  }
-
-  override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
-    return false; // having only 1 piece alive for each player could be considered as insufficient material
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-
-    return Result.ok(undefined);
-  }
+	static override family: GameFamilyKey = GameFamilyKey.abalone;
+	
+	static override getVariantKeys(): VariantKey[] {
+		return [
+			VariantKey.abalone,
+			VariantKey.grandAbalone
+		];
+	}
+	
+	//
+	//
+	override clone(): GameFamily {
+		return super.clone() as GameFamily;
+	}
+	
+	static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
+		return super.fromSetup(setup) as Result<GameFamily, PositionError>;
+	}
+	
+	override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
+		return false;// Having only one remaining piece for each player could be considered as insufficient material, but never happens from an official starting position
+	}
+	
+	protected override validate(): Result<undefined, PositionError> {
+		return this.board.occupied.isEmpty()?
+			Result.err(new PositionError(IllegalSetup.Empty)):
+			Result.ok(undefined);
+	}
+	
+	//
+	//
+	static getMaxUsable(): number | undefined {
+		return 3;
+	}
+	
+	static getWinningScore(): number {
+		return 6;
+	}
+	
+	static hasPrevPlayer(): boolean {
+		return false;
+	}
+	
+	//
+	// Cells
+	static getCentre(): Pos {
+		return [Math.floor(this.width/2), Math.floor(this.height/2)];
+	}
+	
+	static isCell(pos: Pos): boolean {
+		return this.isCellCore(this.getCentre(), pos);
+	}
+	
+	static isCellCore(centre: Pos, pos: Pos): boolean {
+		return dist(centre, pos) <= centre[0];
+	}
+	
+	static getCellList(): Pos[] {
+		const centre = this.getCentre();
+		const res: Pos[] = [];
+		
+		for (let y = this.height - 1; y >= 0; y--) {
+			for (let x = 0; x < this.width; x++) {
+				const pos: Pos = [x, y];
+				if (this.isCellCore(centre, pos)) res.push(pos);
+			}
+		}
+		
+		return res;
+	}
+	
+	//
+	// Notation
+	static override getNotationStyle(): NotationStyle {
+		return NotationStyle.abl;
+	}
+	
+	static override computeMoveNotation(move: ExtendedMoveInfo): string {
+		return this.computeMoveNotationCore(move, MoveNotation.PlayStrategy);
+	}
+	
+	static computeMoveNotationCore(move: ExtendedMoveInfo, notation: MoveNotation): string {
+		const board = this.readThisFen_board(move.prevFen);
+		
+		if (board.isOk) {
+			const m = this.uciToMove(move.uci), from = m[0];
+			
+			const c = board.value.get(this.getFenIndex(from));
+			
+			if (c !== undefined) {
+				let to = m[1], vect = sub(to, from);
+				
+				let n = norm(vect);
+				
+				if (n > 0) {
+					let uvect = div(n, vect);
+					const neighVectors = getNeighVectors();
+					
+					if (includes(neighVectors, uvect)) {// In-line move
+						let sep = '';
+						
+						switch (notation) {
+							default:
+							case MoveNotation.AbaPro:
+								to = add(from, uvect);
+								break;
+							case MoveNotation.Nacre: {
+								to = from;
+								while (board.value.get(this.getFenIndex(to)) === c) to = add(to, uvect);
+								break;
+							}
+							case MoveNotation.Nacre_extended: {
+								const tto = to;
+								to = from;
+								
+								while (board.value.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
+								
+								if (areEqual(from, to)) to = tto;
+								break;
+							}
+							case MoveNotation.PlayStrategy: {
+								const tto = to;
+								to = from;
+								
+								while (board.value.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
+								
+								if (areEqual(from, to)) to = tto;
+								else if (!this.isCell(to)) {// Ejection
+									to = sub(to, uvect);
+									sep = '×';
+								}
+								break;
+							}
+						}
+						
+						return pos2key(from) + sep + pos2key(to);
+					} else {// Broadside move
+						switch (notation) {
+							default:
+								return pos2key(from) + pos2key(to);// Assumes (correctly) the two positions are not reversed
+							case MoveNotation.AbaPro: {
+								n--;
+								let found = false, vvect: Pos = [0, 0], _nvect: Pos = [0, 0];
+								
+								for (const _vect of neighVectors) {
+									_nvect = mult(n, _vect);
+									
+									if (board.value.get(this.getFenIndex(add(from, _nvect))) === c) {
+										vvect = getNextCore(neighVectors, _vect);
+										
+										if (areEqual(add(_nvect, vvect), vect)) {
+											found = true;
+											break;
+										} else {
+											vvect = getPrevCore(neighVectors, _vect);
+											
+											if (areEqual(add(_nvect, vvect), vect)) {
+												found = true;
+												break;
+											}
+										}
+									}
+								}
+								
+								if (found) return pos2key(from) + pos2key(add(from, _nvect)) + pos2key(add(from, vvect));
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return '?';
+	}
+	
+	static uciToMove(uci: string):
+		[Pos, Pos] {
+		const reg = matchKeys(uci);
+		return [key2pos(reg[0]), key2pos(reg[1])];
+	}
+	
+	//
+	// FEN
+	static readThisFen(rules: string, fen: string): Result<[Board, number, number, PlayerIndex, number, number], FenError> {
+		for (const variant of GameFamily.getVariantKeys()) {
+			if (variantKeyToRules(variant) === rules) switch (variant) {
+				default:
+				case VariantKey.abalone:
+					return Abalone.readThisFenCore(fen);
+				case VariantKey.grandAbalone:
+					return GrandAbalone.readThisFenCore(fen);
+			}
+		}
+		
+		return Abalone.readThisFenCore(fen);
+	}
+	
+	protected static readThisFenCore(fen: string): Result<[Board, number, number, PlayerIndex, number, number], FenError> {
+		const [boardPart, ...parts] = fen.split(' ');
+		if (parts.length < 5) return Result.err(new FenError(InvalidFen.Fen));
+		
+		return fp.resultZip([
+			this.readThisFen_board(boardPart),
+			parseScore(parts[0]),
+			parseScore(parts[1]),
+			parsePlayerTurn('b', 'w')(parts[2]),
+			parseFullMoves(parts[3]),
+			parsePliesRemainingThisTurn(parts.length < 6? undefined: parts[5]),
+		]);
+	}
+	
+	protected static readThisFen_board_legacy(fen: string): LegacyNotationBoard {//TODO delete?
+		const res: LegacyNotationBoard = {
+				pieces: {},
+				wMoved: fen.split(' ')[3] === 'b',
+			},
+			cells: Pos[] = this.getCellList();
+		
+		let k = 0;
+		for (let i = 0; i < fen.length; i++) {
+			const c = fen[i];
+			if (c === ' ') break;
+			else if (c !== '/') {
+				const steps = parseInt(c);
+				
+				if (steps > 0) k += steps;
+				else res.pieces[pos2key(cells[k++])] = c;
+			}
+		}
+		
+		return res;
+	}
+	
+	protected static readThisFen_board(fen: string): Result<Board, FenError> {
+		const board = Board.empty(this.rules),
+			cells = this.getCellList();
+		
+		let k = 0;
+		for (let i = 0; i < fen.length; i++) {
+			const c = fen[i];
+			
+			if (c === ' ') break;
+			else if (c !== '/') {
+				const steps = parseInt(c);
+				
+				if (steps > 0) k += steps;
+				else {
+					const piece = charToPiece(c);
+					if (!piece || k++ >= cells.length) return Result.err(new FenError(InvalidFen.Board));
+					
+					board.set(this.getFenIndex(cells[k]), piece);
+				}
+			}
+		}
+		
+		return Result.ok(board);
+	}
+	
+	protected static getFenIndex(pos: Pos): number {
+		return pos[0] + pos[1]*this.width;
+	}
 }
