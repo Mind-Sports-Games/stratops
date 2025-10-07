@@ -47,7 +47,7 @@ export const key2pos = (k: string): Pos => {
 	] as Pos;
 };
 
-const reKey: RegExp = /-?[a-z]+(0|-?[1-9][0-9]*)/g;
+const reKey: string = "-?[a-z]+(0|-?[1-9][0-9]*)";
 export const matchKeys = (key: string): string[] => {
 	return key.match("(" + reKey + ")+") as string[];
 }

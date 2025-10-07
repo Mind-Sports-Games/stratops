@@ -8,6 +8,7 @@ import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, inc
 import {Board} from "../../board";
 import {charToPiece, FenError, InvalidFen, parseFullMoves, parsePlayerTurn, parsePliesRemainingThisTurn, parseScore} from "../../fen";
 import * as fp from "../../fp";
+import {BoardDimensions} from "../../types";
 
 export abstract class GameFamily extends Variant {
 	static override family: GameFamilyKey = GameFamilyKey.abalone;
@@ -197,8 +198,7 @@ export abstract class GameFamily extends Variant {
 	}
 	
 	
-	static uciToMove(uci: string):
-		[Pos, Pos] {
+	static uciToMove(uci: string): [Pos, Pos] {
 		const reg = matchKeys(uci);
 		return [key2pos(reg[0]), key2pos(reg[1])];
 	}
@@ -229,14 +229,16 @@ export abstract class GameFamily extends Variant {
 			
 			if (c === ' ') break;
 			else if (c !== '/') {
-				const steps = parseInt(c);
+				let reg = fen.substring(i).match(/^[1-9][0-9]*/g);
 				
-				if (steps > 0) k += steps;
-				else {
+				if (reg !== null && reg.length > 0) {
+					k += parseInt(fen.substring(i, i + reg[0].length));
+					i += reg[0].length - 1;
+				} else {
 					const piece = charToPiece(c);
-					if (!piece || k++ >= cells.length) return Result.err(new FenError(InvalidFen.Board));
+					if (!piece || k >= cells.length) return Result.err(new FenError(InvalidFen.Board));
 					
-					board.set(this.getFenIndex(cells[k]), piece);
+					board.set(this.getFenIndex(cells[k++]), piece);
 				}
 			}
 		}

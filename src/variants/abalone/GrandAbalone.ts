@@ -3,7 +3,7 @@ import {type PositionError} from '../../chess';
 import type {Setup} from '../../setup';
 import {type BoardDimensions, type Rules} from '../../types';
 import {defined} from '../../util.js';
-import {GameFamily} from './GameFamily';
+import {GameFamily} from "./GameFamily";
 
 export class GrandAbalone extends GameFamily {
 	static override rules: Rules = 'grandabalone';
