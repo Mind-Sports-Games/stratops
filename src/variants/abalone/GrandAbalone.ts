@@ -11,7 +11,7 @@ export class GrandAbalone extends GameFamily {
 	static override width: BoardDimensions['files'] = 11;
 	
 	protected constructor() {
-		super(GrandAbalone.rules);
+		super('grandabalone');
 	}
 	
 	override clone(): GrandAbalone {

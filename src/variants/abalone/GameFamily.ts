@@ -8,9 +8,6 @@ import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, inc
 import {Board} from "../../board";
 import {charToPiece, FenError, InvalidFen, parseFullMoves, parsePlayerTurn, parsePliesRemainingThisTurn, parseScore} from "../../fen";
 import * as fp from "../../fp";
-import {variantKeyToRules} from "../util";
-import {Abalone} from "./Abalone";
-import {GrandAbalone} from "./GrandAbalone";
 
 export abstract class GameFamily extends Variant {
 	static override family: GameFamilyKey = GameFamilyKey.abalone;
@@ -95,7 +92,7 @@ export abstract class GameFamily extends Variant {
 	}
 	
 	protected static computeMoveNotationCore(move: ExtendedMoveInfo, notation: MoveNotation): string {
-		const board = this.readThisFen_board(move.prevFen);
+		const board = this.readFen_board(move.prevFen);
 		
 		if (board.isOk) {
 			const m = this.uciToMove(move.uci), from = m[0],
@@ -111,8 +108,8 @@ export abstract class GameFamily extends Variant {
 						neighVectors = getNeighVectors();
 					
 					return includes(neighVectors, uvect)?
-							this.computeMoveNotationCore_line(notation, board.value, neighVectors, from, to, vect, n, uvect, cFrom):// In-line move
-							this.computeMoveNotationCore_jump(notation, board.value, neighVectors, from, to, vect, n, uvect, cFrom);// Broadside move
+						this.computeMoveNotationCore_line(notation, board.value, neighVectors, from, to, vect, n, uvect, cFrom):// In-line move
+						this.computeMoveNotationCore_jump(notation, board.value, neighVectors, from, to, vect, n, uvect, cFrom);// Broadside move
 				}
 			}
 		}
@@ -208,26 +205,12 @@ export abstract class GameFamily extends Variant {
 	
 	//
 	// FEN
-	static readThisFen(rules: string, fen: string): Result<[Board, number, number, PlayerIndex, number, number], FenError> {
-		for (const variant of GameFamily.getVariantKeys()) {
-			if (variantKeyToRules(variant) === rules) switch (variant) {
-				default:
-				case VariantKey.abalone:
-					return Abalone.readThisFenCore(fen);
-				case VariantKey.grandAbalone:
-					return GrandAbalone.readThisFenCore(fen);
-			}
-		}
-		
-		return Abalone.readThisFenCore(fen);
-	}
-	
-	protected static readThisFenCore(fen: string): Result<[Board, number, number, PlayerIndex, number, number], FenError> {
+	static override readFen(fen: string, _ranks: number, _files: number): Result<[Board, number, number, PlayerIndex, number, number], FenError> {
 		const [boardPart, ...parts] = fen.split(' ');
 		if (parts.length < 5) return Result.err(new FenError(InvalidFen.Fen));
 		
 		return fp.resultZip([
-			this.readThisFen_board(boardPart),
+			this.readFen_board(boardPart),
 			parseScore(parts[0]),
 			parseScore(parts[1]),
 			parsePlayerTurn('b', 'w')(parts[2]),
@@ -236,7 +219,7 @@ export abstract class GameFamily extends Variant {
 		]);
 	}
 	
-	protected static readThisFen_board(fen: string): Result<Board, FenError> {
+	protected static readFen_board(fen: string): Result<Board, FenError> {
 		const board = Board.empty(this.rules),
 			cells = this.getCellList();
 		

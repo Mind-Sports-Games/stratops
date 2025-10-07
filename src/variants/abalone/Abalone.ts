@@ -1,16 +1,15 @@
 import {type Result} from '@badrap/result';
 import {type PositionError} from '../../chess';
 import type {Setup} from '../../setup';
-import {type BoardDimensions, type Rules} from '../../types';
+import {type Rules} from '../../types';
 import {defined} from '../../util.js';
 import {GameFamily} from './GameFamily';
-import {type Variant} from "../Variant";
 
 export class Abalone extends GameFamily {
 	static override rules: Rules = 'abalone';
 	
 	protected constructor() {
-		super(Abalone.rules);
+		super('abalone');
 	}
 	
 	override clone(): Abalone {

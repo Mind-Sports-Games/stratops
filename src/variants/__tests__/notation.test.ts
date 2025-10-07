@@ -2,6 +2,7 @@ import { expect, test } from '@jest/globals';
 import { GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
 import { variantClass } from '../util';
 import { Variant } from '../Variant';
+import {Abalone} from "../abalone/Abalone";
 
 test('testing e4 maps to 56', () => {
   expect(Variant.parseUCISquareToUSI('e4', 9, 9)).toBe('56');
@@ -599,4 +600,28 @@ test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const notation = BackgammonFamily.combinedNotation(actions);
   expect(notation).toBe('53: 13/8* 8/5');
   // expect(notation).toBe('53: 13/8*/5'); // notation on bg-hub
+});
+
+//
+// Abalone
+test('Abalone: notation of in-line moves', () => {
+	const prevFen = "5/6/7/8/9/8/7/SSSsss/SS1ss 0 0 b 0 1";
+	
+	let move = {
+		san: '',// Not used
+		uci: 'a1a2',
+		prevFen,
+		fen: ''// Not used
+	};
+	let notation = Abalone.computeMoveNotation(move);
+	expect(notation).toBe('a1a3');
+	
+	move = {
+		san: '',// Not used
+		uci: 'b1b2',// Illegal, but it does not matter here
+		prevFen,
+		fen: ''// Not used
+	};
+	notation = Abalone.computeMoveNotation(move);
+	expect(notation).toBe('b1×b6');
 });
