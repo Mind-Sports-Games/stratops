@@ -6,7 +6,7 @@ import {type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey,} from '
 import {Variant} from '../Variant';
 import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, includes, key2pos, matchKeys, MoveNotation, mult, norm, type Pos, pos2key, sub} from "./util";
 import {Board} from "../../board";
-import {charToPiece, FenError, InvalidFen, parseFullMoves, parsePlayerTurn, parsePliesRemainingThisTurn, parseScore} from "../../fen";
+import {charToPiece, FenError, InvalidFen, parseFullMoves, parseHalfMoves, parsePlayerTurn, parsePliesRemainingThisTurn, parseScore} from "../../fen";
 import * as fp from "../../fp";
 import {BoardDimensions} from "../../types";
 
@@ -205,7 +205,7 @@ export abstract class GameFamily extends Variant {
 	
 	//
 	// FEN
-	static override readFen(fen: string, _ranks: number, _files: number): Result<[Board, number, number, PlayerIndex, number, number], FenError> {
+	static override readFen(fen: string, _ranks: number, _files: number): Result<[Board, number, number, PlayerIndex, number, number, number], FenError> {
 		const [boardPart, ...parts] = fen.split(' ');
 		if (parts.length < 5) return Result.err(new FenError(InvalidFen.Fen));
 		
@@ -214,7 +214,8 @@ export abstract class GameFamily extends Variant {
 			parseScore(parts[0]),
 			parseScore(parts[1]),
 			parsePlayerTurn('b', 'w')(parts[2]),
-			parseFullMoves(parts[3]),
+			parseHalfMoves(parts[3]),
+			parseFullMoves(parts[4]),
 			parsePliesRemainingThisTurn(parts.length < 6? undefined: parts[5]),
 		]);
 	}

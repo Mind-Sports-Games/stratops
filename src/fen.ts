@@ -402,13 +402,14 @@ const parseMancalaFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
 // ------------------------------------------------------------------------------
 // Abalone FEN parsing
 const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
-	return (variantClass(rules).readFen(fen, 0, 0) as Result<[Board, number, number, PlayerIndex, number, number], FenError>)
-		.map(([board, p1Captures, p2Captures, turn, fullmoves, pliesRemainingThisTurn]) => ({
+	return (variantClass(rules).readFen(fen, 0, 0) as Result<[Board, number, number, PlayerIndex, number, number, number], FenError>)
+		.map(([board, p1Captures, p2Captures, turn, halfmoves, fullmoves, pliesRemainingThisTurn]) => ({
 			...defaultSetup(),
 			board,
 			p1Captures,
 			p2Captures,
 			turn,
+			halfmoves,
 			fullmoves,
 			pliesRemainingThisTurn,
 		}));
