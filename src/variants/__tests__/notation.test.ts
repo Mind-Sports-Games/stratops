@@ -1,9 +1,10 @@
 import { expect, test } from '@jest/globals';
-import { GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
-import { variantClass } from '../util';
+import { gameFamilyClass, variantClass } from '../util';
 import { Variant } from '../Variant';
 import {Abalone} from "../abalone/Abalone";
 import {GrandAbalone} from "../abalone/GrandAbalone";
+import { GameFamilyKey } from '../types';
+import { type GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
 
 test('testing e4 maps to 56', () => {
   expect(Variant.parseUCISquareToUSI('e4', 9, 9)).toBe('56');
@@ -546,14 +547,16 @@ test('moveFromNotationStyle backgammon testing capture', () => {
 test('combinedNotationForBackgammonActions with 2 same actions', () => {
   const actions = ['44:', '44: 8/4', '44: 8/4'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('44: 8/4(2)');
 });
 
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['33:', '33: 8/4*', '33: bar/20*', '33: 8/4', '33: 8/7'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('33: 8/4(2)* bar/20* 8/7');
 });
 
@@ -561,35 +564,40 @@ test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['33:', '33: 8/4*', '33: bar/20*', '33: 8/4', '33: 3/off'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('33: 8/4(2)* bar/20* 3/off');
 });
 
 test('combinedNotationForBackgammonActions with 1 capture and 1 non capture', () => {
   const actions = ['34:', '34: 8/4*', '34: 10/7'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: 8/4* 10/7');
 });
 
 test('combinedNotationForBackgammonActions with endturn', () => {
   const actions = ['34:', '(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: (no-play)');
 });
 
 test('combinedNotationForBackgammonActions with endturn', () => {
   const actions = ['34:', '34: 8/4*', '(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: 8/4*');
 });
 
 test('combinedNotationForBackgammonActions with p2 rolling first', () => {
   const actions = ['(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('...');
 });
 
@@ -598,7 +606,80 @@ test('combinedNotationForBackgammonActions with p2 rolling first', () => {
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['53:', '53: 13/8*', '53: 8/5'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('53: 13/8* 8/5');
   // expect(notation).toBe('53: 13/8*/5'); // notation on bg-hub
+});
+
+//
+// Abalone
+test('Abalone: move notation', () => {
+	const prevFen = "5/6/7/8/9/8/7/SSSsss/SS1ss 0 0 b 0 1";
+	
+	//
+	// In-line
+	let move = {
+		san: '',// Not used
+		uci: 'a1a2',
+		prevFen,
+		fen: ''// Not used
+	};
+	let notation = Abalone.computeMoveNotation(move);
+	expect(notation).toBe('a1a3');
+	
+	move = {
+		san: '',// Not used
+		uci: 'b1b2',// Illegal, but it does not matter here
+		prevFen,
+		fen: ''// Not used
+	};
+	notation = Abalone.computeMoveNotation(move);
+	expect(notation).toBe('b1×b6');
+	
+	//
+	// Broadside
+	move = {
+		san: '',// Not used
+		uci: 'b1c4',// Illegal, but it does not matter here
+		prevFen,
+		fen: ''// Not used
+	};
+	notation = Abalone.computeMoveNotation(move);
+	expect(notation).toBe('b1c4');
+});
+
+test('Grand Abalone: move notation', () => {
+	const prevFen = "6/7/8/9/10/11/10/9/8/SSSSsss/SSS1ss 0 0 b 0 1 2";
+	
+	//
+	// In-line
+	let move = {
+		san: '',// Not used
+		uci: 'a1a2',
+		prevFen,
+		fen: ''// Not used
+	};
+	let notation = GrandAbalone.computeMoveNotation(move);
+	expect(notation).toBe('a1a4');
+	
+	move = {
+		san: '',// Not used
+		uci: 'b1b2',
+		prevFen,
+		fen: ''// Not used
+	};
+	notation = GrandAbalone.computeMoveNotation(move);
+	expect(notation).toBe('b1×b7');
+	
+	//
+	// Broadside
+	move = {
+		san: '',// Not used
+		uci: 'b1c5',
+		prevFen,
+		fen: ''// Not used
+	};
+	notation = GrandAbalone.computeMoveNotation(move);
+	expect(notation).toBe('b1c5');
 });
