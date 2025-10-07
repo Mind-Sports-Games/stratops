@@ -1,7 +1,7 @@
 import {Result} from '@badrap/result';
 import {IllegalSetup, PositionError} from '../../chess';
 import type {Setup} from '../../setup';
-import type {PlayerIndex} from '../../types';
+import type {Piece, PlayerIndex} from '../../types';
 import {type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey,} from '../types';
 import {Variant} from '../Variant';
 import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, includes, key2pos, matchKeys, MoveNotation, mult, norm, type Pos, pos2key, sub} from "./util";
@@ -94,14 +94,14 @@ export abstract class GameFamily extends Variant {
 		return this.computeMoveNotationCore(move, MoveNotation.PlayStrategy);
 	}
 	
-	static computeMoveNotationCore(move: ExtendedMoveInfo, notation: MoveNotation): string {
+	protected static computeMoveNotationCore(move: ExtendedMoveInfo, notation: MoveNotation): string {
 		const board = this.readThisFen_board(move.prevFen);
 		
 		if (board.isOk) {
 			const m = this.uciToMove(move.uci), from = m[0],
-				c = board.value.get(this.getFenIndex(from));
+				cFrom = board.value.get(this.getFenIndex(from));
 			
-			if (c !== undefined) {
+			if (cFrom !== undefined) {
 				let to = m[1];
 				const vect = sub(to, from);
 				let n = norm(vect);
@@ -110,83 +110,95 @@ export abstract class GameFamily extends Variant {
 					const uvect = div(n, vect),
 						neighVectors = getNeighVectors();
 					
-					if (includes(neighVectors, uvect)) {// In-line move
-						let sep = '';
+					return includes(neighVectors, uvect)?
+							this.computeMoveNotationCore_line(notation, board.value, neighVectors, from, to, vect, n, uvect, cFrom):// In-line move
+							this.computeMoveNotationCore_jump(notation, board.value, neighVectors, from, to, vect, n, uvect, cFrom);// Broadside move
+				}
+			}
+		}
+		
+		return this.computeMoveNotation_unknown();
+	}
+	
+	protected static computeMoveNotationCore_line(notation: MoveNotation, board: Board, _neighVectors: Pos[], from: Pos, to: Pos, _vect: Pos, _n: number, uvect: Pos, cFrom: Piece): string {
+		let sep = '';
+		
+		switch (notation) {
+			default:
+			case MoveNotation.AbaPro:
+				to = add(from, uvect);
+				break;
+			case MoveNotation.Nacre: {
+				to = from;
+				while (board.get(this.getFenIndex(to)) === cFrom) to = add(to, uvect);
+				break;
+			}
+			case MoveNotation.Nacre_extended: {
+				const tto = to;
+				to = from;
+				
+				while (board.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
+				
+				if (areEqual(from, to)) to = tto;
+				break;
+			}
+			case MoveNotation.PlayStrategy: {
+				const tto = to;
+				to = from;
+				
+				while (board.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
+				
+				if (areEqual(from, to)) to = tto;
+				else if (!this.isCell(to)) {// Ejection
+					to = sub(to, uvect);
+					sep = '×';
+				}
+				break;
+			}
+		}
+		
+		return pos2key(from) + sep + pos2key(to);
+	}
+	
+	protected static computeMoveNotationCore_jump(notation: MoveNotation, board: Board, neighVectors: Pos[], from: Pos, to: Pos, vect: Pos, n: number, _uvect: Pos, cFrom: Piece): string {
+		switch (notation) {
+			default:
+				return pos2key(from) + pos2key(to);// Assumes (correctly) the two positions are not reversed
+			case MoveNotation.AbaPro: {
+				n--;
+				let found = false, vvect: Pos = [0, 0], _nvect: Pos = [0, 0];
+				
+				for (const _vect of neighVectors) {
+					_nvect = mult(n, _vect);
+					
+					if (board.get(this.getFenIndex(add(from, _nvect))) === cFrom) {
+						vvect = getNextCore(neighVectors, _vect);
 						
-						switch (notation) {
-							default:
-							case MoveNotation.AbaPro:
-								to = add(from, uvect);
-								break;
-							case MoveNotation.Nacre: {
-								to = from;
-								while (board.value.get(this.getFenIndex(to)) === c) to = add(to, uvect);
-								break;
-							}
-							case MoveNotation.Nacre_extended: {
-								const tto = to;
-								to = from;
-								
-								while (board.value.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
-								
-								if (areEqual(from, to)) to = tto;
-								break;
-							}
-							case MoveNotation.PlayStrategy: {
-								const tto = to;
-								to = from;
-								
-								while (board.value.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
-								
-								if (areEqual(from, to)) to = tto;
-								else if (!this.isCell(to)) {// Ejection
-									to = sub(to, uvect);
-									sep = '×';
-								}
-								break;
-							}
-						}
-						
-						return pos2key(from) + sep + pos2key(to);
-					} else {// Broadside move
-						switch (notation) {
-							default:
-								return pos2key(from) + pos2key(to);// Assumes (correctly) the two positions are not reversed
-							case MoveNotation.AbaPro: {
-								n--;
-								let found = false, vvect: Pos = [0, 0], _nvect: Pos = [0, 0];
-								
-								for (const _vect of neighVectors) {
-									_nvect = mult(n, _vect);
-									
-									if (board.value.get(this.getFenIndex(add(from, _nvect))) === c) {
-										vvect = getNextCore(neighVectors, _vect);
-										
-										if (areEqual(add(_nvect, vvect), vect)) {
-											found = true;
-											break;
-										} else {
-											vvect = getPrevCore(neighVectors, _vect);
-											
-											if (areEqual(add(_nvect, vvect), vect)) {
-												found = true;
-												break;
-											}
-										}
-									}
-								}
-								
-								if (found) return pos2key(from) + pos2key(add(from, _nvect)) + pos2key(add(from, vvect));
+						if (areEqual(add(_nvect, vvect), vect)) {
+							found = true;
+							break;
+						} else {
+							vvect = getPrevCore(neighVectors, _vect);
+							
+							if (areEqual(add(_nvect, vvect), vect)) {
+								found = true;
 								break;
 							}
 						}
 					}
 				}
+				
+				if (found) return pos2key(from) + pos2key(add(from, _nvect)) + pos2key(add(from, vvect));
 			}
 		}
 		
+		return this.computeMoveNotation_unknown();
+	}
+	
+	protected static computeMoveNotation_unknown(): string {
 		return '?';
 	}
+	
 	
 	static uciToMove(uci: string):
 		[Pos, Pos] {
