@@ -1,6 +1,6 @@
 {
   "name": "stratops",
-  "version": "0.8.1-pstrat5.18",
+  "version": "0.8.1-pstrat5.19",
   "description": "Strategy game rules and operations",
   "keywords": [
     "chess",
@@ -43,7 +43,9 @@
   },
   "packageManager": "pnpm@10.17.0",
   "pnpm": {
-    "onlyBuiltDependencies": ["dprint"]
+    "onlyBuiltDependencies": [
+      "dprint"
+    ]
   },
   "dependencies": {
     "@badrap/result": "^0.2"

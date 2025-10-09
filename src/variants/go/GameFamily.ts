@@ -18,7 +18,19 @@ export abstract class GameFamily extends Variant {
     const reg = move.uci.match(/([sS]@|[a-zA-Z][1-9][0-9]?)/g) as string[];
     const dest = reg[1];
 
-    return `${dest}`;
+    return GameFamily.remapGoDest(dest);
+  }
+
+  // Remap Go destination to skip the letter 'i' in notation
+  static remapGoDest(dest: string): string {
+    const match = dest.match(/^([a-zA-Z])([1-9][0-9]?)$/);
+    if (!match) return dest;
+    let [, file, rank] = match;
+    const fileCharCode = file.toLowerCase().charCodeAt(0);
+    if (fileCharCode >= 'i'.charCodeAt(0)) {
+      file = String.fromCharCode(fileCharCode + 1);
+    }
+    return `${file}${rank}`;
   }
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {

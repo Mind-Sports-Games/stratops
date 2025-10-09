@@ -600,3 +600,28 @@ test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   expect(notation).toBe('53: 13/8* 8/5');
   // expect(notation).toBe('53: 13/8*/5'); // notation on bg-hub
 });
+
+// Go notation skipping 'i'
+test('moveFromNotationStyle go d4 move', () => {
+  const move = {
+    san: '',
+    uci: 's@d4',
+    fen: '9/9/9/9/3X5/9/9/9/9 w - - 1',
+    prevFen: '9/9/9/9/9/9/9/9/9 w - - 0',
+  };
+
+  const notation = variantClass('go9x9').computeMoveNotation(move);
+  expect(notation).toBe('d4');
+});
+
+test('moveFromNotationStyle go k10 move', () => {
+  const move = {
+    san: '',
+    uci: 's@k10',
+    fen: '19/19/19/19/13X5/19/19/19/19/19/19/19/19/19/19/19/19/19/17X1 w - - 2',
+    prevFen: '19/19/19/19/3X5/19/19/19/19/19/19/19/19/19/19/19/19/19/19 w - - 1',
+  };
+
+  const notation = variantClass('go19x19').computeMoveNotation(move);
+  expect(notation).toBe('l10');
+});
