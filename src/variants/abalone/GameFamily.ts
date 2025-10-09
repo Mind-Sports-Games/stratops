@@ -8,7 +8,6 @@ import {add, areEqual, dist, div, getNeighVectors, getNextCore, getPrevCore, inc
 import {Board} from "../../board";
 import {charToPiece, FenError, InvalidFen, parseFullMoves, parseHalfMoves, parsePlayerTurn, parsePliesRemainingThisTurn, parseScore} from "../../fen";
 import * as fp from "../../fp";
-import {BoardDimensions} from "../../types";
 
 export abstract class GameFamily extends Variant {
 	static override family: GameFamilyKey = GameFamilyKey.abalone;

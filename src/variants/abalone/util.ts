@@ -1,4 +1,4 @@
-import {Key} from "../types";
+import {type Key} from "../types";
 
 export type Pos = [number, number];
 
@@ -36,7 +36,7 @@ const pos2keyCore = (x: number, y: number): string => {
 }
 
 export const key2pos = (k: string): Pos => {
-	let m = matchKey(k);
+	const m = matchKey(k);
 	return [
 		parseInt(m[1]) - 1,
 		m[0].startsWith("-") && m[0].length > 1?
@@ -143,9 +143,9 @@ export const norm = (pos: Pos): number => {
 	return normCore(pos[0], pos[1]);
 };
 export const normCore = (x: number, y: number): number => {
-	return x*y < 0
-		? Math.abs(x) + Math.abs(y)
-		: Math.max(Math.abs(x), Math.abs(y));
+	return x*y < 0?
+		Math.abs(x) + Math.abs(y):
+		Math.max(Math.abs(x), Math.abs(y));
 };
 
 export const dist2 = (pos0: Pos, pos1: Pos): number => {
