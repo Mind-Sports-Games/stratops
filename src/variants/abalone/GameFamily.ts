@@ -100,7 +100,7 @@ export abstract class GameFamily extends Variant {
 		
 		if (board.isOk) {
 			const m = this.uciToMove(move.uci), from = m[0],
-				cFrom = board.value.get(this.getFenIndex(from));
+				cFrom = this.getPiece(board.value, from);
 			
 			if (cFrom !== undefined) {
 				let to = m[1];
@@ -131,14 +131,14 @@ export abstract class GameFamily extends Variant {
 				break;
 			case MoveNotation.Nacre: {
 				to = from;
-				while (board.get(this.getFenIndex(to)) === cFrom) to = add(to, uvect);
+				while (this.getPiece(board, to) === cFrom) to = add(to, uvect);
 				break;
 			}
 			case MoveNotation.Nacre_extended: {
 				const tto = to;
 				to = from;
 				
-				while (board.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
+				while (this.getPiece(board, to) !== undefined) to = add(to, uvect);
 				
 				if (areEqual(from, to)) to = tto;
 				break;
@@ -147,7 +147,7 @@ export abstract class GameFamily extends Variant {
 				const tto = to;
 				to = from;
 				
-				while (board.get(this.getFenIndex(to)) !== undefined) to = add(to, uvect);
+				while (this.getPiece(board, to) !== undefined) to = add(to, uvect);
 				
 				if (areEqual(from, to)) to = tto;
 				else if (!this.isCell(to)) {// Ejection
@@ -172,7 +172,7 @@ export abstract class GameFamily extends Variant {
 				for (const _vect of neighVectors) {
 					_nvect = mult(n, _vect);
 					
-					if (board.get(this.getFenIndex(add(from, _nvect))) === cFrom) {
+					if (this.getPiece(board, add(from, _nvect)) === cFrom) {
 						vvect = getNextCore(neighVectors, _vect);
 						
 						if (areEqual(add(_nvect, vvect), vect)) {
@@ -199,7 +199,6 @@ export abstract class GameFamily extends Variant {
 	protected static computeMoveNotation_unknown(): string {
 		return '?';
 	}
-	
 	
 	static uciToMove(uci: string): [Pos, Pos] {
 		const reg = matchKeys(uci);
@@ -242,7 +241,7 @@ export abstract class GameFamily extends Variant {
 					const piece = charToPiece(c);
 					if (!piece || k >= cells.length) return Result.err(new FenError(InvalidFen.Board));
 					
-					board.set(this.getFenIndex(cells[k++]), piece);
+					this.setPiece(board, cells[k++], piece);
 				}
 			}
 		}
@@ -250,7 +249,17 @@ export abstract class GameFamily extends Variant {
 		return Result.ok(board);
 	}
 	
-	protected static getFenIndex(pos: Pos): number {
-		return pos[0] + pos[1]*this.width;
+	protected static getPiece(board: Board, pos: Pos): Piece | undefined {
+		const i = this.getFenIndex(pos);
+		return i? board.get(i): undefined;
+	}
+	
+	protected static setPiece(board: Board, pos: Pos, piece: Piece): void {
+		const i = this.getFenIndex(pos);
+		if (i) board.set(i, piece);
+	}
+	
+	protected static getFenIndex(pos: Pos): number | undefined {
+		return pos[0] < 0 || pos[1] < 0? undefined: pos[0] + pos[1]*this.width;
 	}
 }
