@@ -29,6 +29,10 @@ export abstract class GameFamily extends Variant {
 		return super.fromSetup(setup) as Result<GameFamily, PositionError>;
 	}
 	
+	static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
+		return +fen.split(' ')[playerIndex === 'p1'? 1: 2];
+	}
+	
 	override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
 		return false;// Having only one remaining piece for each player could be considered as insufficient material, but never happens from an official starting position
 	}
