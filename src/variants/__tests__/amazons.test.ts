@@ -1,60 +1,59 @@
 import { expect, test } from '@jest/globals';
-import { variantClass } from "../util";
 import { Board, defaultSetup, Setup } from '../..';
 import { makeFen } from '../../fen';
 import { Amazons } from '../amazons/Amazons';
-
+import { variantClass } from '../util';
 
 test('get pieces coordinates', () => {
   const fen = '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3 w - - 56 1';
   const rules = 'amazons';
-  const amazonsClass = variantClass("amazons") as typeof Amazons;
+  const amazonsClass = variantClass('amazons') as typeof Amazons;
   const board = amazonsClass.parseFen(fen).unwrap(
     setup => setup.board,
     _ => Board.empty(rules),
   );
   const queens = board['q-piece'];
   expect(queens.toStringWH(10, 10)).toEqual(
-      '. . . X . . X . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . X . . X . . .\n',
+    '. . . X . . X . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . X . . X . . .\n',
   );
 });
 
 test('get pieces coordinates after half a move was described but not played', () => {
   const fen = '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3 w - - 56 1 ½a4a1';
   const rules = 'amazons';
-  const amazonsClass = variantClass("amazons") as typeof Amazons;
+  const amazonsClass = variantClass('amazons') as typeof Amazons;
   const board = amazonsClass.parseFen(fen).unwrap(
     setup => setup.board,
     _ => Board.empty(rules),
   );
   const queens = board['q-piece'];
   expect(queens.toStringWH(10, 10)).toEqual(
-      '. . . X . . X . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . X . . X . . .\n',
+    '. . . X . . X . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . X . . X . . .\n',
   );
 });
 
 test('get pieces coordinates after half a move was described and played', () => {
   const fen = '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3 w - - 56 1 ½a4a1';
   const rules = 'amazons';
-  const amazonsClass = variantClass("amazons") as typeof Amazons;
+  const amazonsClass = variantClass('amazons') as typeof Amazons;
   const board = amazonsClass.parseFen(fen).unwrap(
     setup => setup.board,
     _ => Board.empty(rules),
@@ -72,26 +71,26 @@ test('get pieces coordinates after half a move was described and played', () => 
   );
   const queens = newBoard['q-piece'];
   expect(queens.toStringWH(10, 10)).toEqual(
-      'X . . X . . X . . .\n' // 1
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . X . . X . . .\n', // 10
+    'X . . X . . X . . .\n' // 1
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . X . . X . . .\n', // 10
     // a b c d e f g h i j
   );
-  const p1PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, "p1");
+  const p1PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, 'p1');
   expect(p1PiecesCoords).toEqual([
     { piece: 'Q', coord: 'a1' },
     { piece: 'Q', coord: 'd1' },
     { piece: 'Q', coord: 'g1' },
     { piece: 'Q', coord: 'j4' },
   ]);
-  const p2PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, "p2");
+  const p2PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, 'p2');
   expect(p2PiecesCoords).toEqual([
     { piece: 'q', coord: 'a7' },
     { piece: 'q', coord: 'j7' },
@@ -104,7 +103,7 @@ test('get pieces coordinates after half a move was described and played', () => 
 test('get pieces coordinates after half a fake impossible move was described and played', () => {
   const fen = '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3 w - - 56 1 ½a1a1';
   const rules = 'amazons';
-  const amazonsClass = variantClass("amazons") as typeof Amazons;
+  const amazonsClass = variantClass('amazons') as typeof Amazons;
   const board = amazonsClass.parseFen(fen).unwrap(
     setup => setup.board,
     _ => Board.empty(rules),
@@ -122,26 +121,26 @@ test('get pieces coordinates after half a fake impossible move was described and
   );
   const queens = newBoard['q-piece'];
   expect(queens.toStringWH(10, 10)).toEqual(
-      '. . . X . . X . . .\n' // 1
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + 'X . . . . . . . . X\n'
-    + '. . . . . . . . . .\n'
-    + '. . . . . . . . . .\n'
-    + '. . . X . . X . . .\n', // 10
+    '. . . X . . X . . .\n' // 1
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + 'X . . . . . . . . X\n'
+      + '. . . . . . . . . .\n'
+      + '. . . . . . . . . .\n'
+      + '. . . X . . X . . .\n', // 10
     // a b c d e f g h i j
   );
-  const p1PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, "p1");
+  const p1PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, 'p1');
   expect(p1PiecesCoords).toEqual([
     { piece: 'Q', coord: 'a4' },
     { piece: 'Q', coord: 'd1' },
     { piece: 'Q', coord: 'g1' },
     { piece: 'Q', coord: 'j4' },
   ]);
-  const p2PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, "p2");
+  const p2PiecesCoords = amazonsClass.getPiecesCoordinates(newFen, 'p2');
   expect(p2PiecesCoords).toEqual([
     { piece: 'q', coord: 'a7' },
     { piece: 'q', coord: 'j7' },

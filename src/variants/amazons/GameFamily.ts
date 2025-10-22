@@ -16,11 +16,11 @@ export abstract class GameFamily extends Variant {
   }
 
   static indexToAlgebraic(index: string, width: number = 10): string {
-  const idx = typeof index === 'string' ? parseInt(index, 10) : index;
-  const rank = Math.floor(idx / width) + 1;
-  const file = (idx % width) + 1;
-  const fileLetter = String.fromCharCode('a'.charCodeAt(0) + file - 1);
-  return `${fileLetter}${rank}`;
+    const idx = typeof index === 'string' ? parseInt(index, 10) : index;
+    const rank = Math.floor(idx / width) + 1;
+    const file = (idx % width) + 1;
+    const fileLetter = String.fromCharCode('a'.charCodeAt(0) + file - 1);
+    return `${fileLetter}${rank}`;
   }
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
@@ -68,11 +68,11 @@ export abstract class GameFamily extends Variant {
     return { pieces };
   }
 
-  static override getPiecesCoordinates(fen: string, playerIndex: PlayerIndex): { piece: string, coord: string }[] {
-    const result: { piece: string, coord: string }[] = [];
+  static override getPiecesCoordinates(fen: string, playerIndex: PlayerIndex): { piece: string; coord: string }[] {
+    const result: { piece: string; coord: string }[] = [];
     const board = this.readFen(fen, this.height, this.width);
     for (const [coord, piece] of Object.entries(board.pieces)) {
-      if ((piece as string).toLowerCase() === "q" && this.isPieceOfPlayer(piece as string, playerIndex)) {
+      if ((piece as string).toLowerCase() === 'q' && this.isPieceOfPlayer(piece as string, playerIndex)) {
         let file: number, rank: number;
         if (coord[0] === '1' && coord[1] === '0') {
           rank = Number(coord.slice(2));
@@ -81,7 +81,7 @@ export abstract class GameFamily extends Variant {
           file = Number(coord[0]);
           rank = Number(coord.slice(1));
         }
-        const fileLetter = String.fromCharCode("a".charCodeAt(0) + file - 1);
+        const fileLetter = String.fromCharCode('a'.charCodeAt(0) + file - 1);
         result.push({ piece: piece as string, coord: `${fileLetter}${rank}` });
       }
     }

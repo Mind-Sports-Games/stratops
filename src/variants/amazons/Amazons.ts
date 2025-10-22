@@ -1,11 +1,11 @@
 import type { Result } from '@badrap/result';
 import { Castles, type PositionError } from '../../chess';
+import { Option } from '../../fp';
 import { Material, type Setup } from '../../setup';
+import { SquareSet } from '../../squareSet';
 import type { BoardDimensions, Move, NormalMove, Rules } from '../../types';
 import { defined } from '../../util';
 import { GameFamily } from './GameFamily';
-import { Option } from '../../fp';
-import { SquareSet } from '../../squareSet';
 
 export class Amazons extends GameFamily {
   lastMove?: Option<Move>;
@@ -23,17 +23,23 @@ export class Amazons extends GameFamily {
     if (fenParts.length === 7) {
       if (lastMove) {
         const turnChar = fenParts[1];
-        const turn = turnChar === this.playerFENChars['p1'] ? 'p1'
-          : turnChar === this.playerFENChars['p2'] ? 'p2'
+        const turn = turnChar === this.playerFENChars['p1']
+          ? 'p1'
+          : turnChar === this.playerFENChars['p2']
+          ? 'p2'
           : 'p1';
-        const pieces = this.getPiecesCoordinates(fenParts[0] + ' ' + fenParts[1], turn).map(entry => [entry.coord, entry.piece]).reduce((acc, [coord, piece]) => {
+        const pieces = this.getPiecesCoordinates(fenParts[0] + ' ' + fenParts[1], turn).map(
+          entry => [entry.coord, entry.piece],
+        ).reduce((acc, [coord, piece]) => {
           acc[coord] = piece;
           return acc;
         }, {} as Record<string, string>);
         const move = lastMove as NormalMove;
         const from = move.from.toString();
         const to = move.to.toString();
-        if (defined(pieces[this.indexToAlgebraic(to)]) && this.isPieceOfPlayer(pieces[this.indexToAlgebraic(to)], turn)) {
+        if (
+          defined(pieces[this.indexToAlgebraic(to)]) && this.isPieceOfPlayer(pieces[this.indexToAlgebraic(to)], turn)
+        ) {
           fenParts[fenParts.length - 1] = `½${this.indexToAlgebraic(from)}${this.indexToAlgebraic(to)}`;
           return fenParts.join(' ');
         }
