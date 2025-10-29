@@ -3,7 +3,7 @@ import { PositionError } from '../../chess';
 import { Option } from '../../fp';
 import { Material, type Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import type { Move, NormalMove, PlayerIndex } from '../../types';
+import { type Move, type NormalMove, type PlayerIndex, PLAYERINDEXES } from '../../types';
 import { defined } from '../../util';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
@@ -142,5 +142,25 @@ export abstract class GameFamily extends Variant {
       fullmoves: this.fullmoves,
       lastMove: this.lastMove ? { ...this.lastMove } : undefined,
     };
+  }
+
+  // check there is at least one piece per player on the board
+  protected override validateVariant(): Result<undefined, PositionError> {
+    const piecesPositions = this.board['q-piece'];
+    return Option.fold(
+      (firstPiecePos: number) => {
+        const playerIndex = this.board.get(firstPiecePos)?.playerIndex;
+        let missingPlayer = playerIndex === PLAYERINDEXES[0] ? PLAYERINDEXES[1] : PLAYERINDEXES[0];
+        for (const pos of piecesPositions) {
+          const piece = this.board.get(pos);
+          if (!piece) continue;
+          if (piece.playerIndex === missingPlayer) {
+            return Result.ok(undefined);
+          }
+        }
+        return Result.err(new PositionError(`Not enough pieces for player ${missingPlayer} on the board`));
+      },
+      () => Result.err(new PositionError('Not enough pieces on the board')),
+    )(piecesPositions.first());
   }
 }
