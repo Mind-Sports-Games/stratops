@@ -39,6 +39,11 @@ export abstract class Variant extends Chess {
       && typeof (this as any).getEnPassantOptions === 'function'
     );
   }
+  static allowMultiAction(): boolean {
+    return (
+      typeof (this as any).fixFenForLastAction === 'function'
+    );
+  }
   // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
   static standardInitialPosition: boolean = true;
 
@@ -71,24 +76,24 @@ export abstract class Variant extends Chess {
     return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
   }
 
-  static getEmptyFen(): string {
-    return `${this.getEmptyBoardFen()} ${this.getEmptyEpd()} ${this.getInitialMovesFen()}`;
+  static getEmptyFen(playerIndex: PlayerIndex): string {
+    return `${this.getEmptyBoardFen()} ${this.getEmptyEpd()} ${this.getInitialMovesFen(playerIndex)}`;
   }
 
-  static getInitialEpd(): string {
-    return `${this.playerFENChars['p1']} - -`;
+  static getInitialEpd(playerIndex: PlayerIndex): string {
+    return `${this.playerFENChars[playerIndex]} - -`;
   }
 
   static getEmptyEpd(): string {
     return `${this.playerFENChars['p1']} - -`;
   }
 
-  static getInitialMovesFen(): string {
-    return '0 1';
+  static getInitialMovesFen(playerIndex: PlayerIndex): string {
+    return `${playerIndex === 'p1' ? '0' : '1'} 1`;
   }
 
-  static getInitialFen(): string {
-    return `${this.getInitialBoardFen()} ${this.getInitialEpd()} ${this.getInitialMovesFen()}`;
+  static getInitialFen(playerIndex: PlayerIndex): string {
+    return `${this.getInitialBoardFen()} ${this.getInitialEpd(playerIndex)} ${this.getInitialMovesFen(playerIndex)}`;
   }
 
   static getClass() {
@@ -105,6 +110,23 @@ export abstract class Variant extends Chess {
 
   static getVariantKeys(): VariantKey[] {
     return Object.values(VariantKey);
+  }
+
+  static getPiecesCoordinates(fen: string, playerIndex: PlayerIndex): { piece: string; coord: string }[] {
+    const result: { piece: string; coord: string }[] = [];
+    const board = this.readFen(fen, this.height, this.width);
+    for (const [coord, piece] of Object.entries(board.pieces)) {
+      if (this.isPieceOfPlayer(piece as string, playerIndex)) {
+        result.push({ piece: piece as string, coord });
+      }
+    }
+    return result;
+  }
+
+  static isPieceOfPlayer(piece: string, playerIndex: PlayerIndex): boolean {
+    if (playerIndex === 'p1') return piece === piece.toUpperCase();
+    if (playerIndex === 'p2') return piece === piece.toLowerCase();
+    return false;
   }
 
   static parseLexicalUci(uci: string): LexicalUci | undefined {

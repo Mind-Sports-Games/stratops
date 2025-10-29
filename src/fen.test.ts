@@ -114,7 +114,8 @@ test.each([
   expect(pieceOrUndef !== undefined).toBeTruthy();
   const piece = pieceOrUndef as Piece;
   expect(piece.role).toEqual('q-piece');
-  const chessGroundFen = `3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q5Q b - - 1 1`;
+  const chessGroundFen =
+    `3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q5Q[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1 ½g1j1`;
   expect(amazonsChessgroundFen(fen)).toEqual(chessGroundFen);
 });
 test.each([

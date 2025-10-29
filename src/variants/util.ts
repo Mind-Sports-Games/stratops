@@ -54,10 +54,11 @@ import { Bestemshe } from './togyzkumalak/Bestemshe';
 import { GameFamily as TogyzkumalakGameFamily } from './togyzkumalak/GameFamily';
 import { Togyzkumalak } from './togyzkumalak/Togyzkumalak';
 import { GameFamilyKey, VariantKey } from './types';
-import { Variant } from './Variant';
 import { GameFamily as XiangqiGameFamily } from './xiangqi/GameFamily';
 import { MiniXiangqi } from './xiangqi/MiniXiangqi';
 import { Xiangqi } from './xiangqi/Xiangqi';
+
+import { Variant } from './Variant';
 
 export function variantClass(rules: Rules): typeof Variant {
   switch (rules) {
