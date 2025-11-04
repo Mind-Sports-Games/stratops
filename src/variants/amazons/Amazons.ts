@@ -1,7 +1,7 @@
 import type { Result } from '@badrap/result';
 import { Castles, type PositionError } from '../../chess';
 import { Material, type Setup } from '../../setup';
-import type { BoardDimensions, Rules } from '../../types';
+import type { BoardDimensions, NormalMove, Rules } from '../../types';
 import { defined } from '../../util';
 import { GameFamily } from './GameFamily';
 
@@ -29,8 +29,10 @@ export class Amazons extends GameFamily {
     pos.fullmoves = setup.fullmoves;
     pos.lastMove = setup.lastMove;
     if (defined(pos.lastMove)) {
-      pos.play(pos.lastMove);
+      const move = pos.lastMove as NormalMove;
+      pos.play(move);
       pos.halfmoves -= 1;
+      pos.fullmoves -= 1;
       if (pos.turn === 'p1') pos.turn = 'p2';
       else pos.turn = 'p1';
     }
