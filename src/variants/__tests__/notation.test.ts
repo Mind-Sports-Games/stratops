@@ -1,6 +1,7 @@
 import { expect, test } from '@jest/globals';
-import { GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
-import { variantClass } from '../util';
+import { type GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
+import { GameFamilyKey } from '../types';
+import { gameFamilyClass, variantClass } from '../util';
 import { Variant } from '../Variant';
 
 test('testing e4 maps to 56', () => {
@@ -544,14 +545,16 @@ test('moveFromNotationStyle backgammon testing capture', () => {
 test('combinedNotationForBackgammonActions with 2 same actions', () => {
   const actions = ['44:', '44: 8/4', '44: 8/4'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('44: 8/4(2)');
 });
 
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['33:', '33: 8/4*', '33: bar/20*', '33: 8/4', '33: 8/7'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('33: 8/4(2)* bar/20* 8/7');
 });
 
@@ -559,35 +562,40 @@ test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['33:', '33: 8/4*', '33: bar/20*', '33: 8/4', '33: 3/off'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('33: 8/4(2)* bar/20* 3/off');
 });
 
 test('combinedNotationForBackgammonActions with 1 capture and 1 non capture', () => {
   const actions = ['34:', '34: 8/4*', '34: 10/7'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: 8/4* 10/7');
 });
 
 test('combinedNotationForBackgammonActions with endturn', () => {
   const actions = ['34:', '(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: (no-play)');
 });
 
 test('combinedNotationForBackgammonActions with endturn', () => {
   const actions = ['34:', '34: 8/4*', '(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: 8/4*');
 });
 
 test('combinedNotationForBackgammonActions with p2 rolling first', () => {
   const actions = ['(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('...');
 });
 
@@ -596,7 +604,8 @@ test('combinedNotationForBackgammonActions with p2 rolling first', () => {
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['53:', '53: 13/8*', '53: 8/5'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('53: 13/8* 8/5');
   // expect(notation).toBe('53: 13/8*/5'); // notation on bg-hub
 });

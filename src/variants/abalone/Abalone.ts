@@ -1,7 +1,7 @@
-import { Result } from '@badrap/result';
-import { IllegalSetup, PositionError } from '../../chess';
+import { type Result } from '@badrap/result';
+import { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { BoardDimensions, Rules } from '../../types';
+import { type BoardDimensions, type Rules } from '../../types';
 import { defined } from '../../util.js';
 import { GameFamily } from './GameFamily';
 
