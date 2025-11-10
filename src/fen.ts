@@ -571,7 +571,7 @@ const parseDameoBoardFen = (rules: Rules) => (boardPart1: string, boardPart2: st
 
 const parseDameoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const parts = fen.split(':');
-  if (parts.length !== 6) {
+  if (parts.length !== 5) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
 
