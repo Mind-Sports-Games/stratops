@@ -1,11 +1,11 @@
 import { Result } from '@badrap/result';
 import { Board } from '../../board';
 import { Castles, Chess, PositionError } from '../../chess';
+import { Option } from '../../fp';
 import { Setup } from '../../setup';
 import { type Move, type NormalMove, type Piece, type Rules } from '../../types';
-import { GameFamily } from './GameFamily';
 import { defined } from '../../util';
-import { Option } from '../../fp';
+import { GameFamily } from './GameFamily';
 
 export class Monster extends GameFamily {
   lastMove?: Option<Move>;
@@ -32,7 +32,7 @@ export class Monster extends GameFamily {
     pos.turn = setup.turn;
     const castles = Chess.fromSetup(setup).unwrap(
       (chess) => chess.castles,
-      () => Castles.empty()
+      () => Castles.empty(),
     );
     pos.castles = castles;
     pos.epSquare = setup.epSquare ?? undefined;
@@ -44,8 +44,9 @@ export class Monster extends GameFamily {
       const move = pos.lastMove as NormalMove;
       const piece: Piece | undefined = pos.board.get(move.from);
       pos.play(move);
-      if (move.from === move.to && defined(piece)) 
+      if (move.from === move.to && defined(piece)) {
         pos.board.set(move.to, piece); // restore the piece
+      }
       pos.halfmoves -= 1;
       pos.turn = 'p1';
     }
@@ -55,8 +56,8 @@ export class Monster extends GameFamily {
         (err) => {
           console.error(err);
           return err;
-        }
-      ) as Result<Monster, PositionError>; 
+        },
+      ) as Result<Monster, PositionError>;
   }
 
   static override getClass() {
