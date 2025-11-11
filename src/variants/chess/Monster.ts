@@ -53,10 +53,7 @@ export class Monster extends GameFamily {
     return pos.validate()
       .map(
         () => pos,
-        (err) => {
-          console.error(err);
-          return err;
-        },
+        (err) => err,
       ) as Result<Monster, PositionError>;
   }
 
