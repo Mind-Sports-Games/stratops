@@ -766,6 +766,6 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
       : rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon'
       ? backgammonFenParts(setup)
       : chessVariantFenParts(rules)(setup, opts)),
-    ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
+    ...((rules === 'amazons' || rules === 'monster') && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
   ].join(' ');
 };

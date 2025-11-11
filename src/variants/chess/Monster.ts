@@ -1,11 +1,14 @@
 import { Result } from '@badrap/result';
 import { Board } from '../../board';
-import { Castles, PositionError } from '../../chess';
+import { Castles, Chess, PositionError } from '../../chess';
 import { Setup } from '../../setup';
-import { Rules } from '../../types';
+import { type Move, type NormalMove, type Piece, type Rules } from '../../types';
 import { GameFamily } from './GameFamily';
+import { defined } from '../../util';
+import { Option } from '../../fp';
 
 export class Monster extends GameFamily {
+  lastMove?: Option<Move>;
   static override rules: Rules = 'monster';
   static override standardInitialPosition: boolean = false;
 
@@ -24,7 +27,36 @@ export class Monster extends GameFamily {
   }
 
   static override fromSetup(setup: Setup): Result<Monster, PositionError> {
-    return super.fromSetup(setup) as Result<Monster, PositionError>;
+    const pos = new this();
+    pos.board = setup.board.clone();
+    pos.turn = setup.turn;
+    const castles = Chess.fromSetup(setup).unwrap(
+      (chess) => chess.castles,
+      () => Castles.empty()
+    );
+    pos.castles = castles;
+    pos.epSquare = setup.epSquare ?? undefined;
+    pos.remainingChecks = undefined;
+    pos.halfmoves = setup.halfmoves;
+    pos.fullmoves = setup.fullmoves;
+    pos.lastMove = setup.lastMove;
+    if (defined(pos.lastMove)) {
+      const move = pos.lastMove as NormalMove;
+      const piece: Piece | undefined = pos.board.get(move.from);
+      pos.play(move);
+      if (move.from === move.to && defined(piece)) 
+        pos.board.set(move.to, piece); // restore the piece
+      pos.halfmoves -= 1;
+      pos.turn = 'p1';
+    }
+    return pos.validate()
+      .map(
+        () => pos,
+        (err) => {
+          console.error(err);
+          return err;
+        }
+      ) as Result<Monster, PositionError>; 
   }
 
   static override getClass() {
@@ -45,5 +77,19 @@ export class Monster extends GameFamily {
 
   override clone(): Monster {
     return super.clone() as Monster;
+  }
+
+  override toSetup(): Setup {
+    return {
+      board: this.board.clone(),
+      pockets: undefined,
+      turn: this.turn,
+      unmovedRooks: this.castles.unmovedRooks,
+      epSquare: this.epSquare && !this.lastMove ? this.epSquare : undefined,
+      remainingChecks: undefined,
+      halfmoves: this.halfmoves,
+      fullmoves: this.fullmoves,
+      lastMove: this.lastMove ? { ...this.lastMove } : undefined,
+    };
   }
 }

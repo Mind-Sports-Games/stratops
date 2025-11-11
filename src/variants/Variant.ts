@@ -112,12 +112,16 @@ export abstract class Variant extends Chess {
     return Object.values(VariantKey);
   }
 
+  // Note: working for coordinates of a chess board
   static getPiecesCoordinates(fen: string, playerIndex: PlayerIndex): { piece: string; coord: string }[] {
     const result: { piece: string; coord: string }[] = [];
-    const board = this.readFen(fen, this.height, this.width);
+    const board = this.readFen(fen, this.width, this.height);
     for (const [coord, piece] of Object.entries(board.pieces)) {
       if (this.isPieceOfPlayer(piece as string, playerIndex)) {
-        result.push({ piece: piece as string, coord });
+        const file = this.width + 1 - Number(coord[0]);
+        const rank = this.height + 1 - Number(coord[1]);
+        const fileLetter = String.fromCharCode('a'.charCodeAt(0) + file - 1);
+        result.push({ piece: piece as string, coord: `${fileLetter}${rank}` });
       }
     }
     return result;
