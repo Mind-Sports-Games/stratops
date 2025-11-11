@@ -115,7 +115,7 @@ export abstract class Variant extends Chess {
   // Note: working for coordinates of a chess board
   static getPiecesCoordinates(fen: string, playerIndex: PlayerIndex): { piece: string; coord: string }[] {
     const result: { piece: string; coord: string }[] = [];
-    const board = this.readFen(fen, this.width, this.height);
+    const board = this.readFen(fen, this.height, this.width);
     for (const [coord, piece] of Object.entries(board.pieces)) {
       if (this.isPieceOfPlayer(piece as string, playerIndex)) {
         const file = this.width + 1 - Number(coord[0]);
