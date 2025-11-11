@@ -70,7 +70,7 @@ test('FEN is generated correctly for each step of 3 full rounds', () => {
   const fenAfterThirdAction = makeFen('monster')(positionAfterThirdAction.toSetup()) as string;
   expect(fenAfterThirdAction).toEqual(expectedFenAfterThirdAction);
 
-  const expectedFenAfterFourthAction = 'rnbqkbnr/ppp1pppp/8/2Pp4/8/8/3PPP2/5K2 w kq - 0 2 ½c4c5'; // pawn moved forward 1 square TODO: fix it, ofc its 1 since we just created the position
+  const expectedFenAfterFourthAction = 'rnbqkbnr/ppp1pppp/8/2Pp4/8/8/3PPP2/5K2 w kq - 0 2 ½c4c5'; // pawn moved forward 1 square
   const setupAfterFourthAction = monsterClass.parseFen(expectedFenAfterFourthAction).unwrap() as Setup;
   const positionAfterFourthAction = monsterClass.fromSetup(setupAfterFourthAction).unwrap() as Monster;
   const fenAfterFourthAction = makeFen('monster')(positionAfterFourthAction.toSetup()) as string;
