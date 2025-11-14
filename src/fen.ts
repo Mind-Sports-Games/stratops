@@ -535,7 +535,59 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
     }));
 };
 
-// TODO Dameo add fen parsing
+// ------------------------------------------------------------------------------
+// Dameo FEN parsing
+// W:Wa1,b1,b2,c1,c2,c3,d1,d2,d3,e1,e2,e3,f1,f2,f3,g1,g2,h1:Ba8,b7,b8,c6,c7,c8,d6,d7,d8,e6,e7,e8,f6,f7,f8,g7,g8,h8:H0:F1
+
+const parseDameoBoardFen = (rules: Rules) => (boardPart1: string, boardPart2: string): Result<Board, FenError> => {
+  const board = Board.empty(rules);
+  const { ranks, files } = dimensionsForRules(rules);
+  for(const pieceList of [boardPart1, boardPart2]){
+    const playerIndex = pieceList[0] === 'W' ? 'p1' : 'p2';
+    for (const pieceStr of pieceList.slice(1).split(',')) {
+      let key;
+      /* Possible roles: m = man, k = king,
+      g = ghostman, p = ghostking, a = activeman, b = activeking */
+      let role: string;
+      if (pieceStr.length === 2) {
+        role = 'm-piece';
+        key = pieceStr;
+      } else {
+        role = `${pieceStr[0].toLowerCase()}-piece`;
+        key = pieceStr.slice(1);
+      }
+      const piece = {
+        role: role,
+        playerIndex: playerIndex,
+      } as Piece;
+      const file = key[0].charCodeAt(0) - 97;
+      const rank = parseInt(key.slice(1));
+      const square = file + rank * files;
+      board.set(square, piece);
+    }
+  }
+  return Result.ok(board);
+};
+
+const parseDameoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+  const parts = fen.split(':');
+  if (parts.length !== 5) {
+    return Result.err(new FenError(InvalidFen.Fen));
+  }
+
+  return fp
+    .resultZip([
+      parseDameoBoardFen(rules)(parts[1], parts[2]),
+      parsePlayerTurn('W', 'B')(parts[0]),
+      parseFullMoves(parts[4].slice(1))
+    ])
+    .map(([board, turn, fullmoves]) => ({
+      ...defaultSetup(),
+      board,
+      turn,
+      fullmoves,
+    }));
+};
 
 // ------------------------------------------------------------------------------
 // Default fens
@@ -592,6 +644,9 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   }
   if (rules === 'abalone') {
     return parseAbaloneFen(rules)(fen);
+  }
+  if (rules === 'dameo') {
+    return parseDameoFen(rules)(fen);
   }
   return parseDefaultFen(rules)(fen);
 };
