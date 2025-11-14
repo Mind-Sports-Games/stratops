@@ -1,6 +1,6 @@
 {
   "name": "stratops",
-  "version": "0.8.1-pstrat5.7-dameo",
+  "version": "0.8.1-pstrat5.20",
   "description": "Strategy game rules and operations",
   "keywords": [
     "chess",
@@ -37,10 +37,15 @@
     }
   },
   "sideEffects": false,
-  "packageManager": "pnpm@9.1.0",
   "engines": {
-    "node": ">=20",
-    "pnpm": "^9"
+    "node": "^20.19.4",
+    "pnpm": "^10.17.0"
+  },
+  "packageManager": "pnpm@10.17.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "dprint"
+    ]
   },
   "dependencies": {
     "@badrap/result": "^0.2"
@@ -49,6 +54,7 @@
     "@jest/globals": "^29",
     "@typescript-eslint/eslint-plugin": "^7",
     "@typescript-eslint/parser": "^7",
+    "@types/node": "^20.19.4",
     "dprint": "^0.45",
     "eslint": "^8",
     "jest": "^27.1",

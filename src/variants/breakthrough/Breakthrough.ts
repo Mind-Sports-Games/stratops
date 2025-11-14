@@ -37,7 +37,7 @@ export class Breakthrough extends GameFamily {
     const p1InGoal = this.board.pieces('p1', 'p-piece').intersects(goalP1);
     if (p2InGoal && !p1InGoal) return { winner: 'p2' };
     if (p1InGoal && !p2InGoal) return { winner: 'p1' };
-    return { winner: undefined }; // @Note : this should not happen
+    return { winner: undefined }; // Note : this should not happen
   }
 
   protected constructor() {

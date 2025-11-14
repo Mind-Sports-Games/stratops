@@ -757,7 +757,7 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
     return makeGoFen(rules)(setup, opts);
   }
-  if (rules === 'flipello' || rules === 'flipello10') {
+  if (rules === 'flipello' || rules === 'flipello10' || rules === 'antiflipello' || rules === 'octagonflipello') {
     return makeOthelloFen(rules)(setup, opts);
   }
   return [
@@ -767,6 +767,6 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
       : rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon'
       ? backgammonFenParts(setup)
       : chessVariantFenParts(rules)(setup, opts)),
-    ...(rules === 'amazons' && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
+    ...((rules === 'amazons' || rules === 'monster') && setup.lastMove ? [makeLastMove(rules)(setup.lastMove)] : []),
   ].join(' ');
 };

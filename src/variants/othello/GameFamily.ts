@@ -3,7 +3,7 @@ import { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { type DropMove, Outcome, PlayerFENChar, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
 import { opposite } from '../../util';
-import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
+import { GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
@@ -16,19 +16,6 @@ export abstract class GameFamily extends Variant {
     p1: 'w',
     p2: 'b',
   };
-
-  static override computeMoveNotation(move: ExtendedMoveInfo): string {
-    if (!move.uci.includes('@')) return 'PASS';
-
-    const reg = move.uci.match(/[a-zA-Z][1-9@]0?/g) as string[];
-    const dest = reg[1];
-
-    // convert into flipello notation - a1 is top left for first player (not bottom left)
-    const newRank = 9 - parseInt(dest.slice(1));
-    const destPos = dest[0] + newRank;
-
-    return `${destPos}`;
-  }
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
@@ -47,6 +34,8 @@ export abstract class GameFamily extends Variant {
     return [
       VariantKey.flipello,
       VariantKey.flipello10,
+      VariantKey.antiflipello,
+      VariantKey.octagonflipello,
     ];
   }
 
@@ -172,7 +161,7 @@ export abstract class GameFamily extends Variant {
     return false;
   }
 
-  // @Note : for now we do not need to correctly determine the winner, isVariantEnd only is used to determine if the game is over or not from board editor page
+  // Note : for now we do not need to correctly determine the winner, isVariantEnd only is used to determine if the game is over or not from board editor page
   override variantOutcome(ctx?: Context): Outcome | undefined {
     if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
 
