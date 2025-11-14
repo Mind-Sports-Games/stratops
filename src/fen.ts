@@ -542,7 +542,7 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
 const parseDameoBoardFen = (rules: Rules) => (boardPart1: string, boardPart2: string): Result<Board, FenError> => {
   const board = Board.empty(rules);
   const { ranks, files } = dimensionsForRules(rules);
-  for(const pieceList of [boardPart1, boardPart2]){
+  for (const pieceList of [boardPart1, boardPart2]) {
     const playerIndex = pieceList[0] === 'W' ? 'p1' : 'p2';
     for (const pieceStr of pieceList.slice(1).split(',')) {
       let key;
@@ -579,7 +579,7 @@ const parseDameoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> =
     .resultZip([
       parseDameoBoardFen(rules)(parts[1], parts[2]),
       parsePlayerTurn('W', 'B')(parts[0]),
-      parseFullMoves(parts[4].slice(1))
+      parseFullMoves(parts[4].slice(1)),
     ])
     .map(([board, turn, fullmoves]) => ({
       ...defaultSetup(),
