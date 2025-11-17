@@ -71,6 +71,7 @@ export function playstrategyRules(
     | 'monster'
     | 'linesOfAction'
     | 'scrambledEggs'
+    | 'dameo'
     | 'shogi'
     | 'minishogi'
     | 'xiangqi'
@@ -168,6 +169,7 @@ export function playstrategyVariants(
   | 'english'
   | 'frisian'
   | 'frysk'
+  | 'dameo'
 {
   switch (rules) {
     case 'chess':
