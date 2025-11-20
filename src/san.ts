@@ -102,7 +102,7 @@ export const parseSan = (rules: Rules) => (pos: Position, san: string): Move | u
   }
 
   // Normal move
-  const match = san.match(/^([NBRQK])?([a-h])?([1-8])?[-x]?([a-h][1-8])(?:=?([nbrqkNBRQK]))?[+#]?$/);
+  const match = san.match(/^([LNBRQK])?([a-h])?([1-8])?[-x]?([a-h][1-8])(?:=?([nbrqkNBRQK]))?[+#]?$/);
   if (!match) {
     // Drop
     const match = san.match(/^([pnbrqkPNBRQK])?@([a-h][1-8])[+#]?$/);
@@ -124,13 +124,15 @@ export const parseSan = (rules: Rules) => (pos: Position, san: string): Move | u
   if (match[2]) candidates = candidates.intersect(SquareSet.fromFile64(match[2].charCodeAt(0) - 'a'.charCodeAt(0)));
   if (match[3]) candidates = candidates.intersect(SquareSet.fromRank64(match[3].charCodeAt(0) - '1'.charCodeAt(0)));
 
-  // Optimization: Reduce set of candidates
-  const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile64(squareFile(rules)(to)) : SquareSet.empty();
-  candidates = candidates.intersect(
-    pawnAdvance.union(
-      attacks({ playerIndex: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.p1, pos.board.p2),
-    ),
-  );
+  if (role !== 'l-piece') {
+    // Optimization: Reduce set of candidates
+    const pawnAdvance = role === 'p-piece' ? SquareSet.fromFile64(squareFile(rules)(to)) : SquareSet.empty();
+    candidates = candidates.intersect(
+      pawnAdvance.union(
+        attacks({ playerIndex: opposite(pos.turn), role }, to, pos.board.occupied, pos.board.p1, pos.board.p2),
+      ),
+    );
+  }
 
   // Check uniqueness and legality
   let from;

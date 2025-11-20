@@ -5,6 +5,7 @@ import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } 
 import { parseUci as parseUciRules } from './util.js';
 import { Antichess } from './variants/chess/Antichess.js';
 import { Crazyhouse } from './variants/chess/Crazyhouse.js';
+import { LinesOfAction } from './variants/linesofaction/LinesOfAction.js';
 
 const sanVariation = makeSanVariation('chess');
 const parseSan = parseSanRules('chess');
@@ -201,4 +202,21 @@ test('parse crazyhouse', () => {
   expect(makeFen('crazyhouse')(pos.toSetup())).toBe(
     'r4rk1/ppp1nppp/6b1/8/2B1pP2/4Pq2/PPP4P/R1BqK3[BNNNPPRp] w - - 1 25',
   );
+});
+
+test('lines-of-action parseSan after sequence', () => {
+  const pos = LinesOfAction.getClass().default();
+  // const pos = Board.linesOfAction();
+
+  // Play the moves: Ldb3, L7f7, Lec3, L6f6
+  const moves = ['Ldb3', 'L7f7', 'Lec3', 'L6f6'];
+  for (const san of moves) {
+    const move = parseSanRules('linesofaction')(pos, san);
+    expect(move).toBeDefined();
+    pos.play(move!);
+  }
+
+  // Now test the move Lb4
+  const testMove = parseSanRules('linesofaction')(pos, 'Lb4');
+  expect(testMove).toBeDefined();
 });

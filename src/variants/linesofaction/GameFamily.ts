@@ -45,6 +45,19 @@ export abstract class GameFamily extends Variant {
     return false;
   }
 
+  override toSetup(): Setup {
+    return {
+      board: this.board.clone(),
+      pockets: undefined,
+      turn: this.turn,
+      unmovedRooks: SquareSet.empty(),
+      epSquare: undefined,
+      remainingChecks: undefined,
+      halfmoves: this.halfmoves,
+      fullmoves: this.fullmoves,
+    };
+  }
+
   override isVariantEnd(): boolean {
     return !!this.variantOutcome();
   }

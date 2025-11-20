@@ -223,8 +223,25 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     board.reset();
     board.occupied = new SquareSet([0x8181_817e, 0x7e81_8181, 0, 0]);
     board.promoted = SquareSet.empty();
-    board.p1 = new SquareSet([0x8181_8100, 0x0081_8181, 0, 0]);
-    board.p2 = new SquareSet([0x007e, 0x7e00_0000, 0, 0]);
+    board.p2 = new SquareSet([0x8181_8100, 0x0081_8181, 0, 0]);
+    board.p1 = new SquareSet([0x007e, 0x7e00_0000, 0, 0]);
+    board['p-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['n-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['b-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['r-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['q-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['k-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['l-piece'] = board.occupied;
+    return board;
+  }
+
+  static scrambledEggs(): Board {
+    const board = new Board('scrambledeggs');
+    board.reset();
+    board.promoted = SquareSet.empty();
+    board.p1 = new SquareSet([0x8001804A, 0x54600001, 0, 0]);
+    board.p2 = new SquareSet([0x01800154, 0x2A8001C8, 0, 0]);
+    board.occupied = board.p1.union(board.p2);
     board['p-piece'] = new SquareSet([0, 0, 0, 0]);
     board['n-piece'] = new SquareSet([0, 0, 0, 0]);
     board['b-piece'] = new SquareSet([0, 0, 0, 0]);
