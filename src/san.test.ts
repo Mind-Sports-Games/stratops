@@ -1,8 +1,9 @@
 import { expect, test } from '@jest/globals';
 import { Chess } from './chess.js';
 import { makeFen, parseFen } from './fen.js';
-import { makeSan as makeSanRules, makeSanVariation, parseSan as parseSanRules } from './san.js';
-import { parseUci as parseUciRules } from './util.js';
+import { Board } from './index.js';
+import { makeSan as makeSanRules, makeSanAndPlay, makeSanVariation, parseSan as parseSanRules } from './san.js';
+import { makeUci, parseUci as parseUciRules } from './util.js';
 import { Antichess } from './variants/chess/Antichess.js';
 import { Crazyhouse } from './variants/chess/Crazyhouse.js';
 import { LinesOfAction } from './variants/linesofaction/LinesOfAction.js';
@@ -219,4 +220,42 @@ test('lines-of-action parseSan after sequence', () => {
   // Now test the move Lb4
   const testMove = parseSanRules('linesofaction')(pos, 'Lb4');
   expect(testMove).toBeDefined();
+});
+
+test('lines-of-action makesanandPlay after sequence', () => {
+  const pos = LinesOfAction.getClass().default();
+
+  const moves = ['Ldd3', 'Lxf1', 'Ld5', 'L2f2', 'Lbd3', 'Lxc1', 'Ld6', 'Lxe1', 'Lb7', 'Lxg1'];
+  const ucis = ['d1d3', 'h3f1', 'd3d5', 'h2f2', 'b1d3', 'a3c1', 'd3d6', 'h4e1', 'b8b7', 'c1g1'];
+
+  // function printBoard(board: Board) {
+  //   let out = '';
+  //   for (let rank = 7; rank >= 0; rank--) {
+  //     for (let file = 0; file < 8; file++) {
+  //       const sq = rank * 8 + file;
+  //       if (board.p1.has(sq)) out += '1 ';
+  //       else if (board.p2.has(sq)) out += '2 ';
+  //       else out += '. ';
+  //     }
+  //     out += '\n';
+  //   }
+  //   console.log(out);
+  // }
+
+  for (let i = 0; i < moves.length; i++) {
+    const san = moves[i];
+    const uci = ucis[i];
+    const move = parseSanRules('linesofaction')(pos, san);
+    expect(move).toBeDefined();
+    expect(makeUci('linesofaction')(move!)).toBe(uci);
+    pos.play(move!);
+  }
+
+  const move = parseSanRules('linesofaction')(pos, 'Lcc7')!;
+
+  const testMove = makeSanAndPlay('linesofaction')(pos, move);
+  // console.log(`After move Lcc7:`);
+  // printBoard(pos.board);
+
+  expect(testMove.endsWith('#')).toBe(true);
 });

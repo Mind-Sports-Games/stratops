@@ -64,14 +64,25 @@ export abstract class GameFamily extends Variant {
 
   isPlayerIndexConnected(playerIndex: PlayerIndex): boolean {
     const pieces = playerIndex === 'p1' ? this.board.p1 : this.board.p2;
-    let connected = SquareSet.empty();
+    if (pieces.size() === 0) return false;
 
-    let next = pieces.first();
-    while (next) {
-      connected = connected.with(next);
-      next = kingAttacks(next).intersect(pieces).diff64(connected).first();
+    const visited = new Set<number>();
+    const queue: number[] = [pieces.first()!];
+
+    while (queue.length > 0) {
+      const sq = queue.pop()!;
+      if (visited.has(sq)) continue;
+      visited.add(sq);
+
+      // For each adjacent square (king moves)
+      for (const neighbor of Array.from(kingAttacks(sq))) {
+        if (pieces.has(neighbor) && !visited.has(neighbor)) {
+          queue.push(neighbor);
+        }
+      }
     }
-    return connected.size() > 0 && connected.size() === pieces.size();
+
+    return visited.size === pieces.size();
   }
 
   override variantOutcome(_ctx?: Context): Outcome | undefined {
