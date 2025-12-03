@@ -543,7 +543,7 @@ const parseDameoBoardFen = (rules: Rules) => (boardPart1: string, boardPart2: st
   const board = Board.empty(rules);
   const { ranks, files } = dimensionsForRules(rules);
   for (const pieceList of [boardPart1, boardPart2]) {
-    if (pieceList.length === 1) { continue; }
+    if (pieceList.length === 1) continue;
     const playerIndex = pieceList[0] === 'W' ? 'p1' : 'p2';
     for (const pieceStr of pieceList.slice(1).split(',')) {
       let key;
