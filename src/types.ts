@@ -337,6 +337,7 @@ export const RULES = [
   'english',
   'frisian',
   'frysk',
+  'dameo',
 ] as const;
 
 export type Rules = typeof RULES[number];
