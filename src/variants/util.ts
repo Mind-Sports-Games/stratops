@@ -22,6 +22,8 @@ import { Monster } from './chess/Monster';
 import { NoCastling } from './chess/NoCastling';
 import { RacingKings } from './chess/RacingKings';
 import { ThreeCheck } from './chess/ThreeCheck';
+import { Dameo } from './dameo/Dameo';
+import { GameFamily as DameoGameFamily } from './dameo/GameFamily';
 import { Antidraughts } from './draughts/Antidraughts';
 import { Brazilian } from './draughts/Brazilian';
 import { Brkthru } from './draughts/Brkthru';
@@ -150,6 +152,8 @@ export function variantClass(rules: Rules): typeof Variant {
       return Frisian.getClass();
     case 'frysk':
       return Frysk.getClass();
+    case 'dameo':
+      return Dameo.getClass();
     default:
       return Variant.getClass();
   }
@@ -252,6 +256,8 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'frisian';
     case VariantKey.frysk:
       return 'frysk';
+    case VariantKey.dameo:
+      return 'dameo';
     default:
       return 'chess';
   }
@@ -263,6 +269,8 @@ export function gameFamilyClass(gameFamilyKey?: GameFamilyKey): typeof Variant {
       return AbaloneGameFamily.getClass();
     case GameFamilyKey.draughts:
       return DraughtsGameFamily.getClass();
+    case GameFamilyKey.dameo:
+      return DameoGameFamily.getClass();
     case GameFamilyKey.chess:
       return ChessGameFamily.getClass();
     case GameFamilyKey.loa:

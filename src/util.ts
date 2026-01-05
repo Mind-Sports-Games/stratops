@@ -246,6 +246,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'monster':
     case 'linesofaction':
     case 'scrambledeggs':
+    case 'dameo':
     case 'breakthrough':
       return { ranks: 8, files: 8 };
     case 'shogi':
