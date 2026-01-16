@@ -289,10 +289,9 @@ export function linesOfActionAttacks(
   p1: SquareSet,
   p2: SquareSet,
 ): SquareSet {
-  // TODO: write some tests.
   const ours = playerIndex === 'p1' ? p1 : p2;
-
   const theirs = playerIndex === 'p2' ? p1 : p2;
+
   const deltaToSquare = (delta: Square) => square + delta;
   const pieceCountInRay = (dir: Square) => (isValid(dir) ? ray(square, dir).intersect(occupied).size() : 0);
   const nearby = [-9, -8, -7, -1, 1, 7, 8, 9];
@@ -302,6 +301,14 @@ export function linesOfActionAttacks(
   const possibleTargets = zip(nearby, pieceCountPerRay)
     // NOTE: The following line can produce invalid moves
     .filter(([_, numPieces]) => numPieces > 0)
+    .filter(([delta, numPieces]) => {
+      // Ensure we stay on ray intended (and not wrap board edges)
+      const targetSquare = square + numPieces * delta;
+      const leftEdge = square % 8 === 0;
+      const rightEdge = square % 8 === 7;
+      const illegalMoves = (leftEdge && delta === 7) || (rightEdge && delta === -7);
+      return ray(square, square + delta).equals(ray(square, targetSquare)) && !illegalMoves;
+    })
     .map(([delta, numPieces]) => square + numPieces * delta)
     .filter(isValid);
   const destsByPieceCount = possibleTargets.reduce((range, dest) => range.with(dest), SquareSet.empty());

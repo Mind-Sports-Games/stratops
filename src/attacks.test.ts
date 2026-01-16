@@ -4,6 +4,8 @@ import { Board } from './board.js';
 import { SquareSet } from './squareSet.js';
 import type { PlayerIndex, Square } from './types.js';
 import { defined, parseSquare as parseSquareRules } from './util.js';
+import { parseSan } from './san.js';
+import { LinesOfAction } from './variants/linesofaction/LinesOfAction.js';
 
 const parseSquare = parseSquareRules('chess');
 
@@ -36,21 +38,21 @@ type LoaMoveTest = {
 test('lines-of-action first move generation', () => {
   const pos = Board.linesOfAction();
   const tests: LoaMoveTest[] = [
-    { playerIndex: 'p2', start: parseSquare('b8'), targets: ['b6', 'd6', 'h8'] },
-    { playerIndex: 'p2', start: parseSquare('c8'), targets: ['a6', 'c6', 'e6'] },
-    { playerIndex: 'p2', start: parseSquare('d8'), targets: ['b6', 'd6', 'f6'] },
-    { playerIndex: 'p2', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
-    { playerIndex: 'p2', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
-    { playerIndex: 'p2', start: parseSquare('f8'), targets: ['d6', 'f6', 'h6'] },
-    { playerIndex: 'p2', start: parseSquare('g8'), targets: ['a8', 'e6', 'g6'] },
+    { playerIndex: 'p1', start: parseSquare('b8'), targets: ['b6', 'd6', 'h8'] },
+    { playerIndex: 'p1', start: parseSquare('c8'), targets: ['a6', 'c6', 'e6'] },
+    { playerIndex: 'p1', start: parseSquare('d8'), targets: ['b6', 'd6', 'f6'] },
+    { playerIndex: 'p1', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
+    { playerIndex: 'p1', start: parseSquare('e8'), targets: ['c6', 'e6', 'g6'] },
+    { playerIndex: 'p1', start: parseSquare('f8'), targets: ['d6', 'f6', 'h6'] },
+    { playerIndex: 'p1', start: parseSquare('g8'), targets: ['a8', 'e6', 'g6'] },
 
-    { playerIndex: 'p2', start: parseSquare('b1'), targets: ['b3', 'd3', 'h1'] },
-    { playerIndex: 'p2', start: parseSquare('c1'), targets: ['a3', 'c3', 'e3'] },
-    { playerIndex: 'p2', start: parseSquare('d1'), targets: ['b3', 'd3', 'f3'] },
-    { playerIndex: 'p2', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
-    { playerIndex: 'p2', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
-    { playerIndex: 'p2', start: parseSquare('f1'), targets: ['d3', 'f3', 'h3'] },
-    { playerIndex: 'p2', start: parseSquare('g1'), targets: ['a1', 'e3', 'g3'] },
+    { playerIndex: 'p1', start: parseSquare('b1'), targets: ['b3', 'd3', 'h1'] },
+    { playerIndex: 'p1', start: parseSquare('c1'), targets: ['a3', 'c3', 'e3'] },
+    { playerIndex: 'p1', start: parseSquare('d1'), targets: ['b3', 'd3', 'f3'] },
+    { playerIndex: 'p1', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
+    { playerIndex: 'p1', start: parseSquare('e1'), targets: ['c3', 'e3', 'g3'] },
+    { playerIndex: 'p1', start: parseSquare('f1'), targets: ['d3', 'f3', 'h3'] },
+    { playerIndex: 'p1', start: parseSquare('g1'), targets: ['a1', 'e3', 'g3'] },
   ];
   tests.forEach(({ playerIndex, start, targets }) => {
     if (!defined(start)) return;
@@ -74,19 +76,19 @@ test('lines-of-action second move generation', () => {
   }
   pos.set(c6, piece);
   const tests: LoaMoveTest[] = [
-    { playerIndex: 'p1', start: parseSquare('a7'), targets: ['a1', 'c5', 'c7'] },
-    { playerIndex: 'p1', start: parseSquare('a6'), targets: ['b7', 'c4'] },
-    { playerIndex: 'p1', start: parseSquare('a5'), targets: ['c7', 'c5', 'c3'] },
-    { playerIndex: 'p1', start: parseSquare('a4'), targets: ['c4', 'c2'] },
-    { playerIndex: 'p1', start: parseSquare('a3'), targets: ['c5', 'c3', 'c1'] },
-    { playerIndex: 'p1', start: parseSquare('a2'), targets: ['a8', 'c2', 'c4'] },
+    { playerIndex: 'p2', start: parseSquare('a7'), targets: ['a1', 'c5', 'c7'] },
+    { playerIndex: 'p2', start: parseSquare('a6'), targets: ['b7', 'c4'] },
+    { playerIndex: 'p2', start: parseSquare('a5'), targets: ['c7', 'c5', 'c3'] },
+    { playerIndex: 'p2', start: parseSquare('a4'), targets: ['c4', 'c2'] },
+    { playerIndex: 'p2', start: parseSquare('a3'), targets: ['c5', 'c3', 'c1'] },
+    { playerIndex: 'p2', start: parseSquare('a2'), targets: ['a8', 'c2', 'c4'] },
 
-    { playerIndex: 'p1', start: parseSquare('h7'), targets: ['h1', 'f5', 'f7'] },
-    { playerIndex: 'p1', start: parseSquare('h6'), targets: ['e6', 'f4', 'f8'] },
-    { playerIndex: 'p1', start: parseSquare('h5'), targets: ['f7', 'f5', 'f3'] },
-    { playerIndex: 'p1', start: parseSquare('h4'), targets: ['f6', 'f4', 'f2'] },
-    { playerIndex: 'p1', start: parseSquare('h3'), targets: ['f3', 'f1', 'g4'] },
-    { playerIndex: 'p1', start: parseSquare('h2'), targets: ['h8', 'f2', 'f4'] },
+    { playerIndex: 'p2', start: parseSquare('h7'), targets: ['h1', 'f5', 'f7'] },
+    { playerIndex: 'p2', start: parseSquare('h6'), targets: ['e6', 'f4', 'f8'] },
+    { playerIndex: 'p2', start: parseSquare('h5'), targets: ['f7', 'f5', 'f3'] },
+    { playerIndex: 'p2', start: parseSquare('h4'), targets: ['f6', 'f4', 'f2'] },
+    { playerIndex: 'p2', start: parseSquare('h3'), targets: ['f3', 'f1', 'g4'] },
+    { playerIndex: 'p2', start: parseSquare('h2'), targets: ['h8', 'f2', 'f4'] },
   ];
   tests.forEach(({ playerIndex, start, targets }) => {
     if (!defined(start)) return;
@@ -118,19 +120,19 @@ test('lines-of-action third move generation', () => {
   }
   pos.set(e6, piece2);
   const tests: LoaMoveTest[] = [
-    { playerIndex: 'p2', start: parseSquare('b8'), targets: ['b6', 'd6'] },
-    { playerIndex: 'p2', start: parseSquare('c6'), targets: ['b7', 'c8', 'c4', 'd5'] },
-    { playerIndex: 'p2', start: parseSquare('d8'), targets: ['b6', 'd6', 'f6'] },
-    { playerIndex: 'p2', start: parseSquare('e8'), targets: ['b5', 'g6'] },
-    { playerIndex: 'p2', start: parseSquare('f8'), targets: ['a8', 'd6', 'f6', 'g7'] },
-    { playerIndex: 'p2', start: parseSquare('g8'), targets: ['g6'] },
+    { playerIndex: 'p1', start: parseSquare('b8'), targets: ['b6', 'd6'] },
+    { playerIndex: 'p1', start: parseSquare('c6'), targets: ['b7', 'c8', 'c4', 'd5'] },
+    { playerIndex: 'p1', start: parseSquare('d8'), targets: ['b6', 'd6', 'f6'] },
+    { playerIndex: 'p1', start: parseSquare('e8'), targets: ['b5', 'g6'] },
+    { playerIndex: 'p1', start: parseSquare('f8'), targets: ['a8', 'd6', 'f6', 'g7'] },
+    { playerIndex: 'p1', start: parseSquare('g8'), targets: ['g6'] },
 
-    { playerIndex: 'p2', start: parseSquare('b1'), targets: ['b3', 'd3', 'h1'] },
-    { playerIndex: 'p2', start: parseSquare('c1'), targets: ['a3', 'c3', 'd2'] },
-    { playerIndex: 'p2', start: parseSquare('d1'), targets: ['b3', 'd3', 'f3'] },
-    { playerIndex: 'p2', start: parseSquare('e1'), targets: ['c3', 'e4', 'g3'] },
-    { playerIndex: 'p2', start: parseSquare('f1'), targets: ['d3', 'f3', 'h3'] },
-    { playerIndex: 'p2', start: parseSquare('g1'), targets: ['a1', 'e3', 'g3'] },
+    { playerIndex: 'p1', start: parseSquare('b1'), targets: ['b3', 'd3', 'h1'] },
+    { playerIndex: 'p1', start: parseSquare('c1'), targets: ['a3', 'c3', 'd2'] },
+    { playerIndex: 'p1', start: parseSquare('d1'), targets: ['b3', 'd3', 'f3'] },
+    { playerIndex: 'p1', start: parseSquare('e1'), targets: ['c3', 'e4', 'g3'] },
+    { playerIndex: 'p1', start: parseSquare('f1'), targets: ['d3', 'f3', 'h3'] },
+    { playerIndex: 'p1', start: parseSquare('g1'), targets: ['a1', 'e3', 'g3'] },
   ];
   tests.forEach(({ playerIndex, start, targets }) => {
     if (!defined(start)) return;
@@ -141,6 +143,26 @@ test('lines-of-action third move generation', () => {
       .reduce((range, square) => range.with(square), SquareSet.empty());
     expect(attacks).toEqual(targetSet);
   });
+});
+
+test('lines-of-action attacks of known move after sequence', () => {
+  const pos = LinesOfAction.getClass().default();
+
+  // Play the moves: Ldb3, L7f7, Lec3, L6f6
+  const moves = ['Ldb3', 'L7f7', 'Lec3', 'L6f6'];
+  for (const san of moves) {
+    const move = parseSan('linesofaction')(pos, san);
+    expect(move).toBeDefined();
+    pos.play(move!);
+  }
+
+  // Now test the move Lb4
+  const attacks = linesOfActionAttacks('p1', parseSquare('b1')!, pos.board.occupied, pos.board.p1, pos.board.p2);
+  const targetSet = ['b4', 'c2']
+      .map(parseSquare)
+      .filter(defined)
+      .reduce((range, square) => range.with(square), SquareSet.empty());
+  expect(attacks).toEqual(targetSet);
 });
 
 test('minixiangqi rook attacks', () => {
