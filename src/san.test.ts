@@ -1,7 +1,6 @@
 import { expect, test } from '@jest/globals';
 import { Chess } from './chess.js';
 import { makeFen, parseFen } from './fen.js';
-import { Board } from './index.js';
 import { makeSan as makeSanRules, makeSanAndPlay, makeSanVariation, parseSan as parseSanRules } from './san.js';
 import { makeUci, parseUci as parseUciRules } from './util.js';
 import { Antichess } from './variants/chess/Antichess.js';
