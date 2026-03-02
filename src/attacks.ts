@@ -97,11 +97,14 @@ function hyperbola(bit: SquareSet, range: SquareSet, occupied: SquareSet): Squar
 }
 
 function fileAttacks(square: Square, occupied: SquareSet): SquareSet {
-  return hyperbola(SquareSet.fromSquare(square), FILE_RANGE[square], occupied);
+  const range = FILE_RANGE[square];
+  if (range.isEmpty()) return SquareSet.empty();
+  return hyperbola(SquareSet.fromSquare(square), range, occupied);
 }
 
 function rankAttacks(square: Square, occupied: SquareSet): SquareSet {
   const range = RANK_RANGE[square];
+  if (range.isEmpty()) return SquareSet.empty();
   let forward = occupied.intersect(range);
   let reverse = forward.rbit64();
   forward = forward.minus64(SquareSet.fromSquare(square));

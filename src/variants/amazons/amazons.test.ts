@@ -1,8 +1,8 @@
 import { expect, test } from '@jest/globals';
 import { Board, defaultSetup, Setup } from '../..';
 import { makeFen } from '../../fen';
-import { Amazons } from '../amazons/Amazons';
 import { variantClass } from '../util';
+import { Amazons } from './Amazons';
 
 test('get pieces coordinates', () => {
   const fen = '3q2q3/10/10/q8q/10/10/Q8Q/10/10/3Q2Q3 w - - 56 1';
