@@ -181,23 +181,37 @@ export abstract class GameFamily extends Variant {
     const kingSquares = Array.from(kings);
     const width = (this.constructor as typeof GameFamily).width;
     const height = (this.constructor as typeof GameFamily).height;
+    const palaceSize = 3;
+    const palaceFileMin = Math.floor(width / 2) - Math.floor(palaceSize / 2);
+    const palaceFileMax = palaceFileMin + palaceSize - 1;
+    const palaceRankMin = 0;
+    const palaceRankMax = palaceSize - 1;
     const king1File = kingSquares[0] % width;
     const king1Rank = Math.floor(kingSquares[0] / width);
     const king2File = kingSquares[1] % width;
     const king2Rank = Math.floor(kingSquares[1] / width);
-    if (king1File < 3 || king1File > 5 || king1Rank < 0 || king1Rank > 2) {
+
+    if (
+      king1File < palaceFileMin || king1File > palaceFileMax
+      || king1Rank < palaceRankMin || king1Rank > palaceRankMax
+    ) {
       return Result.err(
         new PositionError(
-          `King 1 must be in the palace (files 4-6, ranks 1-3), found at file ${king1File + 1}, rank ${king1Rank + 1}.`,
+          `King 1 must be in the palace (files ${palaceFileMin + 1}-${palaceFileMax + 1}, ranks ${palaceRankMin + 1}-${
+            palaceRankMax + 1
+          }), found at file ${king1File + 1}, rank ${king1Rank + 1}.`,
         ),
       );
     }
-    if (king2File < 3 || king2File > 5 || king2Rank < height - 3 || king2Rank >= height) {
+    if (
+      king2File < palaceFileMin || king2File > palaceFileMax
+      || king2Rank < height - palaceSize || king2Rank > height - 1
+    ) {
       return Result.err(
         new PositionError(
-          `King 2 must be in the palace (files 4-6, ranks 8-10), found at file ${king2File + 1}, rank ${
-            king2Rank + 1
-          }.`,
+          `King 2 must be in the palace (files ${palaceFileMin + 1}-${palaceFileMax + 1}, ranks ${
+            height - palaceSize + 1
+          }-${height}), found at file ${king2File + 1}, rank ${king2Rank + 1}.`,
         ),
       );
     }
