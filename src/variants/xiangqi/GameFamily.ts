@@ -1,7 +1,10 @@
 import { Result } from '@badrap/result';
-import type { PositionError } from '../../chess';
+import { between, ray, rookAttacksWH } from '../../attacks';
+import { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import type { PlayerIndex } from '../../types';
+import { SquareSet } from '../../squareSet';
+import type { PlayerIndex, Square } from '../../types';
+import { defined, opposite } from '../../util';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -120,5 +123,119 @@ export abstract class GameFamily extends Variant {
 
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
+  }
+
+  /*
+    TODO: implement dests for all pieces, currently only rook and king are implemented.
+    This method is currently only partially implemented to prevent fairy to fail
+     when trying to compute moves for xiangqi variants using methods specific to a 64 squares board.
+  */
+  override dests(square: Square, ctx?: Context): SquareSet {
+    ctx = ctx || this.ctx();
+    if (ctx.variantEnd) return SquareSet.empty();
+    const piece = this.board.get(square);
+    if (!piece || piece.playerIndex !== this.turn) return SquareSet.empty();
+    let pseudo;
+
+    if (piece.role === 'r-piece') {
+      pseudo = rookAttacksWH(square, this.board.occupied, GameFamily.width, GameFamily.height);
+    }
+    if (piece.role === 'k-piece') {
+      pseudo = GameFamily.kingAttacks(square);
+    }
+
+    if (!pseudo) {
+      // TODO: uncomment the line below after all pieces are implemented
+      // console.warn('Unknown piece role:', piece.role, 'at square', square, 'for variant', this.constructor.name);
+      return SquareSet.empty();
+    }
+
+    pseudo = pseudo.diffWH(this.board[this.turn], GameFamily.width, GameFamily.height);
+
+    // Note: check conditions: untested (more or less copy-pasted from the overriden generic one)
+    if (defined(ctx.king)) {
+      if (piece.role === 'k-piece') {
+        const occ = this.board.occupied.without(square);
+        for (const to of pseudo) {
+          if (this.kingAttackers(to, opposite(this.turn), occ).nonEmpty()) pseudo = pseudo.without(to);
+        }
+      }
+
+      if (ctx.checkers.nonEmpty()) {
+        const checker = ctx.checkers.singleSquare();
+        if (!defined(checker)) return SquareSet.empty();
+        pseudo = pseudo.intersect(between(checker, ctx.king).with(checker));
+      }
+
+      if (ctx.blockers.has(square)) pseudo = pseudo.intersect(ray(square, ctx.king));
+    }
+
+    return pseudo;
+  }
+
+  protected override validateVariant(): Result<undefined, PositionError> {
+    const kings = this.board['k-piece'];
+    if (kings.size() !== 2) {
+      return Result.err(new PositionError(`There must be exactly 2 kings, found ${kings.size()}.`));
+    }
+    const kingSquares = Array.from(kings);
+    const width = (this.constructor as typeof GameFamily).width;
+    const height = (this.constructor as typeof GameFamily).height;
+    const king1File = kingSquares[0] % width;
+    const king1Rank = Math.floor(kingSquares[0] / width);
+    const king2File = kingSquares[1] % width;
+    const king2Rank = Math.floor(kingSquares[1] / width);
+    if (king1File < 3 || king1File > 5 || king1Rank < 0 || king1Rank > 2) {
+      return Result.err(
+        new PositionError(
+          `King 1 must be in the palace (files 4-6, ranks 1-3), found at file ${king1File + 1}, rank ${king1Rank + 1}.`,
+        ),
+      );
+    }
+    if (king2File < 3 || king2File > 5 || king2Rank < height - 3 || king2Rank >= height) {
+      return Result.err(
+        new PositionError(
+          `King 2 must be in the palace (files 4-6, ranks 8-10), found at file ${king2File + 1}, rank ${
+            king2Rank + 1
+          }.`,
+        ),
+      );
+    }
+
+    return Result.ok(undefined);
+  }
+
+  // note : everything related to attacks could be moved to a separate class "Attacks.ts" inside xiangqi namespace.
+  static kingAttacks(square: Square): SquareSet {
+    const rank = Math.floor(square / this.width);
+    const file = square % this.width;
+    const deltas = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ];
+    let result = SquareSet.empty();
+    let palaceRankMin, palaceRankMax;
+    if (rank <= 2) {
+      palaceRankMin = 0;
+      palaceRankMax = 2;
+    } else if (rank >= this.height - 3) {
+      palaceRankMin = this.height - 3;
+      palaceRankMax = this.height - 1;
+    } else {
+      return SquareSet.empty();
+    }
+    for (const [df, dr] of deltas) {
+      const newFile = file + df;
+      const newRank = rank + dr;
+      if (
+        newFile >= 3 && newFile <= 5
+        && newRank >= palaceRankMin && newRank <= palaceRankMax
+      ) {
+        result = result.with(newRank * this.width + newFile);
+      }
+    }
+    return result;
   }
 }
