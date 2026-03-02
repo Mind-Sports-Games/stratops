@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 import { parseSan } from '../../san';
-import { LinesOfAction } from '../linesofaction/LinesOfAction';
+import { LinesOfAction } from './LinesOfAction';
 
 test('lines-of-action isplayerIndexConnected complex shape', () => {
   const pos = LinesOfAction.getClass().default();

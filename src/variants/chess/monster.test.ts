@@ -1,8 +1,8 @@
 import { expect, test } from '@jest/globals';
 import { Board, defaultSetup, type Setup } from '../..';
 import { makeFen } from '../../fen';
-import { Monster } from '../chess/Monster';
 import { variantClass } from '../util';
+import { Monster } from './Monster';
 
 test('get pieces coordinates after a possible fake half king move was described and played', () => {
   const fen = 'rnbqkbnr/pppppppp/8/8/8/8/2PPPP2/7K w kq - 0 1 ½h1h1';
