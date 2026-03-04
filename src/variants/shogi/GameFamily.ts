@@ -14,6 +14,8 @@ export abstract class GameFamily extends Variant {
     p2: 'gote', // 後手; "later move"
   };
 
+  static promotionZoneSize = 3;
+
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     const parsed = this.parseUciToUsi(move.uci, this.width, this.height),
       board = this.readFen(move.fen, this.height, this.width),
@@ -240,11 +242,14 @@ export abstract class GameFamily extends Variant {
     if (!prevRole) return '';
     if (prevRole !== currentRole) return '+';
     if (prevRole.includes('+')) return '';
+    const destRank = parseInt(parsed.dest.slice(1));
+    const origRank = parseInt(parsed.orig.slice(1));
     if (
       currentRole.toLowerCase() !== 'g'
       && currentRole.toLowerCase() !== 'k'
-      && ((board.wMoved && ['1', '2', '3'].includes(parsed.dest.slice(1)))
-        || (!board.wMoved && ['7', '8', '9'].includes(parsed.dest.slice(1))))
+      && ((board.wMoved && (destRank <= this.promotionZoneSize || origRank <= this.promotionZoneSize))
+        || (!board.wMoved
+          && (destRank > this.height - this.promotionZoneSize || origRank > this.height - this.promotionZoneSize)))
     ) {
       return '=';
     } else {

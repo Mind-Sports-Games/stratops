@@ -430,6 +430,70 @@ test('moveFromNotationStyle xiangqi 4 pawns in column p2 sideways move', () => {
   expect(notation).toBe('37=6');
 });
 
+// minishogi
+
+test('moveFromNotationStyle minishogi Pawn move', () => {
+  const move = {
+    san: '',
+    uci: 'a2a3',
+    fen: 'rbsgk/4p/P4/5/KGSBR[] b - - 1 1',
+    prevFen: 'rbsgk/4p/5/P4/KGSBR[] w - - 0 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('P-53');
+});
+
+test('moveFromNotationStyle minishogi Rook to rank 2 no promotion symbol', () => {
+  // rank 2 is NOT in the minishogi promotion zone (only rank 1 is) - old code incorrectly appended '='
+  const move = {
+    san: '',
+    uci: 'e1e4',
+    fen: 'k4/4R/5/5/K4[] b - - 1 1',
+    prevFen: 'k4/5/5/5/K3R[] w - - 0 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-12');
+});
+
+test('moveFromNotationStyle minishogi Rook to rank 1 no promotion', () => {
+  const move = {
+    san: '',
+    uci: 'e4e5',
+    fen: 'k3R/5/5/5/K4[] b - - 2 1',
+    prevFen: 'k4/4R/5/5/K4[] w - - 1 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-11=');
+});
+
+test('moveFromNotationStyle minishogi Rook moves away from rank 1 no promotion', () => {
+  // origin rank 1 IS in the minishogi promotion zone - should append '=' since player could have promoted
+  const move = {
+    san: '',
+    uci: 'e5e4',
+    fen: 'k4/4R/5/5/K4[] b - - 3 1',
+    prevFen: 'k3R/5/5/5/K4[] w - - 2 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-12=');
+});
+
+test('moveFromNotationStyle minishogi Rook to rank 1 with promotion', () => {
+  const move = {
+    san: '',
+    uci: 'e4e5',
+    fen: 'k3+R/5/5/5/K4[] b - - 2 1',
+    prevFen: 'k4/4R/5/5/K4[] w - - 1 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-11+');
+});
+
 // Oware
 test('moveFromNotationStyle oware c1 pos stone from starting', () => {
   const move = { san: '', uci: 'c1f2', fen: 'DDDDDD/DDDDDD 0 0 S', prevFen: 'DDDDDD/DDDDDD 0 0 S' };
