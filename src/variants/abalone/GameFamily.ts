@@ -251,12 +251,12 @@ export abstract class GameFamily extends Variant {
 	
 	protected static getPiece(board: Board, pos: Pos): Piece | undefined {
 		const i = this.getFenIndex(pos);
-		return i? board.get(i): undefined;
+		return i !== undefined ? board.get(i) : undefined;
 	}
 	
 	protected static setPiece(board: Board, pos: Pos, piece: Piece): void {
 		const i = this.getFenIndex(pos);
-		if (i) board.set(i, piece);
+		if (i !== undefined) board.set(i, piece);
 	}
 	
 	protected static getFenIndex(pos: Pos): number | undefined {
