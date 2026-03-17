@@ -152,7 +152,7 @@ export abstract class GameFamily extends Variant {
 				if (areEqual(from, to)) to = tto;
 				else if (!this.isCell(to)) {// Ejection
 					to = sub(to, uvect);
-					sep = '×';
+					sep = 'x';
 				}
 				break;
 			}
