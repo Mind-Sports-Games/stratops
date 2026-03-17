@@ -99,7 +99,7 @@ export abstract class GameFamily extends Variant {
 		const board = this.readFen_board(move.prevFen);
 		
 		if (board.isOk) {
-			const m = this.uciToMove(move.uci), from = m[0],
+			const m = this.uciToMove(move), from = m[0],
 				cFrom = this.getPiece(board.value, from);
 			
 			if (cFrom !== undefined) {
@@ -200,8 +200,8 @@ export abstract class GameFamily extends Variant {
 		return '?';
 	}
 	
-	static uciToMove(uci: string): [Pos, Pos] {
-		const reg = matchKeys(uci);
+	static uciToMove(move: ExtendedMoveInfo): [Pos, Pos] {
+		const reg = matchKeys(move.uci);
 		return [key2pos(reg[0]), key2pos(reg[1])];
 	}
 	
