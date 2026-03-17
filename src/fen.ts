@@ -24,7 +24,7 @@ import {
   roleToChar,
   squareFile,
 } from './util.js';
-import {variantClass} from "./variants/util";
+import { variantClass } from './variants/util';
 
 const O = fp.Option;
 const R = fp.Result;
@@ -402,17 +402,20 @@ const parseMancalaFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
 // ------------------------------------------------------------------------------
 // Abalone FEN parsing
 const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
-	return (variantClass(rules).readFen(fen, 0, 0) as Result<[Board, number, number, PlayerIndex, number, number, number], FenError>)
-		.map(([board, p1Captures, p2Captures, turn, halfmoves, fullmoves, pliesRemainingThisTurn]) => ({
-			...defaultSetup(),
-			board,
-			p1Captures,
-			p2Captures,
-			turn,
-			halfmoves,
-			fullmoves,
-			pliesRemainingThisTurn,
-		}));
+  return (variantClass(rules).readFen(fen, 0, 0) as Result<
+    [Board, number, number, PlayerIndex, number, number, number],
+    FenError
+  >)
+    .map(([board, p1Captures, p2Captures, turn, halfmoves, fullmoves, pliesRemainingThisTurn]) => ({
+      ...defaultSetup(),
+      board,
+      p1Captures,
+      p2Captures,
+      turn,
+      halfmoves,
+      fullmoves,
+      pliesRemainingThisTurn,
+    }));
 };
 
 // ------------------------------------------------------------------------------
