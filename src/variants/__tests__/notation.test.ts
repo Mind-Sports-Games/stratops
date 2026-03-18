@@ -724,7 +724,7 @@ test('Abalone: move notation', () => {
     fen: '', // Not used
   };
   notation = Abalone.computeMoveNotation(move);
-  expect(notation).toBe('b1×b6');
+  expect(notation).toBe('b1xb6');
 
   //
   // Broadside
@@ -759,7 +759,7 @@ test('Grand Abalone: move notation', () => {
     fen: '', // Not used
   };
   notation = GrandAbalone.computeMoveNotation(move);
-  expect(notation).toBe('b1×b7');
+  expect(notation).toBe('b1xb7');
 
   //
   // Broadside
