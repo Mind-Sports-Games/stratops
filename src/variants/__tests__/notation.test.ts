@@ -1,4 +1,6 @@
 import { expect, test } from '@jest/globals';
+import { Abalone } from '../abalone/Abalone';
+import { GrandAbalone } from '../abalone/GrandAbalone';
 import { type GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
 import { GameFamilyKey } from '../types';
 import { gameFamilyClass, variantClass } from '../util';
@@ -697,4 +699,76 @@ test('moveFromNotationStyle go k10 move', () => {
 
   const notation = variantClass('go19x19').computeMoveNotation(move);
   expect(notation).toBe('l10');
+});
+
+//
+// Abalone
+test('Abalone: move notation', () => {
+  const prevFen = '5/6/7/8/9/8/7/SSSsss/SS1ss 0 0 b 0 1';
+
+  //
+  // In-line
+  let move = {
+    san: '', // Not used
+    uci: 'a1a2',
+    prevFen,
+    fen: '', // Not used
+  };
+  let notation = Abalone.computeMoveNotation(move);
+  expect(notation).toBe('a1a3');
+
+  move = {
+    san: '', // Not used
+    uci: 'b1b2', // Illegal, but it does not matter here
+    prevFen,
+    fen: '', // Not used
+  };
+  notation = Abalone.computeMoveNotation(move);
+  expect(notation).toBe('b1×b6');
+
+  //
+  // Broadside
+  move = {
+    san: '', // Not used
+    uci: 'b1c4', // Illegal, but it does not matter here
+    prevFen,
+    fen: '', // Not used
+  };
+  notation = Abalone.computeMoveNotation(move);
+  expect(notation).toBe('b1c4');
+});
+
+test('Grand Abalone: move notation', () => {
+  const prevFen = '6/7/8/9/10/11/10/9/8/SSSSsss/SSS1ss 0 0 b 0 1 2';
+
+  //
+  // In-line
+  let move = {
+    san: '', // Not used
+    uci: 'a1a2',
+    prevFen,
+    fen: '', // Not used
+  };
+  let notation = GrandAbalone.computeMoveNotation(move);
+  expect(notation).toBe('a1a4');
+
+  move = {
+    san: '', // Not used
+    uci: 'b1b2',
+    prevFen,
+    fen: '', // Not used
+  };
+  notation = GrandAbalone.computeMoveNotation(move);
+  expect(notation).toBe('b1×b7');
+
+  //
+  // Broadside
+  move = {
+    san: '', // Not used
+    uci: 'b1c5',
+    prevFen,
+    fen: '', // Not used
+  };
+  notation = GrandAbalone.computeMoveNotation(move);
+  expect(notation).toBe('b1c5');
 });

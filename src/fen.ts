@@ -24,7 +24,7 @@ import {
   roleToChar,
   squareFile,
 } from './util.js';
-import { parseBoardFen as parseAbaloneBoardFen } from './variants/abalone/fen.js';
+import { variantClass } from './variants/util';
 
 const O = fp.Option;
 const R = fp.Result;
@@ -49,6 +49,7 @@ export enum InvalidFen {
   RemainingChecks = 'ERR_REMAINING_CHECKS',
   Halfmoves = 'ERR_HALFMOVES',
   Fullmoves = 'ERR_FULLMOVES',
+  PliesRemainingThisTurn = 'ERR_PLIESREMAINING',
   PlayerScore = 'ERR_PLAYER_SCORE',
   PlayerCaptures = 'ERR_PLAYER_CAPTURES',
   PassCount = 'ERR_PASS_COUNT',
@@ -338,12 +339,15 @@ export const parseHalfMoves = (part: fp.Option<string>): Result<number, FenError
 export const parseFullMoves = (part: fp.Option<string>): Result<number, FenError> =>
   parseMoves(1, 1)(fenErr(InvalidFen.Fullmoves))(part);
 
+export const parsePliesRemainingThisTurn = (part: fp.Option<string>): Result<number, FenError> =>
+  parseMoves(0, 0)(fenErr(InvalidFen.PliesRemainingThisTurn))(part);
+
 const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<number, FenError> =>
   fp.pipe(part, O.flatMap(parseSmallUint), O.toResult(err));
 
-const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
-const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
-const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
+export const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
+export const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
+export const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
 
 export const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
   fp.pipe(
@@ -398,27 +402,19 @@ const parseMancalaFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
 // ------------------------------------------------------------------------------
 // Abalone FEN parsing
 const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
-  const [boardPart, ...parts] = fen.split(' ');
-
-  if (parts.length !== 5) {
-    return Result.err(new FenError(InvalidFen.Fen));
-  }
-
-  return fp
-    .resultZip([
-      parseAbaloneBoardFen(rules)(boardPart),
-      parseScore(parts[0]),
-      parseScore(parts[1]),
-      parsePlayerTurn('b', 'w')(parts[2]),
-      parseFullMoves(parts[3]),
-    ])
-    .map(([board, p1Captures, p2Captures, turn, fullmoves]) => ({
+  return (variantClass(rules).readFen(fen, 0, 0) as Result<
+    [Board, number, number, PlayerIndex, number, number, number],
+    FenError
+  >)
+    .map(([board, p1Captures, p2Captures, turn, halfmoves, fullmoves, pliesRemainingThisTurn]) => ({
       ...defaultSetup(),
       board,
       p1Captures,
       p2Captures,
       turn,
+      halfmoves,
       fullmoves,
+      pliesRemainingThisTurn,
     }));
 };
 
@@ -636,14 +632,11 @@ export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, Fe
 export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   if (rules === 'oware' || rules === 'togyzkumalak' || rules === 'bestemshe') {
     return parseMancalaFen(rules)(fen);
-  }
-  if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
+  } else if (rules === 'go9x9' || rules === 'go13x13' || rules === 'go19x19') {
     return parseGoFen(rules)(fen);
-  }
-  if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
+  } else if (rules === 'backgammon' || rules === 'hyper' || rules === 'nackgammon') {
     return parseBackgammonFen(rules)(fen);
-  }
-  if (rules === 'abalone') {
+  } else if (rules === 'abalone' || rules === 'grandabalone') {
     return parseAbaloneFen(rules)(fen);
   }
   if (rules === 'dameo') {

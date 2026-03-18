@@ -327,6 +327,7 @@ export const RULES = [
   'breakthrough',
   'minibreakthrough',
   'abalone',
+  'grandabalone',
   'international',
   'antidraughts',
   'brkthru',
