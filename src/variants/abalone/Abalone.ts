@@ -1,5 +1,6 @@
 import { type Result } from '@badrap/result';
 import { type PositionError } from '../../chess';
+import { registerAbaloneFenParser } from '../../fen';
 import type { Setup } from '../../setup';
 import { type BoardDimensions, type Rules } from '../../types';
 import { defined } from '../../util.js';
@@ -34,3 +35,5 @@ export class Abalone extends GameFamily {
     });
   }
 }
+
+registerAbaloneFenParser('abalone', fen => Abalone.readFen(fen, 0, 0).map(t => Abalone.fenSetupFromTuple(t)));

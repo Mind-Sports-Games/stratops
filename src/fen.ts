@@ -24,7 +24,6 @@ import {
   roleToChar,
   squareFile,
 } from './util.js';
-import { variantClass } from './variants/util';
 
 const O = fp.Option;
 const R = fp.Result;
@@ -400,22 +399,16 @@ const parseMancalaFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
 };
 
 // ------------------------------------------------------------------------------
-// Abalone FEN parsing
+// Abalone FEN parsing — parsers registered by Abalone/GrandAbalone at load time
+type AbaloneSetupParser = (fen: string) => Result<Setup, FenError>;
+const abaloneSetupParsers = new Map<string, AbaloneSetupParser>();
+export const registerAbaloneFenParser = (rules: string, parser: AbaloneSetupParser): void => {
+  abaloneSetupParsers.set(rules, parser);
+};
 const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
-  return (variantClass(rules).readFen(fen, 0, 0) as Result<
-    [Board, number, number, PlayerIndex, number, number, number],
-    FenError
-  >)
-    .map(([board, p1Captures, p2Captures, turn, halfmoves, fullmoves, pliesRemainingThisTurn]) => ({
-      ...defaultSetup(),
-      board,
-      p1Captures,
-      p2Captures,
-      turn,
-      halfmoves,
-      fullmoves,
-      pliesRemainingThisTurn,
-    }));
+  const parser = abaloneSetupParsers.get(rules);
+  if (!parser) return Result.err(new FenError(InvalidFen.Fen));
+  return parser(fen);
 };
 
 // ------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 import { type Result } from '@badrap/result';
 import { type PositionError } from '../../chess';
+import { registerAbaloneFenParser } from '../../fen';
 import type { Setup } from '../../setup';
 import { type BoardDimensions, type Rules } from '../../types';
 import { defined } from '../../util.js';
@@ -47,3 +48,8 @@ export class GrandAbalone extends GameFamily {
     return true;
   }
 }
+
+registerAbaloneFenParser(
+  'grandabalone',
+  fen => GrandAbalone.readFen(fen, 0, 0).map(t => GrandAbalone.fenSetupFromTuple(t)),
+);

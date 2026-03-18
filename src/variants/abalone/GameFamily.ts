@@ -12,7 +12,7 @@ import {
   parseScore,
 } from '../../fen';
 import * as fp from '../../fp';
-import type { Setup } from '../../setup';
+import { defaultSetup, type Setup } from '../../setup';
 import type { Piece, PlayerIndex } from '../../types';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
@@ -310,5 +310,17 @@ export abstract class GameFamily extends Variant {
 
   protected static getFenIndex(pos: Pos): number | undefined {
     return pos[0] < 0 || pos[1] < 0 ? undefined : pos[0] + pos[1] * this.width;
+  }
+
+  static fenSetupFromTuple([board, p1Captures, p2Captures, turn, halfmoves, fullmoves]: [
+    Board,
+    number,
+    number,
+    PlayerIndex,
+    number,
+    number,
+    number,
+  ]): Setup {
+    return { ...defaultSetup(), board, p1Captures, p2Captures, turn, halfmoves, fullmoves };
   }
 }
