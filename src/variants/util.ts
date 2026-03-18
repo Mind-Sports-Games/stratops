@@ -22,6 +22,8 @@ import { Monster } from './chess/Monster';
 import { NoCastling } from './chess/NoCastling';
 import { RacingKings } from './chess/RacingKings';
 import { ThreeCheck } from './chess/ThreeCheck';
+import { Dameo } from './dameo/Dameo';
+import { GameFamily as DameoGameFamily } from './dameo/GameFamily';
 import { Antidraughts } from './draughts/Antidraughts';
 import { Brazilian } from './draughts/Brazilian';
 import { Brkthru } from './draughts/Brkthru';
@@ -40,8 +42,10 @@ import { Go9x9 } from './go/Go9x9';
 import { GameFamily as LinesOfActionGameFamily } from './linesofaction/GameFamily';
 import { LinesOfAction } from './linesofaction/LinesOfAction';
 import { ScrambledEggs } from './linesofaction/ScrambledEggs';
+import { AntiOthello } from './othello/AntiOthello';
 import { GameFamily as OthelloGameFamily } from './othello/GameFamily';
 import { GrandOthello } from './othello/GrandOthello';
+import { OctagonOthello } from './othello/OctagonOthello';
 import { Othello } from './othello/Othello';
 import { GameFamily as OwareGameFamily } from './oware/GameFamily';
 import { Oware } from './oware/Oware';
@@ -52,10 +56,11 @@ import { Bestemshe } from './togyzkumalak/Bestemshe';
 import { GameFamily as TogyzkumalakGameFamily } from './togyzkumalak/GameFamily';
 import { Togyzkumalak } from './togyzkumalak/Togyzkumalak';
 import { GameFamilyKey, VariantKey } from './types';
-import { Variant } from './Variant';
 import { GameFamily as XiangqiGameFamily } from './xiangqi/GameFamily';
 import { MiniXiangqi } from './xiangqi/MiniXiangqi';
 import { Xiangqi } from './xiangqi/Xiangqi';
+
+import { Variant } from './Variant';
 
 export function variantClass(rules: Rules): typeof Variant {
   switch (rules) {
@@ -97,6 +102,10 @@ export function variantClass(rules: Rules): typeof Variant {
       return Othello.getClass();
     case 'flipello10':
       return GrandOthello.getClass();
+    case 'antiflipello':
+      return AntiOthello.getClass();
+    case 'octagonflipello':
+      return OctagonOthello.getClass();
     case 'amazons':
       return Amazons.getClass();
     case 'oware':
@@ -143,6 +152,8 @@ export function variantClass(rules: Rules): typeof Variant {
       return Frisian.getClass();
     case 'frysk':
       return Frysk.getClass();
+    case 'dameo':
+      return Dameo.getClass();
     default:
       return Variant.getClass();
   }
@@ -194,6 +205,10 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'flipello';
     case VariantKey.flipello10:
       return 'flipello10';
+    case VariantKey.antiflipello:
+      return 'antiflipello';
+    case VariantKey.octagonflipello:
+      return 'octagonflipello';
     case VariantKey.amazons:
       return 'amazons';
     case VariantKey.breakthroughtroyka:
@@ -241,6 +256,8 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'frisian';
     case VariantKey.frysk:
       return 'frysk';
+    case VariantKey.dameo:
+      return 'dameo';
     default:
       return 'chess';
   }
@@ -252,6 +269,8 @@ export function gameFamilyClass(gameFamilyKey?: GameFamilyKey): typeof Variant {
       return AbaloneGameFamily.getClass();
     case GameFamilyKey.draughts:
       return DraughtsGameFamily.getClass();
+    case GameFamilyKey.dameo:
+      return DameoGameFamily.getClass();
     case GameFamilyKey.chess:
       return ChessGameFamily.getClass();
     case GameFamilyKey.loa:

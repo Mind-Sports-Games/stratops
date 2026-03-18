@@ -10,6 +10,7 @@ export class MiniShogi extends GameFamily {
   static override height: BoardDimensions['ranks'] = 5;
   static override width: BoardDimensions['files'] = 5;
   static override rules: Rules = 'minishogi';
+  static override promotionZoneSize = 1;
 
   static override default(): MiniShogi {
     return super.defaultBoard(new this()) as MiniShogi;

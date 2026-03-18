@@ -1,14 +1,22 @@
 import { Result } from '@badrap/result';
 import { kingAttacks } from '../../attacks';
-import { type Context, IllegalSetup, PositionError } from '../../chess';
+import { type Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
-import type { Outcome, PlayerIndex } from '../../types';
+import type { Outcome, PlayerFENChar, PlayerIndex } from '../../types';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.loa;
+  static override playerColors: Record<PlayerIndex, string> = {
+    p1: 'black',
+    p2: 'white',
+  };
+  static override playerFENChars: Record<PlayerIndex, PlayerFENChar> = {
+    p1: 'w',
+    p2: 'b',
+  };
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.uci;
@@ -16,14 +24,6 @@ export abstract class GameFamily extends Variant {
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
-  }
-
-  static override getInitialEpd(): string {
-    return 'b - -';
-  }
-
-  static override getEmptyEpd(): string {
-    return `b - -`;
   }
 
   static override getNotationStyle(): NotationStyle {
@@ -37,12 +37,6 @@ export abstract class GameFamily extends Variant {
     ];
   }
 
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-    // TODO: maybe do some more validation of the position
-    return Result.ok(undefined);
-  }
-
   override clone(): GameFamily {
     return super.clone() as GameFamily;
   }
@@ -51,20 +45,44 @@ export abstract class GameFamily extends Variant {
     return false;
   }
 
+  override toSetup(): Setup {
+    return {
+      board: this.board.clone(),
+      pockets: undefined,
+      turn: this.turn,
+      unmovedRooks: SquareSet.empty(),
+      epSquare: undefined,
+      remainingChecks: undefined,
+      halfmoves: this.halfmoves,
+      fullmoves: this.fullmoves,
+    };
+  }
+
   override isVariantEnd(): boolean {
     return !!this.variantOutcome();
   }
 
   isPlayerIndexConnected(playerIndex: PlayerIndex): boolean {
     const pieces = playerIndex === 'p1' ? this.board.p1 : this.board.p2;
-    let connected = SquareSet.empty();
+    if (pieces.size() === 0) return false;
 
-    let next = pieces.first();
-    while (next) {
-      connected = connected.with(next);
-      next = kingAttacks(next).intersect(pieces).diff64(connected).first();
+    const visited = new Set<number>();
+    const queue: number[] = [pieces.first()!];
+
+    while (queue.length > 0) {
+      const sq = queue.pop()!;
+      if (visited.has(sq)) continue;
+      visited.add(sq);
+
+      // For each adjacent square (king moves)
+      for (const neighbor of Array.from(kingAttacks(sq))) {
+        if (pieces.has(neighbor) && !visited.has(neighbor)) {
+          queue.push(neighbor);
+        }
+      }
     }
-    return connected.size() > 0 && connected.size() === pieces.size();
+
+    return visited.size === pieces.size();
   }
 
   override variantOutcome(_ctx?: Context): Outcome | undefined {
@@ -74,8 +92,9 @@ export abstract class GameFamily extends Variant {
       return { winner: 'p1' };
     } else if (!p1Wins && p2Wins) {
       return { winner: 'p2' };
-    } else {
-      return undefined;
+    } else if (p1Wins && p2Wins) {
+      return { winner: undefined }; // Draw, both players connected
     }
+    return undefined;
   }
 }

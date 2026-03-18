@@ -1,3 +1,4 @@
+import { Board } from '../../board';
 import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
@@ -5,7 +6,13 @@ export class ScrambledEggs extends GameFamily {
   static override rules: Rules = 'scrambledeggs';
 
   static override default(): ScrambledEggs {
-    return super.defaultBoard(new this()) as ScrambledEggs;
+    const pos = new this();
+    pos.board = Board.scrambledEggs();
+    pos.turn = 'p1';
+    pos.halfmoves = 0;
+    pos.fullmoves = 1;
+
+    return pos;
   }
 
   static override getClass() {

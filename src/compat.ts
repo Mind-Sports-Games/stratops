@@ -71,12 +71,15 @@ export function playstrategyRules(
     | 'monster'
     | 'linesOfAction'
     | 'scrambledEggs'
+    | 'dameo'
     | 'shogi'
     | 'minishogi'
     | 'xiangqi'
     | 'minixiangqi'
     | 'flipello'
     | 'flipello10'
+    | 'antiflipello'
+    | 'octagonflipello'
     | 'amazons'
     | 'oware'
     | 'togyzkumalak'
@@ -141,6 +144,8 @@ export function playstrategyVariants(
   | 'minixiangqi'
   | 'flipello'
   | 'flipello10'
+  | 'antiflipello'
+  | 'octagonflipello'
   | 'amazons'
   | 'oware'
   | 'togyzkumalak'
@@ -164,6 +169,7 @@ export function playstrategyVariants(
   | 'english'
   | 'frisian'
   | 'frysk'
+  | 'dameo'
 {
   switch (rules) {
     case 'chess':

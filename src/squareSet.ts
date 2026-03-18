@@ -1,5 +1,12 @@
 import type { PlayerIndex, Square, Tuple } from './types.js';
 
+// Note:
+// In this file, functions and methods with `32` or `64` in their name (e.g., `bswap32`, `shl64`, `diff64`)
+// are specialized for 32-bit or 64-bit boards and are supposed to work correctly for those sizes specifically.
+// Functions with `WH` in their name (e.g., `padWH`, `unionWH`, `diffWH`) are generic and work for any board width and height.
+// Functions with `Square` in their name (e.g., `padSquare`, `fullSquare`) are intended for square boards of size N×N.
+// These functions are supposed to be integrated to the generic Variant file and be overriden based on the game when needed (so the "WH" or "Size" part would be removed).
+
 function popcnt32(n: number): number {
   n = n - ((n >>> 1) & 0x5555_5555);
   n = (n & 0x3333_3333) + ((n >>> 2) & 0x3333_3333);
@@ -68,7 +75,7 @@ export class SquareSet implements Iterable<Square> {
 
   static fromSquare(square: Square): SquareSet {
     return bitPartMap(square)({
-      [BitPartTarget.Gte128]: (_: number) => new SquareSet([0, 0, 0, 0]),
+      [BitPartTarget.Gte128]: (_: number) => new SquareSet([0, 0, 0, 0]), // no squares
       [BitPartTarget.Gte96]: (square: number) => new SquareSet([0, 0, 0, 1 << (square - 96)]),
       [BitPartTarget.Gte64]: (square: number) => new SquareSet([0, 0, 1 << (square - 64), 0]),
       [BitPartTarget.Gte32]: (square: number) => new SquareSet([0, 1 << (square - 32), 0, 0]),
@@ -84,45 +91,259 @@ export class SquareSet implements Iterable<Square> {
   static full64(): SquareSet {
     return new SquareSet([0xffff_ffff, 0xffff_ffff, 0, 0]);
   }
+  static fullSquare(size: number): SquareSet {
+    return new SquareSet([0xffff_ffff, 0xffff_ffff, 0xffff_ffff, 0xffff_ffff])
+      .padSquare(size);
+  }
+  static fullWH(width: number, height: number): SquareSet {
+    return new SquareSet([0xffff_ffff, 0xffff_ffff, 0xffff_ffff, 0xffff_ffff])
+      .padWH(width, height);
+  }
 
   static fromRank64(rank: number): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0xff, 0, 0, 0]).shl64(8 * rank);
+  }
+  static fromRankWH(rank: number, width: number, height: number): SquareSet {
+    if (rank < 0 || rank >= height) return SquareSet.empty();
+    const maxSquare = width * height;
+    const bitParts = [0, 0, 0, 0];
+    for (let file = 0; file < width; file++) {
+      const square = rank * width + file;
+      if (square < maxSquare) {
+        const part = Math.floor(square / 32);
+        const idx = square % 32;
+        bitParts[part] |= 1 << idx;
+      }
+    }
+    const paddedBitParts: Tuple<number, 4> = [
+      bitParts[0] ?? 0,
+      bitParts[1] ?? 0,
+      bitParts[2] ?? 0,
+      bitParts[3] ?? 0,
+    ];
+    return new SquareSet(paddedBitParts);
   }
 
   static fromFile64(file: number): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0x0101_0101 << file, 0x0101_0101 << file, 0, 0]);
   }
+  static fromFileWH(file: number, width: number, height: number): SquareSet {
+    if (file < 0 || file >= width) return SquareSet.empty();
+    const bitParts: number[] = [0, 0, 0, 0];
+    for (let rank = 0; rank < height; rank++) {
+      const square = rank * width + file;
+      if (square < 128) {
+        const part = Math.floor(square / 32);
+        const idx = square % 32;
+        bitParts[part] |= 1 << idx;
+      }
+    }
+    const paddedBitParts: Tuple<number, 4> = [
+      bitParts[0] ?? 0,
+      bitParts[1] ?? 0,
+      bitParts[2] ?? 0,
+      bitParts[3] ?? 0,
+    ];
+    return new SquareSet(paddedBitParts);
+  }
+
+  // Note: these 2 pad functions below just represent a mask to make sure we keep only the relevant bits for a given size.
+  // It will be invoked after each bit manipulation to maintain consistency so the values do not "overflow" and corrupt the board representation even after chained bits operations.
+  padWH(width: number, height: number): SquareSet {
+    const maxSquare = width * height;
+    if (maxSquare >= 128) return this;
+    // Create a mask with only the relevant bits set
+    const maskParts: number[] = [0, 0, 0, 0];
+    for (let sq = 0; sq < maxSquare; sq++) {
+      const part = Math.floor(sq / 32);
+      const idx = sq % 32;
+      maskParts[part] |= 1 << idx;
+    }
+    return new SquareSet([
+      this.bitParts[0] & maskParts[0],
+      this.bitParts[1] & maskParts[1],
+      this.bitParts[2] & maskParts[2],
+      this.bitParts[3] & maskParts[3],
+    ]);
+  }
+  padSquare(size: number): SquareSet {
+    const maxSquare = size * size;
+    if (maxSquare >= 128) return this;
+    const maskParts: number[] = [0, 0, 0, 0];
+    for (let part = 0; part < 4; part++) {
+      const start = part * 32;
+      const end = Math.min(maxSquare, start + 32);
+      if (end > start) {
+        maskParts[part] = (1 << (end - start)) - 1;
+      }
+    }
+    return new SquareSet([
+      this.bitParts[0] & maskParts[0],
+      this.bitParts[1] & maskParts[1],
+      this.bitParts[2] & maskParts[2],
+      this.bitParts[3] & maskParts[3],
+    ]);
+  }
 
   static corners64(): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0x81, 0x8100_0000, 0, 0]);
+  }
+  static cornersWH(width: number, height: number): SquareSet {
+    const maxSquare = width * height;
+    const indices = [
+      0,
+      width - 1,
+      (height - 1) * width,
+      (height - 1) * width + width - 1,
+    ];
+    const bitParts = [0, 0, 0, 0];
+    for (const idx of indices) {
+      if (idx >= 0 && idx < maxSquare) {
+        const part = Math.floor(idx / 32);
+        const bit = idx % 32;
+        bitParts[part] |= 1 << bit;
+      }
+    }
+
+    return new SquareSet(
+      [
+        bitParts[0] ?? 0,
+        bitParts[1] ?? 0,
+        bitParts[2] ?? 0,
+        bitParts[3] ?? 0,
+      ] as const,
+    );
   }
 
   static center64(): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0x1800_0000, 0x18, 0, 0]);
   }
+  static centerWH(width: number, height: number): SquareSet {
+    const maxSquare = width * height;
+    const bitParts = [0, 0, 0, 0];
+    const indices: number[] = [];
+    const midRanks = height % 2 === 0 ? [height / 2 - 1, height / 2] : [Math.floor(height / 2)];
+    const midFiles = width % 2 === 0 ? [width / 2 - 1, width / 2] : [Math.floor(width / 2)];
+    for (const rank of midRanks) {
+      for (const file of midFiles) {
+        const idx = rank * width + file;
+        if (idx >= 0 && idx < maxSquare) indices.push(idx);
+      }
+    }
+    for (const idx of indices) {
+      const part = Math.floor(idx / 32);
+      const bit = idx % 32;
+      bitParts[part] |= 1 << bit;
+    }
+    return new SquareSet(
+      [
+        bitParts[0] ?? 0,
+        bitParts[1] ?? 0,
+        bitParts[2] ?? 0,
+        bitParts[3] ?? 0,
+      ] as const,
+    );
+  }
 
   static backranks64(): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0xff, 0xff00_0000, 0, 0]);
+  }
+  static backranksWH(width: number, height: number): SquareSet {
+    const backrank = [0, 0, 0, 0];
+    for (let file = 0; file < width; file++) {
+      const square = (height - 1) * width + file;
+      const part = Math.floor(square / 32);
+      const idx = square % 32;
+      backrank[part] |= 1 << idx;
+    }
+    return new SquareSet(
+      [
+        backrank[0] ?? 0,
+        backrank[1] ?? 0,
+        backrank[2] ?? 0,
+        backrank[3] ?? 0,
+      ] as const,
+    );
   }
 
   static backrank64(playerIndex: PlayerIndex): SquareSet {
     // TODO: this is only correct for chess for now
     return playerIndex === 'p1' ? new SquareSet([0xff, 0, 0, 0]) : new SquareSet([0, 0xff00_0000, 0, 0]);
   }
+  static backrankWH(playerIndex: PlayerIndex, width: number, height: number): SquareSet {
+    const backrank = [0, 0, 0, 0];
+    const rank = playerIndex === 'p1' ? height - 1 : 0;
+    for (let file = 0; file < width; file++) {
+      const square = rank * width + file;
+      const part = Math.floor(square / 32);
+      const idx = square % 32;
+      backrank[part] |= 1 << idx;
+    }
+    return new SquareSet(
+      [
+        backrank[0] ?? 0,
+        backrank[1] ?? 0,
+        backrank[2] ?? 0,
+        backrank[3] ?? 0,
+      ] as const,
+    );
+  }
 
   static lightSquares64(): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0x55aa_55aa, 0x55aa_55aa, 0, 0]);
   }
+  static lightSquaresWH(width: number, height: number): SquareSet {
+    const lightSquares = [0, 0, 0, 0];
+    for (let rank = 0; rank < height; rank++) {
+      for (let file = 0; file < width; file++) {
+        if ((rank + file) % 2 === 0) {
+          const square = rank * width + file;
+          const part = Math.floor(square / 32);
+          const idx = square % 32;
+          lightSquares[part] |= 1 << idx;
+        }
+      }
+    }
+    return new SquareSet(
+      [
+        lightSquares[0] ?? 0,
+        lightSquares[1] ?? 0,
+        lightSquares[2] ?? 0,
+        lightSquares[3] ?? 0,
+      ] as const,
+    );
+  }
 
   static darkSquares64(): SquareSet {
     // TODO: this is only correct for chess for now
     return new SquareSet([0xaa55_aa55, 0xaa55_aa55, 0, 0]);
+  }
+  static darkSquaresWH(width: number, height: number): SquareSet {
+    const darkSquares = [0, 0, 0, 0];
+    for (let rank = 0; rank < height; rank++) {
+      for (let file = 0; file < width; file++) {
+        if ((rank + file) % 2 !== 0) {
+          const square = rank * width + file;
+          const part = Math.floor(square / 32);
+          const idx = square % 32;
+          darkSquares[part] |= 1 << idx;
+        }
+      }
+    }
+    return new SquareSet(
+      [
+        darkSquares[0] ?? 0,
+        darkSquares[1] ?? 0,
+        darkSquares[2] ?? 0,
+        darkSquares[3] ?? 0,
+      ] as const,
+    );
   }
 
   private copy(f: CopyParams): SquareSet {
@@ -137,6 +358,9 @@ export class SquareSet implements Iterable<Square> {
   complement(): SquareSet {
     return new SquareSet([~this.bitParts[0], ~this.bitParts[1], ~this.bitParts[2], ~this.bitParts[3]]);
   }
+  complementWH(width: number, height: number): SquareSet {
+    return this.complement().padWH(width, height);
+  }
 
   xor(other: SquareSet): SquareSet {
     return new SquareSet([
@@ -145,6 +369,10 @@ export class SquareSet implements Iterable<Square> {
       this.bitParts[2] ^ other.bitParts[2],
       this.bitParts[3] ^ other.bitParts[3],
     ]);
+  }
+  xorWH(other: SquareSet, width = 8, height = 8): SquareSet {
+    return this.xor(other)
+      .padWH(width, height); // only keeping valid bits
   }
 
   union(other: SquareSet): SquareSet {
@@ -155,7 +383,12 @@ export class SquareSet implements Iterable<Square> {
       this.bitParts[3] | other.bitParts[3],
     ]);
   }
+  unionWH(other: SquareSet, width = 8, height = 8): SquareSet {
+    return this.union(other)
+      .padWH(width, height); // only keeping valid bits
+  }
 
+  // safe
   intersect(other: SquareSet): SquareSet {
     return new SquareSet([
       this.bitParts[0] & other.bitParts[0],
@@ -173,15 +406,21 @@ export class SquareSet implements Iterable<Square> {
       this.bitParts[3] & ~other.bitParts[3],
     ]);
   }
+  diffWH(other: SquareSet, width = 8, height = 8): SquareSet {
+    return this.diff(other)
+      .padWH(width, height); // only keeping valid bits
+  }
 
   diff64(other: SquareSet): SquareSet {
     return new SquareSet([this.bitParts[0] & ~other.bitParts[0], this.bitParts[1] & ~other.bitParts[1], 0, 0]);
   }
 
+  // safe
   intersects(other: SquareSet): boolean {
     return this.intersect(other).nonEmpty();
   }
 
+  // safe
   isDisjoint(other: SquareSet): boolean {
     return this.intersect(other).isEmpty();
   }
@@ -189,9 +428,19 @@ export class SquareSet implements Iterable<Square> {
   supersetOf64(other: SquareSet): boolean {
     return other.diff64(this).isEmpty();
   }
+  supersetWH(other: SquareSet, width: number, height: number): boolean {
+    const a = this.padWH(width, height);
+    const b = other.padWH(width, height);
+    return b.diff(a).isEmpty();
+  }
 
   subsetOf64(other: SquareSet): boolean {
     return this.diff64(other).isEmpty();
+  }
+  subsetWH(other: SquareSet, width: number, height: number): boolean {
+    const a = this.padWH(width, height);
+    const b = other.padWH(width, height);
+    return a.diff(b).isEmpty();
   }
 
   shr64(shift: number): SquareSet {
@@ -244,6 +493,19 @@ export class SquareSet implements Iterable<Square> {
       },
       [BitPartTarget.Default]: () => this,
     });
+  }
+  shrWH(shift: number, width: number, height: number): SquareSet {
+    if (shift <= 0) return this.padWH(width, height);
+    const maxSquare = width * height;
+    if (shift >= maxSquare) return SquareSet.empty();
+
+    let result = SquareSet.empty();
+    for (let sq = shift; sq < maxSquare; sq++) {
+      if (this.has(sq)) {
+        result = result.with(sq - shift);
+      }
+    }
+    return result.padWH(width, height);
   }
 
   shl64(shift: number): SquareSet {
@@ -300,6 +562,19 @@ export class SquareSet implements Iterable<Square> {
       [BitPartTarget.Default]: () => this,
     });
   }
+  shlWH(shift: number, width: number, height: number): SquareSet {
+    if (shift <= 0) return this.padWH(width, height);
+    const maxSquare = width * height;
+    if (shift >= maxSquare) return SquareSet.empty();
+
+    let result = SquareSet.empty();
+    for (let sq = 0; sq < maxSquare - shift; sq++) {
+      if (this.has(sq)) {
+        result = result.with(sq + shift);
+      }
+    }
+    return result.padWH(width, height);
+  }
 
   bswap128(): SquareSet {
     return new SquareSet([
@@ -312,6 +587,33 @@ export class SquareSet implements Iterable<Square> {
 
   bswap64(): SquareSet {
     return new SquareSet([bswap32(this.bitParts[1]), bswap32(this.bitParts[0]), 0, 0]);
+  }
+  bswapSize(size: number): SquareSet {
+    let result = SquareSet.empty();
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        const fromSq = row * size + col;
+        const toSq = (size - 1 - row) * size + col;
+        if (this.has(fromSq)) {
+          result = result.with(toSq);
+        }
+      }
+    }
+    return result;
+  }
+  bswapWH(width: number, height: number): SquareSet {
+    const maxSquare = width * height;
+    let result = SquareSet.empty();
+    for (let sq = 0; sq < maxSquare; sq++) {
+      const row = Math.floor(sq / width);
+      const col = sq % width;
+      const mirroredRow = height - 1 - row;
+      const mirroredSq = mirroredRow * width + col;
+      if (this.has(sq)) {
+        result = result.with(mirroredSq);
+      }
+    }
+    return result.padWH(width, height);
   }
 
   rbit128(): SquareSet {
@@ -326,15 +628,36 @@ export class SquareSet implements Iterable<Square> {
   rbit64(): SquareSet {
     return new SquareSet([rbit32(this.bitParts[1]), rbit32(this.bitParts[0]), 0, 0]);
   }
+  rbitWH(width: number, height: number): SquareSet {
+    const maxSquare = width * height;
+    let result = SquareSet.empty();
+    for (let sq = 0; sq < maxSquare; sq++) {
+      if (this.has(sq)) {
+        const reversed = maxSquare - 1 - sq;
+        result = result.with(reversed);
+      }
+    }
+    return result.padWH(width, height);
+  }
 
   // This is only used in attacks, which is only used for chess
-  // TODO: port this to other numbers, it only works for the 64 bit chess representation.
   minus64(other: SquareSet): SquareSet {
     const lo = this.bitParts[0] - other.bitParts[0];
     const c = ((lo & other.bitParts[0] & 1) + (other.bitParts[0] >>> 1) + (lo >>> 1)) >>> 31;
     return new SquareSet([lo, this.bitParts[1] - (other.bitParts[1] + c), 0, 0]);
   }
+  minusWH(other: SquareSet, width: number, height: number): SquareSet {
+    const maxSquare = width * height;
+    let result = SquareSet.empty();
+    for (let sq = 0; sq < maxSquare; sq++) {
+      if (this.has(sq) && !other.has(sq)) {
+        result = result.with(sq);
+      }
+    }
+    return result.padWH(width, height);
+  }
 
+  // safe
   equals(other: SquareSet): boolean {
     return (
       this.bitParts[0] === other.bitParts[0]
@@ -344,20 +667,24 @@ export class SquareSet implements Iterable<Square> {
     );
   }
 
+  // safe
   size(): number {
     return (
       popcnt32(this.bitParts[0]) + popcnt32(this.bitParts[1]) + popcnt32(this.bitParts[2]) + popcnt32(this.bitParts[3])
     );
   }
 
+  // safe
   isEmpty(): boolean {
     return this.bitParts[0] === 0 && this.bitParts[1] === 0 && this.bitParts[2] === 0 && this.bitParts[3] === 0;
   }
 
+  // safe
   nonEmpty(): boolean {
     return this.bitParts[0] !== 0 || this.bitParts[1] !== 0 || this.bitParts[2] !== 0 || this.bitParts[3] !== 0;
   }
 
+  // safe
   has(square: Square): boolean {
     // console.log(`square: ${square}`);
     return (
@@ -373,10 +700,12 @@ export class SquareSet implements Iterable<Square> {
     );
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   set(square: Square, on: boolean): SquareSet {
     return on ? this.with(square) : this.without(square);
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   with(square: Square): SquareSet {
     return bitPartMap(square)({
       [BitPartTarget.Gte128]: (_: number) => new SquareSet(this.bitParts),
@@ -388,6 +717,7 @@ export class SquareSet implements Iterable<Square> {
     });
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   without(square: Square): SquareSet {
     return bitPartMap(square)({
       [BitPartTarget.Gte128]: (_: number) => new SquareSet(this.bitParts),
@@ -399,6 +729,7 @@ export class SquareSet implements Iterable<Square> {
     });
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   toggle(square: Square): SquareSet {
     return bitPartMap(square)({
       [BitPartTarget.Gte128]: (_: number) => new SquareSet(this.bitParts),
@@ -410,6 +741,7 @@ export class SquareSet implements Iterable<Square> {
     });
   }
 
+  // works as a generic function, relies on the fact no square outside the range of the board is set
   last(): Square | undefined {
     if (this.bitParts[3] !== 0) return 127 - Math.clz32(this.bitParts[3]);
     if (this.bitParts[2] !== 0) return 95 - Math.clz32(this.bitParts[2]);
@@ -418,6 +750,7 @@ export class SquareSet implements Iterable<Square> {
     return;
   }
 
+  // works as a generic function, relies on the fact no square outside the range of the board is set
   first(): Square | undefined {
     if (this.bitParts[0] !== 0) return 31 - Math.clz32(this.bitParts[0] & -this.bitParts[0]);
     if (this.bitParts[1] !== 0) return 63 - Math.clz32(this.bitParts[1] & -this.bitParts[1]);
@@ -426,6 +759,7 @@ export class SquareSet implements Iterable<Square> {
     return;
   }
 
+  // works as a generic function, relies on the fact no square outside the range of the board is set
   withoutFirst(): SquareSet {
     if (this.bitParts[0] !== 0) return this.copy({ 0: v => v & (v - 1) });
     if (this.bitParts[1] !== 1) return this.copy({ 1: v => v & (v - 1) });
@@ -433,6 +767,7 @@ export class SquareSet implements Iterable<Square> {
     return this.copy({ 3: v => v & (v - 1) });
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   moreThanOne(): boolean {
     // TODO: There is probably a more efficient way to do this, but
     // because we now have more combinations than we had before I went
@@ -447,10 +782,12 @@ export class SquareSet implements Iterable<Square> {
     );
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   singleSquare(): Square | undefined {
     return this.moreThanOne() ? undefined : this.last();
   }
 
+  // works as a generic function, just do not use an index that is outside the range of the board
   isSingleSquare(): boolean {
     return this.nonEmpty() && !this.moreThanOne();
   }
@@ -509,6 +846,19 @@ export class SquareSet implements Iterable<Square> {
       b0 ^= 1 << idx;
       yield idx;
     }
+  }
+
+  toStringWH(width: number, height: number): string {
+    let str = '';
+    for (let rank = 0; rank < height; rank++) {
+      let line = '';
+      for (let file = 0; file < width; file++) {
+        const sq = rank * width + file;
+        line += this.has(sq) ? 'X ' : '. ';
+      }
+      str += line.trim() + '\n';
+    }
+    return str;
   }
 }
 

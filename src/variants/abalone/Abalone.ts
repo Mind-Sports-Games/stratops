@@ -1,7 +1,7 @@
-import { Result } from '@badrap/result';
-import { IllegalSetup, PositionError } from '../../chess';
+import { type Result } from '@badrap/result';
+import { PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { BoardDimensions, Rules } from '../../types';
+import { type BoardDimensions, type Rules } from '../../types';
 import { defined } from '../../util.js';
 import { GameFamily } from './GameFamily';
 
@@ -32,11 +32,5 @@ export class Abalone extends GameFamily {
 
   protected constructor() {
     super('abalone');
-  }
-
-  protected override validate(): Result<undefined, PositionError> {
-    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
-
-    return Result.ok(undefined);
   }
 }

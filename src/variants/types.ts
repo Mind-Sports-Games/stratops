@@ -74,6 +74,7 @@ export interface LegacyNotationBoard { // comes from lila/ui/common/notation
 export enum NotationStyle {
   abl = 'abl',
   bkg = 'bkg',
+  dmo = 'dmo',
   dpg = 'dpg',
   dpo = 'dpo',
   man = 'man',
@@ -97,6 +98,7 @@ export enum GameFamilyKey {
   go = 'go',
   backgammon = 'backgammon',
   abalone = 'abalone',
+  dameo = 'dameo',
 }
 
 export enum VariantKey {
@@ -121,6 +123,8 @@ export enum VariantKey {
   minixiangqi = 'minixiangqi',
   flipello = 'flipello',
   flipello10 = 'flipello10',
+  antiflipello = 'antiflipello',
+  octagonflipello = 'octagonflipello',
   amazons = 'amazons',
   breakthroughtroyka = 'breakthroughtroyka',
   minibreakthroughtroyka = 'minibreakthroughtroyka',
@@ -145,4 +149,5 @@ export enum VariantKey {
   fromPositionDraughts = 'fromPositionDraughts',
   frisian = 'frisian',
   frysk = 'frysk',
+  dameo = 'dameo',
 }

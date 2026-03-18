@@ -5,6 +5,7 @@ import {
   bishopAttacks,
   kingAttacks,
   knightAttacks,
+  linesOfActionAttacks,
   pawnAttacks,
   queenAttacks,
   ray,
@@ -439,7 +440,7 @@ export class Chess extends Position {
     pos.remainingChecks = undefined;
     pos.halfmoves = setup.halfmoves;
     pos.fullmoves = setup.fullmoves;
-    return pos.validate().map(_ => pos);
+    return pos.validate().map(_ => pos) as Result<Chess, PositionError>;
   }
 
   override clone(): Chess {
@@ -583,7 +584,9 @@ export class Chess extends Position {
     else if (piece.role === 'n-piece') pseudo = knightAttacks(square);
     else if (piece.role === 'r-piece') pseudo = rookAttacks(square, this.board.occupied);
     else if (piece.role === 'q-piece') pseudo = queenAttacks(square, this.board.occupied);
-    else pseudo = kingAttacks(square);
+    else if (piece.role === 'l-piece') {
+      pseudo = linesOfActionAttacks(piece.playerIndex, square, this.board.occupied, this.board.p1, this.board.p2);
+    } else pseudo = kingAttacks(square);
 
     pseudo = pseudo.diff64(this.board[this.turn]);
 

@@ -1,3 +1,4 @@
+import { Board } from '../../board';
 import { Rules } from '../../types';
 import { GameFamily } from './GameFamily';
 
@@ -5,7 +6,13 @@ export class LinesOfAction extends GameFamily {
   static override rules: Rules = 'linesofaction';
 
   static override default(): LinesOfAction {
-    return super.defaultBoard(new this()) as LinesOfAction;
+    const pos = new this();
+    pos.board = Board.linesOfAction();
+    pos.turn = 'p1';
+    pos.halfmoves = 0;
+    pos.fullmoves = 1;
+
+    return pos;
   }
 
   static override getClass() {

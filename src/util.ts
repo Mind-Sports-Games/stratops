@@ -246,6 +246,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'monster':
     case 'linesofaction':
     case 'scrambledeggs':
+    case 'dameo':
     case 'breakthrough':
       return { ranks: 8, files: 8 };
     case 'shogi':
@@ -260,6 +261,10 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'flipello':
       return { ranks: 8, files: 8 };
     case 'flipello10':
+      return { ranks: 10, files: 10 };
+    case 'antiflipello':
+      return { ranks: 8, files: 8 };
+    case 'octagonflipello':
       return { ranks: 10, files: 10 };
     case 'amazons':
       return { ranks: 10, files: 10 };

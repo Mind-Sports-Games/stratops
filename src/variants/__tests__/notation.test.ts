@@ -1,6 +1,7 @@
 import { expect, test } from '@jest/globals';
-import { GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
-import { variantClass } from '../util';
+import { type GameFamily as BackgammonFamily } from '../backgammon/GameFamily';
+import { GameFamilyKey } from '../types';
+import { gameFamilyClass, variantClass } from '../util';
 import { Variant } from '../Variant';
 
 test('testing e4 maps to 56', () => {
@@ -429,6 +430,70 @@ test('moveFromNotationStyle xiangqi 4 pawns in column p2 sideways move', () => {
   expect(notation).toBe('37=6');
 });
 
+// minishogi
+
+test('moveFromNotationStyle minishogi Pawn move', () => {
+  const move = {
+    san: '',
+    uci: 'a2a3',
+    fen: 'rbsgk/4p/P4/5/KGSBR[] b - - 1 1',
+    prevFen: 'rbsgk/4p/5/P4/KGSBR[] w - - 0 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('P-53');
+});
+
+test('moveFromNotationStyle minishogi Rook to rank 2 no promotion symbol', () => {
+  // rank 2 is NOT in the minishogi promotion zone (only rank 1 is) - old code incorrectly appended '='
+  const move = {
+    san: '',
+    uci: 'e1e4',
+    fen: 'k4/4R/5/5/K4[] b - - 1 1',
+    prevFen: 'k4/5/5/5/K3R[] w - - 0 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-12');
+});
+
+test('moveFromNotationStyle minishogi Rook to rank 1 no promotion', () => {
+  const move = {
+    san: '',
+    uci: 'e4e5',
+    fen: 'k3R/5/5/5/K4[] b - - 2 1',
+    prevFen: 'k4/4R/5/5/K4[] w - - 1 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-11=');
+});
+
+test('moveFromNotationStyle minishogi Rook moves away from rank 1 no promotion', () => {
+  // origin rank 1 IS in the minishogi promotion zone - should append '=' since player could have promoted
+  const move = {
+    san: '',
+    uci: 'e5e4',
+    fen: 'k4/4R/5/5/K4[] b - - 3 1',
+    prevFen: 'k3R/5/5/5/K4[] w - - 2 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-12=');
+});
+
+test('moveFromNotationStyle minishogi Rook to rank 1 with promotion', () => {
+  const move = {
+    san: '',
+    uci: 'e4e5',
+    fen: 'k3+R/5/5/5/K4[] b - - 2 1',
+    prevFen: 'k4/4R/5/5/K4[] w - - 1 1',
+  };
+
+  const notation = variantClass('minishogi').computeMoveNotation(move);
+  expect(notation).toBe('R-11+');
+});
+
 // Oware
 test('moveFromNotationStyle oware c1 pos stone from starting', () => {
   const move = { san: '', uci: 'c1f2', fen: 'DDDDDD/DDDDDD 0 0 S', prevFen: 'DDDDDD/DDDDDD 0 0 S' };
@@ -544,14 +609,16 @@ test('moveFromNotationStyle backgammon testing capture', () => {
 test('combinedNotationForBackgammonActions with 2 same actions', () => {
   const actions = ['44:', '44: 8/4', '44: 8/4'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('44: 8/4(2)');
 });
 
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['33:', '33: 8/4*', '33: bar/20*', '33: 8/4', '33: 8/7'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('33: 8/4(2)* bar/20* 8/7');
 });
 
@@ -559,35 +626,40 @@ test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['33:', '33: 8/4*', '33: bar/20*', '33: 8/4', '33: 3/off'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('33: 8/4(2)* bar/20* 3/off');
 });
 
 test('combinedNotationForBackgammonActions with 1 capture and 1 non capture', () => {
   const actions = ['34:', '34: 8/4*', '34: 10/7'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: 8/4* 10/7');
 });
 
 test('combinedNotationForBackgammonActions with endturn', () => {
   const actions = ['34:', '(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: (no-play)');
 });
 
 test('combinedNotationForBackgammonActions with endturn', () => {
   const actions = ['34:', '34: 8/4*', '(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('34: 8/4*');
 });
 
 test('combinedNotationForBackgammonActions with p2 rolling first', () => {
   const actions = ['(no-play)'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('...');
 });
 
@@ -596,7 +668,33 @@ test('combinedNotationForBackgammonActions with p2 rolling first', () => {
 test('combinedNotationForBackgammonActions with 4 actions and captures', () => {
   const actions = ['53:', '53: 13/8*', '53: 8/5'];
 
-  const notation = BackgammonFamily.combinedNotation(actions);
+  const backgammonGameFamily = gameFamilyClass(GameFamilyKey.backgammon) as typeof BackgammonFamily;
+  const notation = backgammonGameFamily.combinedNotation(actions);
   expect(notation).toBe('53: 13/8* 8/5');
   // expect(notation).toBe('53: 13/8*/5'); // notation on bg-hub
+});
+
+// Go notation skipping 'i'
+test('moveFromNotationStyle go d4 move', () => {
+  const move = {
+    san: '',
+    uci: 's@d4',
+    fen: '9/9/9/9/3X5/9/9/9/9 w - - 1',
+    prevFen: '9/9/9/9/9/9/9/9/9 w - - 0',
+  };
+
+  const notation = variantClass('go9x9').computeMoveNotation(move);
+  expect(notation).toBe('d4');
+});
+
+test('moveFromNotationStyle go k10 move', () => {
+  const move = {
+    san: '',
+    uci: 's@k10',
+    fen: '19/19/19/19/13X5/19/19/19/19/19/19/19/19/19/19/19/19/19/17X1 w - - 2',
+    prevFen: '19/19/19/19/3X5/19/19/19/19/19/19/19/19/19/19/19/19/19/19 w - - 1',
+  };
+
+  const notation = variantClass('go19x19').computeMoveNotation(move);
+  expect(notation).toBe('l10');
 });

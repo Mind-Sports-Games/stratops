@@ -223,8 +223,8 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     board.reset();
     board.occupied = new SquareSet([0x8181_817e, 0x7e81_8181, 0, 0]);
     board.promoted = SquareSet.empty();
-    board.p1 = new SquareSet([0x8181_8100, 0x0081_8181, 0, 0]);
-    board.p2 = new SquareSet([0x007e, 0x7e00_0000, 0, 0]);
+    board.p2 = new SquareSet([0x8181_8100, 0x0081_8181, 0, 0]);
+    board.p1 = new SquareSet([0x007e, 0x7e00_0000, 0, 0]);
     board['p-piece'] = new SquareSet([0, 0, 0, 0]);
     board['n-piece'] = new SquareSet([0, 0, 0, 0]);
     board['b-piece'] = new SquareSet([0, 0, 0, 0]);
@@ -232,6 +232,58 @@ export class Board implements Iterable<[Square, Piece]>, ByRole<SquareSet>, ByPl
     board['q-piece'] = new SquareSet([0, 0, 0, 0]);
     board['k-piece'] = new SquareSet([0, 0, 0, 0]);
     board['l-piece'] = board.occupied;
+    return board;
+  }
+
+  static scrambledEggs(): Board {
+    const board = new Board('scrambledeggs');
+    board.reset();
+    board.promoted = SquareSet.empty();
+    board.p1 = new SquareSet([0x8001804A, 0x54600001, 0, 0]);
+    board.p2 = new SquareSet([0x01800154, 0x2A8001C8, 0, 0]);
+    board.occupied = board.p1.union(board.p2);
+    board['p-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['n-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['b-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['r-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['q-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['k-piece'] = new SquareSet([0, 0, 0, 0]);
+    board['l-piece'] = board.occupied;
+    return board;
+  }
+
+  static minixiangqi(): Board {
+    const board = new Board('minixiangqi');
+    board.clear(); // more suitable for any non-standard chess variant
+
+    // let's place elements explicitly for clarity
+    board['r-piece'] = SquareSet.empty().with(0).with(6);
+    board['c-piece'] = SquareSet.empty().with(1).with(5);
+    board['n-piece'] = SquareSet.empty().with(2).with(4);
+    board['k-piece'] = SquareSet.empty().with(3);
+    board['p-piece'] = SquareSet.empty().with(7).with(9).with(10).with(11).with(13);
+    // Note: a refacto will take place, overriding methods like union() or minus()
+    // in the appropriate variant file, to automatically pad the sets to the board size,
+    // without adding "WH" to the method name, or these 7,7.
+    board.p1 = board['r-piece']
+      .unionWH(board['c-piece'], 7, 7)
+      .unionWH(board['n-piece'], 7, 7)
+      .unionWH(board['k-piece'], 7, 7)
+      .unionWH(board['p-piece'], 7, 7);
+
+    board['r-piece'] = board['r-piece'].with(42).with(48);
+    board['c-piece'] = board['c-piece'].with(43).with(47);
+    board['n-piece'] = board['n-piece'].with(44).with(46);
+    board['k-piece'] = board['k-piece'].with(45);
+    board['p-piece'] = board['p-piece'].with(35).with(37).with(38).with(39).with(41);
+    board.p2 = board['r-piece'].minusWH(board.p1, 7, 7)
+      .unionWH(board['c-piece'].minusWH(board.p1, 7, 7), 7, 7)
+      .unionWH(board['n-piece'].minusWH(board.p1, 7, 7), 7, 7)
+      .unionWH(board['k-piece'].minusWH(board.p1, 7, 7), 7, 7)
+      .unionWH(board['p-piece'].minusWH(board.p1, 7, 7), 7, 7);
+
+    board.occupied = board.p1.unionWH(board.p2, 7, 7);
+
     return board;
   }
 

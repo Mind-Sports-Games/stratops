@@ -10,7 +10,8 @@
     "coverage/",
     "*.js.map",
     "*.d.ts",
-    "*.js"
+    "*.js",
+    "attacks.test.ts"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.88.10.wasm",

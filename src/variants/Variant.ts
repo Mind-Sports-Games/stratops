@@ -1,6 +1,6 @@
 import { Result } from '@badrap/result';
 import { Board } from '../board';
-import { Chess, type PositionError } from '../chess';
+import { Chess, IllegalSetup, PositionError } from '../chess';
 import {
   boardAndPocketStrings,
   FenError,
@@ -15,7 +15,7 @@ import {
 } from '../fen';
 import * as fp from '../fp';
 import type { Setup } from '../setup';
-import { type BoardDimensions, PlayerIndex, type Role, RULES, type Rules } from '../types';
+import { type BoardDimensions, PlayerFENChar, PlayerIndex, type Role, type Rules } from '../types';
 import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
@@ -24,6 +24,28 @@ export abstract class Variant extends Chess {
   static width: BoardDimensions['files'] = 8;
   static rules: Rules = 'chess';
   static family: GameFamilyKey = GameFamilyKey.chess;
+  static playerColors: Record<PlayerIndex, string> = {
+    p1: 'white',
+    p2: 'black',
+  };
+  static playerFENChars: Record<PlayerIndex, PlayerFENChar> = {
+    p1: 'w',
+    p2: 'b',
+  };
+  static allowCastling: boolean = false;
+  static allowEnPassant(): boolean {
+    return (
+      typeof (this as any).fixFenForEp === 'function'
+      && typeof (this as any).getEnPassantOptions === 'function'
+    );
+  }
+  static allowMultiAction(): boolean {
+    return (
+      typeof (this as any).fixFenForLastAction === 'function'
+    );
+  }
+  // @TODO: this is supposed to represent the js version of SG but the value is currently only correctly set for chess variants.
+  static standardInitialPosition: boolean = true;
 
   static computeMoveNotation(move: ExtendedMoveInfo): string {
     return move.san[0] === 'P' ? move.san.slice(1) : move.san;
@@ -54,24 +76,24 @@ export abstract class Variant extends Chess {
     return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
   }
 
-  static getEmptyFen(): string {
-    return `${this.getEmptyBoardFen()} ${this.getEmptyEpd()} ${this.getInitialMovesFen()}`;
+  static getEmptyFen(playerIndex: PlayerIndex): string {
+    return `${this.getEmptyBoardFen()} ${this.getEmptyEpd()} ${this.getInitialMovesFen(playerIndex)}`;
   }
 
-  static getInitialEpd(): string {
-    return 'w - -';
+  static getInitialEpd(playerIndex: PlayerIndex): string {
+    return `${this.playerFENChars[playerIndex]} - -`;
   }
 
   static getEmptyEpd(): string {
-    return `w - -`;
+    return `${this.playerFENChars['p1']} - -`;
   }
 
-  static getInitialMovesFen(): string {
-    return '0 1';
+  static getInitialMovesFen(playerIndex: PlayerIndex): string {
+    return `${playerIndex === 'p1' ? '0' : '1'} 1`;
   }
 
-  static getInitialFen(): string {
-    return `${this.getInitialBoardFen()} ${this.getInitialEpd()} ${this.getInitialMovesFen()}`;
+  static getInitialFen(playerIndex: PlayerIndex): string {
+    return `${this.getInitialBoardFen()} ${this.getInitialEpd(playerIndex)} ${this.getInitialMovesFen(playerIndex)}`;
   }
 
   static getClass() {
@@ -88,6 +110,27 @@ export abstract class Variant extends Chess {
 
   static getVariantKeys(): VariantKey[] {
     return Object.values(VariantKey);
+  }
+
+  // Note: working for coordinates of a chess board
+  static getPiecesCoordinates(fen: string, playerIndex: PlayerIndex): { piece: string; coord: string }[] {
+    const result: { piece: string; coord: string }[] = [];
+    const board = this.readFen(fen, this.height, this.width);
+    for (const [coord, piece] of Object.entries(board.pieces)) {
+      if (this.isPieceOfPlayer(piece as string, playerIndex)) {
+        const file = this.width + 1 - Number(coord[0]);
+        const rank = this.height + 1 - Number(coord[1]);
+        const fileLetter = String.fromCharCode('a'.charCodeAt(0) + file - 1);
+        result.push({ piece: piece as string, coord: `${fileLetter}${rank}` });
+      }
+    }
+    return result;
+  }
+
+  static isPieceOfPlayer(piece: string, playerIndex: PlayerIndex): boolean {
+    if (playerIndex === 'p1') return piece === piece.toUpperCase();
+    if (playerIndex === 'p2') return piece === piece.toLowerCase();
+    return false;
   }
 
   static parseLexicalUci(uci: string): LexicalUci | undefined {
@@ -156,14 +199,14 @@ export abstract class Variant extends Chess {
       });
   }
 
-  static parsePlayerTurn(turnPart: fp.Option<string>, p1Char = 'w', p2Char = 'b'): Result<PlayerIndex, FenError> {
+  static parsePlayerTurn(turnPart: fp.Option<string>): Result<PlayerIndex, FenError> {
     return fp.pipe(
       turnPart,
       fp.Option.fold(
         (turnPart: string) =>
-          turnPart.toLowerCase() === p1Char.toLowerCase()
+          turnPart.toLowerCase() === this.playerFENChars['p1'].charAt(0).toLowerCase()
             ? Result.ok('p1')
-            : turnPart.toLowerCase() === p2Char.toLowerCase()
+            : turnPart.toLowerCase() === this.playerFENChars['p2'].charAt(0).toLowerCase()
             ? Result.ok('p2')
             : Result.err(new FenError(InvalidFen.Turn)),
         () => Result.ok('p1'),
@@ -239,6 +282,16 @@ export abstract class Variant extends Chess {
 
   protected constructor(game: Rules) {
     super(game);
+  }
+
+  protected override validate(): Result<undefined, PositionError> {
+    if (this.board.occupied.isEmpty()) return Result.err(new PositionError(IllegalSetup.Empty));
+    return this.validateVariant();
+  }
+
+  // Note: override this method in subclasses to implement variant-specific validation logic.
+  protected validateVariant(): Result<undefined, PositionError> {
+    return Result.ok(undefined);
   }
 
   override clone(): Variant {
