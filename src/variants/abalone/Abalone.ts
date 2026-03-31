@@ -1,14 +1,27 @@
 import { type Result } from '@badrap/result';
-import { PositionError } from '../../chess';
+import { type PositionError } from '../../chess';
+import { registerAbaloneFenParser } from '../../fen';
 import type { Setup } from '../../setup';
 import { type BoardDimensions, type Rules } from '../../types';
 import { defined } from '../../util.js';
 import { GameFamily } from './GameFamily';
 
 export class Abalone extends GameFamily {
-  static override height: BoardDimensions['ranks'] = 9;
-  static override width: BoardDimensions['files'] = 9;
   static override rules: Rules = 'abalone';
+  static override width: BoardDimensions['files'] = 9;
+  static override height: BoardDimensions['ranks'] = 9;
+
+  protected constructor() {
+    super('abalone');
+  }
+
+  override clone(): Abalone {
+    return super.clone() as Abalone;
+  }
+
+  static override getClass() {
+    return this;
+  }
 
   static override default(): Abalone {
     const pos = super.default();
@@ -21,16 +34,6 @@ export class Abalone extends GameFamily {
       return v as Abalone;
     });
   }
-
-  static override getClass() {
-    return this;
-  }
-
-  override clone(): Abalone {
-    return super.clone() as Abalone;
-  }
-
-  protected constructor() {
-    super('abalone');
-  }
 }
+
+registerAbaloneFenParser('abalone', fen => Abalone.readFen(fen, 0, 0).map(t => Abalone.fenSetupFromTuple(t)));

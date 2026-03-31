@@ -1,6 +1,7 @@
 import type { Rules } from '../types';
 import { Abalone } from './abalone/Abalone';
 import { GameFamily as AbaloneGameFamily } from './abalone/GameFamily';
+import { GrandAbalone } from './abalone/GrandAbalone';
 import { Amazons } from './amazons/Amazons';
 import { GameFamily as AmazonsGameFamily } from './amazons/GameFamily';
 import { Backgammon } from './backgammon/Backgammon';
@@ -132,6 +133,8 @@ export function variantClass(rules: Rules): typeof Variant {
       return MiniBreakthrough.getClass();
     case 'abalone':
       return Abalone.getClass();
+    case 'grandabalone':
+      return GrandAbalone.getClass();
     case 'international':
       return International.getClass();
     case 'antidraughts':
@@ -235,6 +238,8 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'nackgammon';
     case VariantKey.abalone:
       return 'abalone';
+    case VariantKey.grandAbalone:
+      return 'grandabalone';
     case VariantKey.international:
     case VariantKey.fromPositionDraughts:
       return 'international';
