@@ -778,6 +778,7 @@ const backgammonFenParts = (setup: Setup): string[] => [
   backgammonDice(setup.unusedDice, setup.usedDice),
   setup.turn === 'p1' ? 'w' : 'b',
   playerScores(setup.p1Score, setup.p2Score),
+  '0',
   `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
 ];
 
