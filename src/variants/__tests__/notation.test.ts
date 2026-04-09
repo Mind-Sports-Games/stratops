@@ -533,7 +533,7 @@ test('moveFromNotationStyle backgammon a1f2 p2 from starting', () => {
   };
 
   const notation = variantClass('backgammon').computeMoveNotation(move);
-  expect(notation).toBe('66: 13/7');
+  expect(notation).toBe('66: 12/18');
 });
 
 test('moveFromNotationStyle backgammon testing drop S@i2', () => {
@@ -593,7 +593,7 @@ test('moveFromNotationStyle backgammon testing capture', () => {
   };
 
   const notation = variantClass('backgammon').computeMoveNotation(move);
-  expect(notation).toBe('11: 6/5');
+  expect(notation).toBe('11: 19/20');
 });
 
 test('moveFromNotationStyle backgammon testing capture', () => {

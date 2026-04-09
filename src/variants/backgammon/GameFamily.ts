@@ -29,7 +29,6 @@ export abstract class GameFamily extends Variant {
     const orig = reg[0];
     const dest = reg[1];
     const isDrop = reg[0].includes('@');
-    const movePlayer = move.prevFen.split(' ')[3] === 'w' ? 'p1' : 'p2';
     const moveOpponent = move.prevFen.split(' ')[3] === 'w' ? 'p2' : 'p1';
 
     const diceRoll = this.getDice(move.prevFen); // this is not really used but for completeness
@@ -48,20 +47,12 @@ export abstract class GameFamily extends Variant {
 
     const origBoardPosNumber = isDrop
       ? 'bar'
-      : movePlayer === 'p1'
-      ? origRank === 1
-        ? this.width + 1 - origFile
-        : this.width + origFile
       : origRank === 1
-      ? this.width + origFile
-      : this.width + 1 - origFile;
-    const destBoardPosNumber = movePlayer === 'p1'
-      ? destRank === 1
-        ? this.width + 1 - destFile
-        : this.width + destFile
-      : destRank === 1
-      ? this.width + destFile
-      : this.width + 1 - destFile;
+      ? this.width + 1 - origFile
+      : this.width + origFile;
+    const destBoardPosNumber = destRank === 1
+      ? this.width + 1 - destFile
+      : this.width + destFile;
 
     // examples:
     // 43: 8/4 8/5

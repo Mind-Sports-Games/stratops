@@ -497,7 +497,7 @@ export const makeOthelloFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
 export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardAndPockets, ...parts] = fen.split(' ');
 
-  if (parts.length !== 6) {
+  if (parts.length !== 7) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
 
@@ -509,7 +509,7 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
       parsePlayerTurn()(parts[2]),
       parseScore(parts[3]),
       parseScore(parts[4]),
-      parseFullMoves(parts[5]),
+      parseFullMoves(parts[6]),
     ])
     .map(([{ board, pockets }, unusedDice, usedDice, turn, p1Score, p2Score, fullmoves]) => ({
       ...defaultSetup(),
