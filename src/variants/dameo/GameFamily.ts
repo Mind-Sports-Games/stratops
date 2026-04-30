@@ -1,4 +1,5 @@
-import type { BoardDimensions } from '../../types';
+import type { Context } from '../../chess';
+import type { BoardDimensions, Outcome } from '../../types';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -25,5 +26,9 @@ export abstract class GameFamily extends Variant {
       output += notation.slice(2);
     }
     return output;
+  }
+
+  override outcome(ctx?: Context): Outcome | undefined {
+    return this.variantOutcome(ctx);
   }
 }

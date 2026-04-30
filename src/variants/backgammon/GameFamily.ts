@@ -177,4 +177,8 @@ export abstract class GameFamily extends Variant {
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
   }
+
+  override outcome(ctx?: Context): Outcome | undefined {
+    return this.variantOutcome(ctx);
+  }
 }
