@@ -497,9 +497,13 @@ export const makeOthelloFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
 export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardAndPockets, ...parts] = fen.split(' ');
 
-  if (parts.length !== 7) {
+  // FEN format: board unusedDice usedDice turn p1Score p2Score [cube] fullmoves
+  // cube field is optional (present when doubling cube is in use)
+  const hasCube = parts.length === 7;
+  if (parts.length !== 6 && parts.length !== 7) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
+  const fullmovesIdx = hasCube ? 6 : 5;
 
   return fp
     .resultZip([
@@ -509,7 +513,7 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
       parsePlayerTurn()(parts[2]),
       parseScore(parts[3]),
       parseScore(parts[4]),
-      parseFullMoves(parts[6]),
+      parseFullMoves(parts[fullmovesIdx]),
     ])
     .map(([{ board, pockets }, unusedDice, usedDice, turn, p1Score, p2Score, fullmoves]) => ({
       ...defaultSetup(),

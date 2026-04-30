@@ -1,7 +1,7 @@
-import type { Result } from '@badrap/result';
-import type { PositionError } from '../../chess';
+import { Result } from '@badrap/result';
+import { type Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import type { BoardDimensions, PlayerIndex } from '../../types';
+import type { BoardDimensions, Outcome, PlayerIndex } from '../../types';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -63,7 +63,14 @@ export abstract class GameFamily extends Variant {
   }
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
-    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
+    return (super.fromSetup(setup) as Result<GameFamily, PositionError>).map(pos => {
+      pos.pockets = setup.pockets?.clone();
+      return pos;
+    });
+  }
+
+  protected override validate(): Result<undefined, PositionError> {
+    return Result.ok(undefined);
   }
 
   static override getNotationStyle(): NotationStyle {
@@ -155,6 +162,16 @@ export abstract class GameFamily extends Variant {
 
       return 0;
     } else return 0;
+  }
+
+  override variantOutcome(_ctx?: Context): Outcome | undefined {
+    if (this.board.p1.isEmpty() && !(this.pockets?.p1.nonEmpty() ?? false)) {
+      return { winner: 'p1' };
+    }
+    if (this.board.p2.isEmpty() && !(this.pockets?.p2.nonEmpty() ?? false)) {
+      return { winner: 'p2' };
+    }
+    return undefined;
   }
 
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
