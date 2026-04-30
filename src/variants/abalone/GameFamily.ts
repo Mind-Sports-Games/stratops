@@ -1,10 +1,11 @@
 import { Result } from '@badrap/result';
 import { Board } from '../../board';
-import { IllegalSetup, PositionError } from '../../chess';
+import { Context, IllegalSetup, PositionError } from '../../chess';
 import {
   charToPiece,
   FenError,
   InvalidFen,
+  parseFen as parseFenVariant,
   parseFullMoves,
   parseHalfMoves,
   parsePlayerTurn,
@@ -13,7 +14,9 @@ import {
 } from '../../fen';
 import * as fp from '../../fp';
 import { defaultSetup, type Setup } from '../../setup';
+import type { Outcome } from '../../types';
 import type { Piece, PlayerIndex } from '../../types';
+import { opposite } from '../../util.js';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 import {
@@ -37,6 +40,14 @@ import {
 
 export abstract class GameFamily extends Variant {
   static override family: GameFamilyKey = GameFamilyKey.abalone;
+  static override playerColors: Record<PlayerIndex, string> = {
+    p1: 'black',
+    p2: 'white',
+  };
+  static startingPieceCount: number | undefined = undefined;
+  static winningScore: number | undefined = undefined;
+  p1Captures: number = 0;
+  p2Captures: number = 0;
 
   static override getVariantKeys(): VariantKey[] {
     return [
@@ -52,11 +63,78 @@ export abstract class GameFamily extends Variant {
   }
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
-    return super.fromSetup(setup) as Result<GameFamily, PositionError>;
+    return (super.fromSetup(setup) as Result<GameFamily, PositionError>).map(pos => {
+      pos.p1Captures = setup.p1Captures ?? 0;
+      pos.p2Captures = setup.p2Captures ?? 0;
+      return pos;
+    });
+  }
+
+  override toSetup(): Setup {
+    return {
+      ...super.toSetup(),
+      p1Captures: this.p1Captures,
+      p2Captures: this.p2Captures,
+    };
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
     return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2];
+  }
+
+  static override parseFen(fen: string): Result<Setup, FenError> {
+    return parseFenVariant(this.rules)(fen);
+  }
+
+  static override getPiecesCoordinates(_fen: string, _playerIndex: PlayerIndex): { piece: string; coord: string }[] {
+    return [];
+  }
+
+  static override getInitialEpd(playerIndex: PlayerIndex): string {
+    return `0 0 ${playerIndex === 'p1' ? 'b' : 'w'}`;
+  }
+
+  static override getEmptyEpd(): string {
+    return '0 0 b';
+  }
+
+  static computeCaptureSetup(board: Board): { p1Captures: number; p2Captures: number } {
+    const startingMarbles = this.startingPieceCount!;
+    const winningScore = this.winningScore!;
+    return {
+      p1Captures: Math.max(0, Math.min(startingMarbles - board.p1.size(), winningScore)),
+      p2Captures: Math.max(0, Math.min(startingMarbles - board.p2.size(), winningScore)),
+    };
+  }
+
+  static writeFen(board: Board): string {
+    const cells = this.getCellList();
+    let fen = '';
+    let empty = 0;
+    let prevY: number | undefined = undefined;
+    for (const pos of cells) {
+      const [, y] = pos;
+      if (prevY !== undefined && y !== prevY) {
+        if (empty > 0) {
+          fen += empty;
+          empty = 0;
+        }
+        fen += '/';
+      }
+      prevY = y;
+      const piece = this.getPiece(board, pos);
+      if (piece) {
+        if (empty > 0) {
+          fen += empty;
+          empty = 0;
+        }
+        fen += piece.playerIndex === 'p1' ? 'S' : 's';
+      } else {
+        empty++;
+      }
+    }
+    if (empty > 0) fen += empty;
+    return fen;
   }
 
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
@@ -69,14 +147,23 @@ export abstract class GameFamily extends Variant {
       : Result.ok(undefined);
   }
 
+  override isVariantEnd(): boolean {
+    return !!this.variantOutcome();
+  }
+
+  override variantOutcome(ctx?: Context): Outcome | undefined {
+    const cls = this.constructor as typeof GameFamily;
+    const winScore = cls.winningScore!;
+    if (this.p1Captures >= winScore) return { winner: 'p1' };
+    if (this.p2Captures >= winScore) return { winner: 'p2' };
+    if (ctx && !this.hasDests(ctx)) return { winner: opposite(this.turn) };
+    return undefined;
+  }
+
   //
   //
   static getMaxUsable(): number | undefined {
     return 3;
-  }
-
-  static getWinningScore(): number {
-    return 6;
   }
 
   static hasPrevPlayer(): boolean {

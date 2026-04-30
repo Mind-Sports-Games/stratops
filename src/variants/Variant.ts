@@ -5,6 +5,7 @@ import {
   boardAndPocketStrings,
   FenError,
   InvalidFen,
+  makeFen,
   parseBoardAndOptPockets,
   parseCastlingFen,
   parseFenSquare,
@@ -102,6 +103,10 @@ export abstract class Variant extends Chess {
 
   static getScoreFromFen(_fen: string, _playerIndex: string): number | undefined {
     return undefined;
+  }
+
+  static toFen(setup: Setup): string {
+    return makeFen(this.rules)(setup);
   }
 
   static getNotationStyle(): NotationStyle {
