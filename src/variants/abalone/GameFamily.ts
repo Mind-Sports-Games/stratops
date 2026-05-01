@@ -102,8 +102,8 @@ export abstract class GameFamily extends Variant {
     const startingMarbles = this.startingPieceCount!;
     const winningScore = this.winningScore!;
     return {
-      p1Captures: Math.max(0, Math.min(startingMarbles - board.p1.size(), winningScore)),
-      p2Captures: Math.max(0, Math.min(startingMarbles - board.p2.size(), winningScore)),
+      p1Captures: Math.max(0, Math.min(startingMarbles - board.p2.size(), winningScore)),
+      p2Captures: Math.max(0, Math.min(startingMarbles - board.p1.size(), winningScore)),
     };
   }
 
