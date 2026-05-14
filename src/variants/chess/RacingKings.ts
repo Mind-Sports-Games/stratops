@@ -65,9 +65,6 @@ export class RacingKings extends GameFamily {
   override dests(square: Square, ctx?: Context): SquareSet {
     ctx = ctx || this.ctx();
 
-    // Kings cannot give check.
-    if (square === ctx.king) return super.dests(square, ctx);
-
     // TODO: This could be optimized considerably.
     let dests = SquareSet.empty();
     for (const to of super.dests(square, ctx)) {
