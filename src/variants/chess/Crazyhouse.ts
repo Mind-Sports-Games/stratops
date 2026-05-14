@@ -1,6 +1,7 @@
 import { Result } from '@badrap/result';
 import { between } from '../../attacks';
 import { Context, IllegalSetup, PositionError } from '../../chess';
+import { makeFen } from '../../fen';
 import { Material, Setup } from '../../setup';
 import { SquareSet } from '../../squareSet';
 import { PlayerIndex, Rules } from '../../types';
@@ -25,6 +26,10 @@ export class Crazyhouse extends GameFamily {
 
   static override getClass() {
     return this;
+  }
+
+  static override toFen(setup: Setup): string {
+    return makeFen(this.rules)(setup, { promoted: true });
   }
 
   protected constructor() {

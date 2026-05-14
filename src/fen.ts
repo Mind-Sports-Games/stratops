@@ -411,6 +411,28 @@ const parseAbaloneFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   return parser(fen);
 };
 
+// Abalone FEN writing — writers registered by Abalone/GrandAbalone at load time
+type AbaloneBoardWriter = (board: Board) => string;
+const abaloneBoardWriters = new Map<string, AbaloneBoardWriter>();
+export const registerAbaloneFenWriter = (rules: string, writer: AbaloneBoardWriter): void => {
+  abaloneBoardWriters.set(rules, writer);
+};
+const abalonePlayerTurn = (setup: Setup): string => (setup.turn === 'p1' ? 'b' : 'w');
+const makeAbaloneFen = (rules: Rules) => (setup: Setup): string => {
+  const writer = abaloneBoardWriters.get(rules);
+  if (!writer) return '';
+  const p1Captures = (setup.p1Captures as number | undefined) ?? 0;
+  const p2Captures = (setup.p2Captures as number | undefined) ?? 0;
+  return [
+    writer(setup.board),
+    `${p1Captures}`,
+    `${p2Captures}`,
+    abalonePlayerTurn(setup),
+    `${Math.max(0, Math.min(setup.halfmoves, 9999))}`,
+    `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
+  ].join(' ');
+};
+
 // ------------------------------------------------------------------------------
 // Go FEN parsing
 const parseKo = (part: fp.Option<string>): Result<fp.Option<number>> => {
@@ -497,9 +519,13 @@ export const makeOthelloFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
 export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardAndPockets, ...parts] = fen.split(' ');
 
-  if (parts.length !== 7) {
+  // FEN format: board unusedDice usedDice turn p1Score p2Score [cube] fullmoves
+  // cube field is optional (present when doubling cube is in use)
+  const hasCube = parts.length === 7;
+  if (parts.length !== 6 && parts.length !== 7) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
+  const fullmovesIdx = hasCube ? 6 : 5;
 
   return fp
     .resultZip([
@@ -509,7 +535,7 @@ export const parseBackgammonFen = (rules: Rules) => (fen: string): Result<Setup,
       parsePlayerTurn()(parts[2]),
       parseScore(parts[3]),
       parseScore(parts[4]),
-      parseFullMoves(parts[6]),
+      parseFullMoves(parts[fullmovesIdx]),
     ])
     .map(([{ board, pockets }, unusedDice, usedDice, turn, p1Score, p2Score, fullmoves]) => ({
       ...defaultSetup(),
@@ -802,6 +828,9 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   }
   if (rules === 'flipello' || rules === 'flipello10' || rules === 'antiflipello' || rules === 'octagonflipello') {
     return makeOthelloFen(rules)(setup, opts);
+  }
+  if (rules === 'abalone' || rules === 'grandabalone') {
+    return makeAbaloneFen(rules)(setup);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
