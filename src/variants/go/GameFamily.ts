@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
-import type { PositionError } from '../../chess';
+import type { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import type { PlayerIndex } from '../../types';
+import type { Outcome, PlayerIndex } from '../../types';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -59,5 +59,9 @@ export abstract class GameFamily extends Variant {
 
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {
     return false;
+  }
+
+  override outcome(ctx?: Context): Outcome | undefined {
+    return this.variantOutcome(ctx);
   }
 }
