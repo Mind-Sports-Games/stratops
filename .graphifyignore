@@ -1,0 +1,8 @@
+# .graphifyignore
+dist/
+node_modules/
+
+# only index src/, ignore everything else
+*
+!src/
+!src/**
