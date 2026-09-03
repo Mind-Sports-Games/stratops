@@ -113,6 +113,10 @@ export abstract class Variant extends Chess {
     return NotationStyle.san;
   }
 
+  static combinedNotation(actionNotations: string[]): string {
+    return actionNotations.join(' ');
+  }
+
   static getVariantKeys(): VariantKey[] {
     return Object.values(VariantKey);
   }
