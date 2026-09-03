@@ -20,7 +20,7 @@ export abstract class GameFamily extends Variant {
     return NotationStyle.dmo;
   }
 
-  static combinedNotation(actionNotations: string[]): string {
+  static override combinedNotation(actionNotations: string[]): string {
     let output = actionNotations[0];
     for (const notation of actionNotations.slice(1)) {
       output += notation.slice(2);
