@@ -256,6 +256,7 @@ export interface Setup {
   passCount?: fp.Option<number>;
   unusedDice?: fp.Option<string>;
   usedDice?: fp.Option<string>;
+  round?: fp.Option<number>;
   lastMove?: fp.Option<Move>;
 }
 

@@ -257,6 +257,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'xiangqi':
       return { ranks: 10, files: 9 };
     case 'minixiangqi':
+    case 'entropy':
       return { ranks: 7, files: 7 };
     case 'flipello':
       return { ranks: 8, files: 8 };
