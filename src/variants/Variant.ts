@@ -16,13 +16,15 @@ import {
 } from '../fen';
 import * as fp from '../fp';
 import type { Setup } from '../setup';
-import { type BoardDimensions, PlayerFENChar, PlayerIndex, type Role, type Rules } from '../types';
+import { type BoardDimensions, PlayerFENChar, PlayerIndex, type Role, type Rules, type Square } from '../types';
 import { ExtendedMoveInfo, GameFamilyKey, Key, LexicalUci, NotationStyle, ParsedMove, VariantKey } from './types';
 
 // This class is to allow us to benefit from the Chess class for other games even though all their own logic is still not fully implemented.
 export abstract class Variant extends Chess {
   static height: BoardDimensions['ranks'] = 8;
   static width: BoardDimensions['files'] = 8;
+  static unplayableSquares: Square[] = [];
+  static misere = false;
   static rules: Rules = 'chess';
   static family: GameFamilyKey = GameFamilyKey.chess;
   static playerColors: Record<PlayerIndex, string> = {

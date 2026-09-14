@@ -1,4 +1,4 @@
-import { type BoardDimensions, type Rules } from '../../types';
+import { type BoardDimensions, type Rules, type Square } from '../../types';
 import { type ExtendedMoveInfo } from '../types';
 import { GameFamily } from './GameFamily';
 
@@ -6,6 +6,8 @@ export class OctagonOthello extends GameFamily {
   static override height: BoardDimensions['ranks'] = 10;
   static override width: BoardDimensions['files'] = 10;
   static override rules: Rules = 'octagonflipello';
+  // a1 a2 a9 a10 b1 b10 i1 i10 j1 j2 j9 j10
+  static override unplayableSquares: Square[] = [0, 10, 80, 90, 1, 91, 8, 98, 9, 19, 89, 99];
 
   static override default(): OctagonOthello {
     return super.defaultBoard(new this()) as OctagonOthello;

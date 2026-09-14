@@ -221,24 +221,82 @@ test('minibreakthrough wins', () => {
   expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
 });
 
-test('othello wins', () => {
-  const variantKey = 'flipello';
+const othelloPos = (rules: Rules, board: string) =>
+  variantClass(rules).fromSetup(parseFen(rules)(`${board} w - - 0 1`).unwrap()).unwrap();
 
-  const pos = variantClass(variantKey).fromSetup(
-    parseFen(variantKey)('pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp w - - 0 1').unwrap(),
-  ).unwrap();
+test('othello wins', () => {
+  // full board, P2 has every disc
+  const p2Sweep = othelloPos('flipello', 'pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp/pppppppp');
+  expect(p2Sweep.isEnd()).toBe(true);
+  expect(p2Sweep.outcome()).toStrictEqual({ winner: 'p2' });
+
+  // full board, 33 P vs 31 p
+  const p1Majority = othelloPos('flipello', 'PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP/Pppppppp/pppppppp/pppppppp/pppppppp');
+  expect(p1Majority.isEnd()).toBe(true);
+  expect(p1Majority.outcome()).toStrictEqual({ winner: 'p1' });
+
+  // full board, 32 each
+  const equal = othelloPos('flipello', 'PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP/pppppppp/pppppppp/pppppppp/pppppppp');
+  expect(equal.isEnd()).toBe(true);
+  expect(equal.outcome()).toStrictEqual({ winner: undefined });
+
+  // P1 wiped out before the board is full
+  const p1Eliminated = othelloPos(
+    'flipello',
+    'pppppppp/pppppppp/pppppppp/pppppppp/ppppppp1/ppppppp1/ppppppp1/ppppppp1',
+  );
+  expect(p1Eliminated.isEnd()).toBe(true);
+  expect(p1Eliminated.outcome()).toStrictEqual({ winner: 'p2' });
+
+  // not over: both players still have discs and squares remain
+  const ongoing = othelloPos('flipello', '8/8/2P1p3/1pPPP3/2PpPP2/2PpPp2/3p4/8');
+  expect(ongoing.isEnd()).toBe(false);
+  expect(ongoing.outcome()).toBeUndefined();
+});
+
+test('anti othello wins', () => {
+  // full board, 33 P vs 31 p: fewest discs wins
+  const pos = othelloPos('antiflipello', 'PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP/Pppppppp/pppppppp/pppppppp/pppppppp');
   expect(pos.isEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+
+  const eliminated = othelloPos(
+    'antiflipello',
+    'pppppppp/pppppppp/pppppppp/pppppppp/ppppppp1/ppppppp1/ppppppp1/ppppppp1',
+  );
+  expect(eliminated.outcome()).toStrictEqual({ winner: 'p1' });
 });
 
 test('grand othello wins', () => {
-  const variantKey = 'flipello10';
-
-  const pos = variantClass(variantKey).fromSetup(
-    parseFen(variantKey)(
-      'pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp w - - 0 1',
-    ).unwrap(),
-  ).unwrap();
+  const pos = othelloPos(
+    'flipello10',
+    'pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp',
+  );
   expect(pos.isEnd()).toBe(true);
-  expect(pos.outcome()).toStrictEqual({ winner: 'p1' });
+  expect(pos.outcome()).toStrictEqual({ winner: 'p2' });
+});
+
+test('octagon othello wins', () => {
+  // all 88 playable squares filled, the 12 cut corners stay empty
+  const full = othelloPos(
+    'octagonflipello',
+    '2pppppp2/1pppppppp1/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/1PPPPPPPP1/2PPPPPP2',
+  );
+  expect(full.board.occupied.size()).toBe(88);
+  expect(full.isEnd()).toBe(true);
+  expect(full.outcome()).toStrictEqual({ winner: 'p2' });
+
+  // one playable square left: not over
+  const oneLeft = othelloPos(
+    'octagonflipello',
+    '2pppppp2/1pppppppp1/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/pppppppppp/1PPPPPPPP1/2PPPPP3',
+  );
+  expect(oneLeft.isEnd()).toBe(false);
+  expect(oneLeft.outcome()).toBeUndefined();
+
+  // a disc on a cut corner (a1) is not a legal position
+  const corner = variantClass('octagonflipello').fromSetup(
+    parseFen('octagonflipello')('10/10/10/10/4pP4/4Pp4/10/10/10/P9 w - - 0 1').unwrap(),
+  );
+  expect(corner.isErr).toBe(true);
 });
