@@ -143,30 +143,30 @@ test('entropy order scores after every action', () => {
 
 const fullBoard = 'rgbrgbr/gbrgbrg/brgbrgb/rgbrgbr/gbrgbrg/brgbrgb/rgbrgb1';
 
-test('entropy clears the board and swaps roles once order acts on a full board', () => {
+test('entropy swaps roles on the drop that fills the board, and clears it on the next draw', () => {
   const pos = position(`${fullBoard}[R] w 0 0 1 49`);
+  const bankedScore = Entropy.guaranteedScore(position(`${fullBoard.replace(/1$/, 'r')}[] b 0 0 1 49`).board);
   pos.play({ role: 'r-piece', to: square('g1') });
-  expect(pos.isBoardFull()).toBe(true);
-  expect(pos.round).toBe(1);
 
-  const bankedScore = Entropy.guaranteedScore(pos.board);
-  pos.pass();
   expect(pos.round).toBe(2);
   expect(pos.p2Score).toBe(bankedScore);
-  expect(pos.board.occupied.isEmpty()).toBe(true);
+  expect(pos.isBoardFull()).toBe(true);
   expect(pos.chaosPlayer()).toBe('p2');
   expect(pos.orderPlayer()).toBe('p1');
-  expect(pos.turn).toBe('p1');
-  expect(pos.canPass()).toBe(true);
+  expect(pos.turn).toBe('p2');
+  expect(pos.mustDraw()).toBe(true);
+  expect(pos.canPass()).toBe(false);
   expect(pos.isEnd()).toBe(false);
   expect(pos.outcome()).toBeUndefined();
+
+  pos.draw('g-piece');
+  expect(pos.board.occupied.isEmpty()).toBe(true);
+  expect(pos.counterInPocket()).toBe('g-piece');
 });
 
 test('entropy is decided on score once both rounds are played', () => {
   const pos = position(`${fullBoard.toUpperCase()}[r] b 0 12 2 98`);
   pos.play({ role: 'r-piece', to: square('g1') });
-  expect(pos.isEnd()).toBe(false);
-  pos.pass();
 
   expect(pos.round).toBe(3);
   expect(pos.isBoardFull()).toBe(true);

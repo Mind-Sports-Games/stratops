@@ -219,6 +219,11 @@ export abstract class GameFamily extends Variant {
   }
 
   draw(role: Role): void {
+    // a full board is the finished round's, left standing until the next round's first draw
+    if (this.isBoardFull() && !this.isVariantEnd()) {
+      this.board = Board.empty(this.rules);
+      this.pockets = Material.empty();
+    }
     this.pockets = this.pockets ?? Material.empty();
     this.pockets[this.turn][role]++;
   }
@@ -228,13 +233,8 @@ export abstract class GameFamily extends Variant {
     if (this.orderPlayer() === 'p1') this.p1Score = score;
     else this.p2Score = score;
 
-    if (this.isBoardFull() && actor === this.orderPlayer()) {
-      if (this.round < ROUNDS) {
-        this.board = Board.empty(this.rules);
-        this.pockets = Material.empty();
-      }
-      this.round += 1;
-    }
+    // a round closes on the drop that fills the board, so the turn passes to the next round's chaos
+    if (this.isBoardFull() && actor === this.chaosPlayer()) this.round += 1;
 
     this.halfmoves += 1;
     if (actor === 'p2') this.fullmoves += 1;
