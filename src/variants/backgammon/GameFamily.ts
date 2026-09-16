@@ -89,7 +89,7 @@ export abstract class GameFamily extends Variant {
     ];
   }
 
-  static combinedNotation(actionNotations: string[]): string {
+  static override combinedNotation(actionNotations: string[]): string {
     const actions: string[] = [];
     const captures: boolean[] = [];
     const occurances: number[] = [];
