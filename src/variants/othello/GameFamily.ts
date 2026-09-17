@@ -1,7 +1,7 @@
 import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
-import { type DropMove, Outcome, PlayerFENChar, type PlayerIndex, PLAYERINDEXES, type Square } from '../../types';
+import { type DropMove, Outcome, PlayerFENChar, type PlayerIndex, type Square } from '../../types';
 import { opposite } from '../../util';
 import { GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
@@ -16,6 +16,9 @@ export abstract class GameFamily extends Variant {
     p1: 'w',
     p2: 'b',
   };
+  static playableSquareCount(): number {
+    return this.width * this.height - this.unplayableSquares.length;
+  }
 
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return super.fromSetup(setup) as Result<GameFamily, PositionError>;
@@ -127,6 +130,12 @@ export abstract class GameFamily extends Variant {
       }
     }
 
+    for (const square of (this.constructor as typeof GameFamily).unplayableSquares) {
+      if (this.board.get(square)) {
+        return Result.err(new PositionError(`Square ${square} is outside the board.`));
+      }
+    }
+
     return Result.ok(undefined);
   }
 
@@ -134,59 +143,23 @@ export abstract class GameFamily extends Variant {
     return super.clone() as GameFamily;
   }
 
-  // no piece on the board for a player, or all squares occupied
+  // Board full, or a player has no disc left.
   override isVariantEnd(): boolean {
-    const width = (this.constructor as typeof GameFamily).width;
-    const height = (this.constructor as typeof GameFamily).height;
-    if (this.board.occupied.size() === width * height) return true;
-
-    let player1HasPieces = false;
-    let player2HasPieces = false;
-    for (const square of this.board.occupied) {
-      const piece = this.board.get(square);
-      if (piece?.playerIndex === PLAYERINDEXES[0]) {
-        player1HasPieces = true;
-      }
-      if (piece?.playerIndex === PLAYERINDEXES[1]) {
-        player2HasPieces = true;
-      }
-      if (player1HasPieces && player2HasPieces) {
-        break;
-      }
-    }
-    if (!player1HasPieces || !player2HasPieces) {
-      return true;
-    }
-
-    return false;
+    const ctor = this.constructor as typeof GameFamily;
+    return (
+      this.board.occupied.size() === ctor.playableSquareCount()
+      || this.board.p1.isEmpty()
+      || this.board.p2.isEmpty()
+    );
   }
 
-  // Note : for now we do not need to correctly determine the winner, isVariantEnd only is used to determine if the game is over or not from board editor page
   override variantOutcome(ctx?: Context): Outcome | undefined {
     if (ctx ? !ctx.variantEnd : !this.isVariantEnd()) return;
-
-    let player1HasPieces = false;
-    let player2HasPieces = false;
-    for (const square of this.board.occupied) {
-      const piece = this.board.get(square);
-      if (piece?.playerIndex === PLAYERINDEXES[0]) {
-        player1HasPieces = true;
-      }
-      if (piece?.playerIndex === PLAYERINDEXES[1]) {
-        player2HasPieces = true;
-      }
-      if (player1HasPieces && player2HasPieces) {
-        break;
-      }
-    }
-    if (!player1HasPieces) {
-      return { winner: 'p1' };
-    }
-    if (!player2HasPieces) {
-      return { winner: 'p2' };
-    }
-
-    return { winner: undefined };
+    const p1 = this.board.p1.size();
+    const p2 = this.board.p2.size();
+    if (p1 === p2) return { winner: undefined };
+    const p1HasMore = p1 > p2;
+    return { winner: p1HasMore !== (this.constructor as typeof GameFamily).misere ? 'p1' : 'p2' };
   }
 
   override hasInsufficientMaterial(_playerIndex: PlayerIndex): boolean {

@@ -4,6 +4,7 @@ import { GameFamily } from './GameFamily';
 
 export class AntiOthello extends GameFamily {
   static override rules: Rules = 'antiflipello';
+  static override misere = true;
 
   static override default(): AntiOthello {
     return super.defaultBoard(new this()) as AntiOthello;
