@@ -35,7 +35,7 @@ export abstract class GameFamily extends Variant {
     return move.uci;
   }
 
-  static combinedNotation(actionNotations: string[]): string {
+  static override combinedNotation(actionNotations: string[]): string {
     return actionNotations.filter(notation => notation !== '').join(' ');
   }
 
