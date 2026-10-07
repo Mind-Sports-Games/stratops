@@ -36,6 +36,8 @@ import { International } from './draughts/International';
 import { Pool } from './draughts/Pool';
 import { Portuguese } from './draughts/Portuguese';
 import { Russian } from './draughts/Russian';
+import { Entropy } from './entropy/Entropy';
+import { GameFamily as EntropyGameFamily } from './entropy/GameFamily';
 import { GameFamily as GoGameFamily } from './go/GameFamily';
 import { Go13x13 } from './go/Go13x13';
 import { Go19x19 } from './go/Go19x19';
@@ -157,6 +159,8 @@ export function variantClass(rules: Rules): typeof Variant {
       return Frysk.getClass();
     case 'dameo':
       return Dameo.getClass();
+    case 'entropy':
+      return Entropy.getClass();
     default:
       return Variant.getClass();
   }
@@ -263,6 +267,8 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'frysk';
     case VariantKey.dameo:
       return 'dameo';
+    case VariantKey.entropy:
+      return 'entropy';
     default:
       return 'chess';
   }
@@ -276,6 +282,8 @@ export function gameFamilyClass(gameFamilyKey?: GameFamilyKey): typeof Variant {
       return DraughtsGameFamily.getClass();
     case GameFamilyKey.dameo:
       return DameoGameFamily.getClass();
+    case GameFamilyKey.entropy:
+      return EntropyGameFamily.getClass();
     case GameFamilyKey.chess:
       return ChessGameFamily.getClass();
     case GameFamilyKey.loa:

@@ -18,9 +18,12 @@ const abalone: ScoreReader = (fen, playerIndex) => +fen.split(' ')[playerIndex =
 
 const backgammon: ScoreReader = (fen, playerIndex) => +fen.split(' ')[playerIndex === 'p1' ? 4 : 5];
 
+const entropy: ScoreReader = (fen, playerIndex) => +fen.split(' ')[playerIndex === 'p1' ? 2 : 3];
+
 const fiveCheck: ScoreReader = (fen, playerIndex) => +fen.split(' ')[6][playerIndex === 'p1' ? 1 : 3];
 
 const readers: Partial<Record<`${VariantKey}`, ScoreReader>> = {
+  entropy,
   fiveCheck,
   flipello: othello,
   flipello10: othello,

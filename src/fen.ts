@@ -54,6 +54,7 @@ export enum InvalidFen {
   PassCount = 'ERR_PASS_COUNT',
   Ko = 'ERR_KO',
   BackgammonScore = 'ERR_BACKGAMMON_SCORE',
+  Round = 'ERR_ROUND',
 }
 
 export class FenError extends Error {}
@@ -347,6 +348,7 @@ const parseFenUint = (err: () => Error) => (part: fp.Option<string>): Result<num
 export const parseScore = parseFenUint(fenErr(InvalidFen.PlayerScore));
 export const parseCaptures = parseFenUint(fenErr(InvalidFen.PlayerCaptures));
 export const parsePassCount = parseFenUint(fenErr(InvalidFen.PassCount));
+export const parseRound = parseFenUint(fenErr(InvalidFen.Round));
 
 export const parseFenSquare = (rules: Rules) => (part: fp.Option<string>): Result<fp.Option<Square>, FenError> =>
   fp.pipe(
@@ -606,6 +608,46 @@ const parseDameoFen = (rules: Rules) => (fen: string): Result<Setup, FenError> =
 };
 
 // ------------------------------------------------------------------------------
+// Entropy fens
+// 7/7/7/7/7/7/7[] w 0 0 1 1 : board[pocket] turn p1Score p2Score round fullmoves
+export const parseEntropyFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+  const [boardAndPockets, ...parts] = fen.split(' ');
+
+  if (parts.length !== 5) {
+    return Result.err(new FenError(InvalidFen.Fen));
+  }
+
+  return fp
+    .resultZip([
+      parseBoardAndPockets(rules)(boardAndPockets),
+      parsePlayerTurn()(parts[0]),
+      parseScore(parts[1]),
+      parseScore(parts[2]),
+      parseRound(parts[3]),
+      parseFullMoves(parts[4]),
+    ])
+    .map(([{ board, pockets }, turn, p1Score, p2Score, round, fullmoves]) => ({
+      ...defaultSetup(),
+      board,
+      pockets,
+      turn,
+      p1Score,
+      p2Score,
+      round,
+      fullmoves,
+    }));
+};
+
+export const makeEntropyFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string =>
+  [
+    `${makeBoardFen(rules)(setup.board, opts)}[${setup.pockets ? makePockets(rules)(setup.pockets) : ''}]`,
+    playerTurn(setup),
+    playerScores(setup.p1Score, setup.p2Score),
+    `${fp.Option.unwrapOr(1)(setup.round)}`,
+    `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
+  ].join(' ');
+
+// ------------------------------------------------------------------------------
 // Default fens
 export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...originalParts] = fen.split(' ');
@@ -660,6 +702,9 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   }
   if (rules === 'dameo') {
     return parseDameoFen(rules)(fen);
+  }
+  if (rules === 'entropy') {
+    return parseEntropyFen(rules)(fen);
   }
   return parseDefaultFen(rules)(fen);
 };
@@ -831,6 +876,9 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   }
   if (rules === 'abalone' || rules === 'grandabalone') {
     return makeAbaloneFen(rules)(setup);
+  }
+  if (rules === 'entropy') {
+    return makeEntropyFen(rules)(setup, opts);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),

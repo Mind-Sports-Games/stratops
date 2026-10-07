@@ -4,6 +4,7 @@ import { VariantKey } from './types.js';
 import { variantClassFromKey } from './util.js';
 
 const FENS: Partial<Record<`${VariantKey}`, string>> = {
+  entropy: 'Rk5/7/3y3/7/7/7/6P[g] b 3 0 1 5',
   fiveCheck: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 +0+0',
   flipello:
     '8/8/8/3pP3/3Pp3/8/8/8[PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPpppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp] w - - 0 1',
@@ -21,6 +22,7 @@ const FAMILY_FEN: Array<[string[], string]> = [
   [['abalone', 'grandabalone'], FENS.abalone!],
   [['backgammon', 'hyper', 'nackgammon'], FENS.backgammon!],
   [['oware'], FENS.oware!],
+  [['entropy'], FENS.entropy!],
   [['fiveCheck'], FENS.fiveCheck!],
 ];
 
@@ -45,6 +47,7 @@ describe('score', () => {
         'antiflipello',
         'backgammon',
         'bestemshe',
+        'entropy',
         'fiveCheck',
         'flipello',
         'flipello10',
