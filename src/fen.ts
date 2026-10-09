@@ -6,9 +6,12 @@ import { SquareSet } from './squareSet.js';
 import {
   FILE_NAMES,
   type Move,
+  OPENING_STEPS,
+  type OpeningStep,
   type Piece,
   type PlayerIndex,
   PLAYERINDEXES,
+  type Role,
   ROLES,
   type Rules,
   type Square,
@@ -19,6 +22,7 @@ import {
   dimensionsForRules,
   makeSquare,
   makeUci,
+  opposite,
   parseSquare,
   parseUci,
   roleToChar,
@@ -55,6 +59,8 @@ export enum InvalidFen {
   Ko = 'ERR_KO',
   BackgammonScore = 'ERR_BACKGAMMON_SCORE',
   Round = 'ERR_ROUND',
+  BlackSeat = 'ERR_BLACK_SEAT',
+  OpeningStep = 'ERR_OPENING_STEP',
 }
 
 export class FenError extends Error {}
@@ -648,6 +654,116 @@ export const makeEntropyFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
   ].join(' ');
 
 // ------------------------------------------------------------------------------
+// Five in a row fens
+// 15/15/15/15/15/15/15/15/15/15/15/15/15/15/15 b 1 o 1 : board nextColour blackSeat openingStep fullmoves
+// A stone's letter is its colour; it belongs to whichever seat currently plays that colour.
+// The stones are kept outside the Board, whose SquareSets cannot hold a 15x15 board.
+const GOMOKU_STONES: Partial<Record<string, Role>> = { B: 'b-piece', W: 'w-piece' };
+
+export const gomokuNextColour = (stones: Map<Square, Role>): Role => {
+  const black = [...stones.values()].filter(role => role === 'b-piece').length;
+  return black * 2 === stones.size ? 'b-piece' : 'w-piece';
+};
+
+export const gomokuSeatToMove = (
+  stones: Map<Square, Role>,
+  blackSeat: PlayerIndex,
+  openingStep: OpeningStep,
+): PlayerIndex =>
+  openingStep === 'o'
+    ? 'p1'
+    : openingStep === 's'
+    ? 'p2'
+    : gomokuNextColour(stones) === 'b-piece'
+    ? blackSeat
+    : opposite(blackSeat);
+
+export const parseGomokuStones = (rules: Rules) => (boardPart: string): Result<Map<Square, Role>, FenError> => {
+  const { ranks, files } = dimensionsForRules(rules);
+  const rows = boardPart.split('/');
+  if (rows.length !== ranks) return Result.err(new FenError(InvalidFen.Board));
+  const stones = new Map<Square, Role>();
+  for (const [index, row] of rows.entries()) {
+    const rank = ranks - 1 - index;
+    let file = 0;
+    for (const token of row.match(/\d+|./g) ?? []) {
+      if (/^\d+$/.test(token)) {
+        file += parseInt(token, 10);
+      } else {
+        const role = GOMOKU_STONES[token];
+        if (!role || file >= files) return Result.err(new FenError(InvalidFen.Board));
+        stones.set(file + rank * files, role);
+        file++;
+      }
+    }
+    if (file !== files) return Result.err(new FenError(InvalidFen.Board));
+  }
+  return Result.ok(stones);
+};
+
+export const makeGomokuStones = (rules: Rules) => (stones: Map<Square, Role>): string => {
+  const { ranks, files } = dimensionsForRules(rules);
+  const rows: string[] = [];
+  for (let rank = ranks - 1; rank >= 0; rank--) {
+    let row = '';
+    let empty = 0;
+    for (let file = 0; file < files; file++) {
+      const role = stones.get(file + rank * files);
+      if (!role) empty++;
+      else {
+        row += `${empty || ''}${roleToChar(role).toUpperCase()}`;
+        empty = 0;
+      }
+    }
+    rows.push(`${row}${empty || ''}`);
+  }
+  return rows.join('/');
+};
+
+export const parseGomokuFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+  const [boardPart, ...parts] = fen.split(' ');
+
+  if (parts.length !== 4) {
+    return Result.err(new FenError(InvalidFen.Fen));
+  }
+
+  const blackSeat: PlayerIndex | undefined = parts[1] === '1' ? 'p1' : parts[1] === '2' ? 'p2' : undefined;
+  const openingStep = OPENING_STEPS.find(step => step === parts[2]);
+
+  return fp
+    .resultZip([
+      parseGomokuStones(rules)(boardPart),
+      blackSeat ? Result.ok(blackSeat) : Result.err(new FenError(InvalidFen.BlackSeat)),
+      openingStep ? Result.ok(openingStep) : Result.err(new FenError(InvalidFen.OpeningStep)),
+      parseFullMoves(parts[3]),
+    ])
+    .chain(([stones, blackSeat, openingStep, fullmoves]) => {
+      if (parts[0] !== roleToChar(gomokuNextColour(stones))) return Result.err(new FenError(InvalidFen.Turn));
+      return Result.ok({
+        ...defaultSetup(),
+        board: Board.empty(rules),
+        unmovedRooks: SquareSet.empty(),
+        stones,
+        turn: gomokuSeatToMove(stones, blackSeat, openingStep),
+        blackSeat,
+        openingStep,
+        fullmoves,
+      });
+    });
+};
+
+export const makeGomokuFen = (rules: Rules) => (setup: Setup): string => {
+  const stones = setup.stones ?? new Map<Square, Role>();
+  return [
+    makeGomokuStones(rules)(stones),
+    roleToChar(gomokuNextColour(stones)),
+    (setup.blackSeat ?? 'p1') === 'p1' ? '1' : '2',
+    setup.openingStep ?? '-',
+    `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
+  ].join(' ');
+};
+
+// ------------------------------------------------------------------------------
 // Default fens
 export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...originalParts] = fen.split(' ');
@@ -705,6 +821,9 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   }
   if (rules === 'entropy') {
     return parseEntropyFen(rules)(fen);
+  }
+  if (rules === 'gomoku') {
+    return parseGomokuFen(rules)(fen);
   }
   return parseDefaultFen(rules)(fen);
 };
@@ -879,6 +998,9 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   }
   if (rules === 'entropy') {
     return makeEntropyFen(rules)(setup, opts);
+  }
+  if (rules === 'gomoku') {
+    return makeGomokuFen(rules)(setup);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),

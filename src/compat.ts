@@ -94,7 +94,8 @@ export function playstrategyRules(
     | 'minibreakthroughtroyka'
     | 'abalone'
     | 'grandabalone'
-    | 'entropy',
+    | 'entropy'
+    | 'gomoku',
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -174,6 +175,7 @@ export function playstrategyVariants(
   | 'frysk'
   | 'dameo'
   | 'entropy'
+  | 'gomoku'
 {
   switch (rules) {
     case 'chess':

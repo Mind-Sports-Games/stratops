@@ -340,9 +340,15 @@ export const RULES = [
   'frysk',
   'dameo',
   'entropy',
+  'gomoku',
 ] as const;
 
 export type Rules = typeof RULES[number];
+
+// five in a row's opening, as its fen records it: opening, choice, swap2 drops, final choice, play
+export const OPENING_STEPS = ['o', 'c', 's', 'f', '-'] as const;
+
+export type OpeningStep = typeof OPENING_STEPS[number];
 
 export interface Outcome {
   winner: PlayerIndex | undefined;

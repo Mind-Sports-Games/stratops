@@ -1,7 +1,7 @@
 import { Board } from './board.js';
 import type * as fp from './fp.js';
 import { SquareSet } from './squareSet.js';
-import { type Move, type PlayerIndex, ROLES, type Square } from './types.js';
+import { type Move, type OpeningStep, type PlayerIndex, type Role, ROLES, type Square } from './types.js';
 
 export class MaterialSide {
   'a-piece': number;
@@ -257,6 +257,9 @@ export interface Setup {
   unusedDice?: fp.Option<string>;
   usedDice?: fp.Option<string>;
   round?: fp.Option<number>;
+  stones?: Map<Square, Role>;
+  blackSeat?: fp.Option<PlayerIndex>;
+  openingStep?: fp.Option<OpeningStep>;
   lastMove?: fp.Option<Move>;
 }
 

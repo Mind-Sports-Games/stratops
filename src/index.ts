@@ -12,6 +12,8 @@ export {
   isNormal,
   Move,
   NormalMove,
+  OPENING_STEPS,
+  OpeningStep,
   Outcome,
   Piece,
   PlayerIndex,
