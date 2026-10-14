@@ -258,6 +258,7 @@ export interface Setup {
   usedDice?: fp.Option<string>;
   round?: fp.Option<number>;
   stones?: Map<Square, Role>;
+  offered?: Square[];
   blackSeat?: fp.Option<PlayerIndex>;
   openingStep?: fp.Option<OpeningStep>;
   lastMove?: fp.Option<Move>;

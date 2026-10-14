@@ -341,12 +341,15 @@ export const RULES = [
   'dameo',
   'entropy',
   'gomoku',
+  'pente',
+  'renju',
 ] as const;
 
 export type Rules = typeof RULES[number];
 
-// five in a row's opening, as its fen records it: opening, choice, swap2 drops, final choice, play
-export const OPENING_STEPS = ['o', 'c', 's', 'f', '-'] as const;
+// five in a row's opening, as its fen records it. Swap2: opening, choice, swap2 drops, final choice.
+// Taraguchi-10: placing, swap offered, offering ten, picking. Both end in play.
+export const OPENING_STEPS = ['o', 'c', 's', 'f', 'p', 'q', 'x', 'k', '-'] as const;
 
 export type OpeningStep = typeof OPENING_STEPS[number];
 

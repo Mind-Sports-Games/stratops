@@ -155,4 +155,6 @@ export enum VariantKey {
   dameo = 'dameo',
   entropy = 'entropy',
   gomoku = 'gomoku',
+  pente = 'pente',
+  renju = 'renju',
 }

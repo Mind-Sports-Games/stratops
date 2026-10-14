@@ -43,10 +43,14 @@ const ownerAt = (pos: GameFamily, key: string) => pos.stoneAt(parseSquare('gomok
 
 const opened = play(start(), 'B@h8', 'W@h9', 'B@i8');
 
-test('gomoku is wired as the five in a row game family with a single variant', () => {
+test('gomoku is wired as the five in a row game family', () => {
   expect(variantClass('gomoku')).toBe(Gomoku);
   expect(variantClassFromKey(VariantKey.gomoku)).toBe(Gomoku);
-  expect(gameFamilyClass(GameFamilyKey.fiveinarow).getVariantKeys()).toEqual([VariantKey.gomoku]);
+  expect(gameFamilyClass(GameFamilyKey.fiveinarow).getVariantKeys()).toEqual([
+    VariantKey.gomoku,
+    VariantKey.pente,
+    VariantKey.renju,
+  ]);
   expect(Gomoku.family).toBe(GameFamilyKey.fiveinarow);
   expect(Gomoku.getBoardDimensions()).toEqual({ files: 15, ranks: 15 });
   expect(Gomoku.getNotationStyle()).toBe(NotationStyle.uci);

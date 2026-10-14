@@ -95,7 +95,9 @@ export function playstrategyRules(
     | 'abalone'
     | 'grandabalone'
     | 'entropy'
-    | 'gomoku',
+    | 'gomoku'
+    | 'pente'
+    | 'renju',
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -176,6 +178,8 @@ export function playstrategyVariants(
   | 'dameo'
   | 'entropy'
   | 'gomoku'
+  | 'pente'
+  | 'renju'
 {
   switch (rules) {
     case 'chess':

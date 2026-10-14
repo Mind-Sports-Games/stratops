@@ -260,6 +260,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'entropy':
       return { ranks: 7, files: 7 };
     case 'gomoku':
+    case 'renju':
       return { ranks: 15, files: 15 };
     case 'flipello':
       return { ranks: 8, files: 8 };
@@ -282,6 +283,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'go13x13':
       return { ranks: 13, files: 13 };
     case 'go19x19':
+    case 'pente':
       return { ranks: 19, files: 19 };
     case 'nackgammon':
     case 'hyper':

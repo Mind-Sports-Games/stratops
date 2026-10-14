@@ -6,7 +6,6 @@ import { SquareSet } from './squareSet.js';
 import {
   FILE_NAMES,
   type Move,
-  OPENING_STEPS,
   type OpeningStep,
   type Piece,
   type PlayerIndex,
@@ -656,33 +655,67 @@ export const makeEntropyFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
 // ------------------------------------------------------------------------------
 // Five in a row fens
 // 15/15/15/15/15/15/15/15/15/15/15/15/15/15/15 b 1 o 1 : board nextColour blackSeat openingStep fullmoves
+// Pente adds each seat's captured stones, P1's first: board nextColour blackSeat openingStep p1 p2 fullmoves
 // A stone's letter is its colour; it belongs to whichever seat currently plays that colour.
+// A lowercase b is one of renju's offered fifth stones, waiting beside the board for white to pick it.
 // The stones are kept outside the Board, whose SquareSets cannot hold a 15x15 board.
-const GOMOKU_STONES: Partial<Record<string, Role>> = { B: 'b-piece', W: 'w-piece' };
+const FIVE_IN_A_ROW_STONES: Partial<Record<string, Role>> = { B: 'b-piece', W: 'w-piece' };
+const FIVE_IN_A_ROW_OFFERED = 'b';
 
-export const gomokuNextColour = (stones: Map<Square, Role>): Role => {
-  const black = [...stones.values()].filter(role => role === 'b-piece').length;
-  return black * 2 === stones.size ? 'b-piece' : 'w-piece';
-};
+export type FiveInARowCaptures = Record<PlayerIndex, number>;
 
-export const gomokuSeatToMove = (
+export const fiveInARowScored = (rules: Rules): boolean => rules === 'pente';
+
+export const fiveInARowOpeningSteps = (rules: Rules): readonly OpeningStep[] =>
+  rules === 'renju' ? ['p', 'q', 'x', 'k', '-'] : ['o', 'c', 's', 'f', '-'];
+
+export const fiveInARowSeatOf = (role: Role, blackSeat: PlayerIndex): PlayerIndex =>
+  role === 'b-piece' ? blackSeat : opposite(blackSeat);
+
+// captured stones still count as dropped, so black and white alternate from the first stone
+export const fiveInARowDropped = (
   stones: Map<Square, Role>,
   blackSeat: PlayerIndex,
-  openingStep: OpeningStep,
-): PlayerIndex =>
-  openingStep === 'o'
-    ? 'p1'
-    : openingStep === 's'
-    ? 'p2'
-    : gomokuNextColour(stones) === 'b-piece'
-    ? blackSeat
-    : opposite(blackSeat);
+  captures: FiveInARowCaptures,
+  role: Role,
+): number => {
+  const onBoard = [...stones.values()].filter(stone => stone === role).length;
+  const otherColour: Role = role === 'b-piece' ? 'w-piece' : 'b-piece';
+  return onBoard + captures[fiveInARowSeatOf(otherColour, blackSeat)];
+};
 
-export const parseGomokuStones = (rules: Rules) => (boardPart: string): Result<Map<Square, Role>, FenError> => {
+export const fiveInARowNextColour = (
+  stones: Map<Square, Role>,
+  blackSeat: PlayerIndex,
+  captures: FiveInARowCaptures,
+): Role =>
+  fiveInARowDropped(stones, blackSeat, captures, 'b-piece')
+      === fiveInARowDropped(stones, blackSeat, captures, 'w-piece')
+    ? 'b-piece'
+    : 'w-piece';
+
+// one seat drops both colours through the opening and the swap2 pair, and white picks before black's fifth is down
+export const fiveInARowSeatToMove = (
+  stones: Map<Square, Role>,
+  blackSeat: PlayerIndex,
+  captures: FiveInARowCaptures,
+  openingStep: OpeningStep,
+): PlayerIndex => {
+  if (openingStep === 'o') return 'p1';
+  if (openingStep === 's') return 'p2';
+  const seatOfNext = fiveInARowSeatOf(fiveInARowNextColour(stones, blackSeat, captures), blackSeat);
+  return openingStep === 'k' ? opposite(seatOfNext) : seatOfNext;
+};
+
+export const parseFiveInARowStones = (rules: Rules) =>
+(
+  boardPart: string,
+): Result<{ stones: Map<Square, Role>; offered: Square[] }, FenError> => {
   const { ranks, files } = dimensionsForRules(rules);
   const rows = boardPart.split('/');
   if (rows.length !== ranks) return Result.err(new FenError(InvalidFen.Board));
   const stones = new Map<Square, Role>();
+  const offered: Square[] = [];
   for (const [index, row] of rows.entries()) {
     const rank = ranks - 1 - index;
     let file = 0;
@@ -690,28 +723,33 @@ export const parseGomokuStones = (rules: Rules) => (boardPart: string): Result<M
       if (/^\d+$/.test(token)) {
         file += parseInt(token, 10);
       } else {
-        const role = GOMOKU_STONES[token];
-        if (!role || file >= files) return Result.err(new FenError(InvalidFen.Board));
-        stones.set(file + rank * files, role);
+        const role = FIVE_IN_A_ROW_STONES[token];
+        if ((!role && token !== FIVE_IN_A_ROW_OFFERED) || file >= files) {
+          return Result.err(new FenError(InvalidFen.Board));
+        }
+        if (role) stones.set(file + rank * files, role);
+        else offered.push(file + rank * files);
         file++;
       }
     }
     if (file !== files) return Result.err(new FenError(InvalidFen.Board));
   }
-  return Result.ok(stones);
+  return Result.ok({ stones, offered: offered.sort((a, b) => a - b) });
 };
 
-export const makeGomokuStones = (rules: Rules) => (stones: Map<Square, Role>): string => {
+export const makeFiveInARowStones = (rules: Rules) => (stones: Map<Square, Role>, offered: Square[] = []): string => {
   const { ranks, files } = dimensionsForRules(rules);
   const rows: string[] = [];
   for (let rank = ranks - 1; rank >= 0; rank--) {
     let row = '';
     let empty = 0;
     for (let file = 0; file < files; file++) {
-      const role = stones.get(file + rank * files);
-      if (!role) empty++;
+      const square = file + rank * files;
+      const role = stones.get(square);
+      const char = role ? roleToChar(role).toUpperCase() : offered.includes(square) ? FIVE_IN_A_ROW_OFFERED : '';
+      if (!char) empty++;
       else {
-        row += `${empty || ''}${roleToChar(role).toUpperCase()}`;
+        row += `${empty || ''}${char}`;
         empty = 0;
       }
     }
@@ -720,45 +758,56 @@ export const makeGomokuStones = (rules: Rules) => (stones: Map<Square, Role>): s
   return rows.join('/');
 };
 
-export const parseGomokuFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+export const parseFiveInARowFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...parts] = fen.split(' ');
+  const scored = fiveInARowScored(rules);
 
-  if (parts.length !== 4) {
+  if (parts.length !== (scored ? 6 : 4)) {
     return Result.err(new FenError(InvalidFen.Fen));
   }
 
   const blackSeat: PlayerIndex | undefined = parts[1] === '1' ? 'p1' : parts[1] === '2' ? 'p2' : undefined;
-  const openingStep = OPENING_STEPS.find(step => step === parts[2]);
+  const openingStep = fiveInARowOpeningSteps(rules).find(step => step === parts[2]);
 
   return fp
     .resultZip([
-      parseGomokuStones(rules)(boardPart),
+      parseFiveInARowStones(rules)(boardPart),
       blackSeat ? Result.ok(blackSeat) : Result.err(new FenError(InvalidFen.BlackSeat)),
       openingStep ? Result.ok(openingStep) : Result.err(new FenError(InvalidFen.OpeningStep)),
-      parseFullMoves(parts[3]),
+      scored ? parseCaptures(parts[3]) : Result.ok(0),
+      scored ? parseCaptures(parts[4]) : Result.ok(0),
+      parseFullMoves(parts[scored ? 5 : 3]),
     ])
-    .chain(([stones, blackSeat, openingStep, fullmoves]) => {
-      if (parts[0] !== roleToChar(gomokuNextColour(stones))) return Result.err(new FenError(InvalidFen.Turn));
+    .chain(([{ stones, offered }, blackSeat, openingStep, p1Captures, p2Captures, fullmoves]) => {
+      const captures = { p1: p1Captures, p2: p2Captures };
+      if (parts[0] !== roleToChar(fiveInARowNextColour(stones, blackSeat, captures))) {
+        return Result.err(new FenError(InvalidFen.Turn));
+      }
       return Result.ok({
         ...defaultSetup(),
         board: Board.empty(rules),
         unmovedRooks: SquareSet.empty(),
         stones,
-        turn: gomokuSeatToMove(stones, blackSeat, openingStep),
+        offered,
+        turn: fiveInARowSeatToMove(stones, blackSeat, captures, openingStep),
         blackSeat,
         openingStep,
+        ...(scored ? { p1Captures, p2Captures } : {}),
         fullmoves,
       });
     });
 };
 
-export const makeGomokuFen = (rules: Rules) => (setup: Setup): string => {
+export const makeFiveInARowFen = (rules: Rules) => (setup: Setup): string => {
   const stones = setup.stones ?? new Map<Square, Role>();
+  const blackSeat = setup.blackSeat ?? 'p1';
+  const captures = { p1: setup.p1Captures ?? 0, p2: setup.p2Captures ?? 0 };
   return [
-    makeGomokuStones(rules)(stones),
-    roleToChar(gomokuNextColour(stones)),
-    (setup.blackSeat ?? 'p1') === 'p1' ? '1' : '2',
+    makeFiveInARowStones(rules)(stones, setup.offered),
+    roleToChar(fiveInARowNextColour(stones, blackSeat, captures)),
+    blackSeat === 'p1' ? '1' : '2',
     setup.openingStep ?? '-',
+    ...(fiveInARowScored(rules) ? [`${captures.p1}`, `${captures.p2}`] : []),
     `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
   ].join(' ');
 };
@@ -822,8 +871,8 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   if (rules === 'entropy') {
     return parseEntropyFen(rules)(fen);
   }
-  if (rules === 'gomoku') {
-    return parseGomokuFen(rules)(fen);
+  if (rules === 'gomoku' || rules === 'pente' || rules === 'renju') {
+    return parseFiveInARowFen(rules)(fen);
   }
   return parseDefaultFen(rules)(fen);
 };
@@ -999,8 +1048,8 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   if (rules === 'entropy') {
     return makeEntropyFen(rules)(setup, opts);
   }
-  if (rules === 'gomoku') {
-    return makeGomokuFen(rules)(setup);
+  if (rules === 'gomoku' || rules === 'pente' || rules === 'renju') {
+    return makeFiveInARowFen(rules)(setup);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
