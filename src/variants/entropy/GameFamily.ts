@@ -14,6 +14,7 @@ import {
   type Square,
 } from '../../types';
 import { opposite } from '../../util';
+import * as score from '../score';
 import { ExtendedMoveInfo, GameFamilyKey, LexicalUci, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -68,7 +69,7 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    return +fen.split(' ')[playerIndex === 'p1' ? 2 : 3];
+    return score.entropy(fen, playerIndex);
   }
 
   static override parseLexicalUci(uci: string): LexicalUci | undefined {

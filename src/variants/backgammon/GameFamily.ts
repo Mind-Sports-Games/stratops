@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import { type Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { BoardDimensions, Outcome, PlayerIndex } from '../../types';
+import * as score from '../score';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -78,7 +79,7 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    return +fen.split(' ')[playerIndex === 'p1' ? 4 : 5];
+    return score.backgammon(fen, playerIndex);
   }
 
   static override getVariantKeys(): VariantKey[] {

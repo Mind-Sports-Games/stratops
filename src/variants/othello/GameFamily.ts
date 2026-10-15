@@ -3,6 +3,7 @@ import { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import { type DropMove, Outcome, PlayerFENChar, type PlayerIndex, type Square } from '../../types';
 import { opposite } from '../../util';
+import * as score from '../score';
 import { GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -29,8 +30,7 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    const boardPart = fen.split(' ')[0].split('[')[0];
-    return boardPart.split(playerIndex === 'p1' ? 'P' : 'p').length - 1;
+    return score.othello(fen, playerIndex);
   }
 
   static override getVariantKeys(): VariantKey[] {
