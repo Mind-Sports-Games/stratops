@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import { RemainingChecks, Setup } from '../../setup';
 import { Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
+import * as score from '../score';
 import { GameFamily } from './GameFamily';
 
 export class FiveCheck extends GameFamily {
@@ -25,7 +26,7 @@ export class FiveCheck extends GameFamily {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    return +fen.split(' ')[6][playerIndex === 'p1' ? 1 : 3];
+    return score.fiveCheck(fen, playerIndex);
   }
 
   protected constructor() {

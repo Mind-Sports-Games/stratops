@@ -17,6 +17,7 @@ import { defaultSetup, type Setup } from '../../setup';
 import type { Outcome } from '../../types';
 import type { Piece, PlayerIndex } from '../../types';
 import { opposite } from '../../util.js';
+import * as score from '../score';
 import { type ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 import {
@@ -79,7 +80,7 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2];
+    return score.abalone(fen, playerIndex);
   }
 
   static override parseFen(fen: string): Result<Setup, FenError> {

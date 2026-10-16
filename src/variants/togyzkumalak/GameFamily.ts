@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import type { Context, PositionError } from '../../chess';
 import type { Setup } from '../../setup';
 import type { Outcome, PlayerIndex } from '../../types';
+import * as score from '../score';
 import { ExtendedMoveInfo, GameFamilyKey, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
 
@@ -20,8 +21,8 @@ export abstract class GameFamily extends Variant {
     const destEmpty = this.isDestEmptyInTogyFen(dest, destNumber, move.fen, this.width);
     const isCapture = gainedStones && orig[1] !== dest[1] && destEmpty;
 
-    const score = orig[1] === '1' ? this.getScoreFromFen(move.fen, 'p1') : this.getScoreFromFen(move.fen, 'p2');
-    const scoreText = isCapture ? `(${score})` : '';
+    const moverScore = orig[1] === '1' ? this.getScoreFromFen(move.fen, 'p1') : this.getScoreFromFen(move.fen, 'p2');
+    const scoreText = isCapture ? `(${moverScore})` : '';
 
     const createdTuzdik = orig[1] === '1'
       ? this.hasTuzdik(move.fen, 'p1') && !this.hasTuzdik(move.prevFen, 'p1')
@@ -39,7 +40,7 @@ export abstract class GameFamily extends Variant {
   }
 
   static override getScoreFromFen(fen: string, playerIndex: string): number {
-    return +fen.split(' ')[playerIndex === 'p1' ? 1 : 2];
+    return score.togyzkumalak(fen, playerIndex);
   }
 
   static override getVariantKeys(): VariantKey[] {
