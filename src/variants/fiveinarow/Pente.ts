@@ -1,5 +1,6 @@
 import { parseFen } from '../../fen';
 import type { BoardDimensions, Rules } from '../../types';
+import * as score from '../score';
 import { GameFamily } from './GameFamily';
 
 export class Pente extends GameFamily {
@@ -16,9 +17,8 @@ export class Pente extends GameFamily {
     return this;
   }
 
-  // the stones each seat has captured
   static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
-    return +fen.split(' ')[playerIndex === 'p1' ? 4 : 5];
+    return score.pente(fen, playerIndex);
   }
 
   protected constructor() {
