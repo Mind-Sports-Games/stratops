@@ -657,7 +657,8 @@ export const makeEntropyFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
 // 15/15/15/15/15/15/15/15/15/15/15/15/15/15/15 b 1 o 1 : board nextColour blackSeat openingStep fullmoves
 // Pente adds each seat's captured stones, P1's first: board nextColour blackSeat openingStep p1 p2 fullmoves
 // A stone's letter is its colour; it belongs to whichever seat currently plays that colour.
-// A lowercase b is one of renju's offered fifth stones, waiting beside the board for white to pick it.
+// A lowercase b is one of renju's offered fifth stones, waiting beside the board for white's drop on one of them.
+// Renju's opening step z marks a game black lost to a forbidden action, which no line of five shows.
 // The stones are kept outside the Board, whose SquareSets cannot hold a 15x15 board.
 const FIVE_IN_A_ROW_STONES: Partial<Record<string, Role>> = { B: 'b-piece', W: 'w-piece' };
 const FIVE_IN_A_ROW_OFFERED = 'b';
@@ -667,7 +668,7 @@ export type FiveInARowCaptures = Record<PlayerIndex, number>;
 export const fiveInARowScored = (rules: Rules): boolean => rules === 'pente';
 
 export const fiveInARowOpeningSteps = (rules: Rules): readonly OpeningStep[] =>
-  rules === 'renju' ? ['p', 'q', 'x', 'k', '-'] : ['o', 'c', 's', 'f', '-'];
+  rules === 'renju' ? ['p', 'q', 'x', 'k', '-', 'z'] : ['o', 'c', 's', 'f', '-'];
 
 export const fiveInARowSeatOf = (role: Role, blackSeat: PlayerIndex): PlayerIndex =>
   role === 'b-piece' ? blackSeat : opposite(blackSeat);
@@ -694,7 +695,7 @@ export const fiveInARowNextColour = (
     ? 'b-piece'
     : 'w-piece';
 
-// one seat drops both colours through the opening and the swap2 pair, and white picks before black's fifth is down
+// one seat drops both colours through the opening and the swap2 pair, and white drops black's fifth on an offered point
 export const fiveInARowSeatToMove = (
   stones: Map<Square, Role>,
   blackSeat: PlayerIndex,

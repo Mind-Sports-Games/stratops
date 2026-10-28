@@ -39,6 +39,13 @@ const TARAGUCHI_RESTRICTED_STONES = 5;
 const TARAGUCHI_SWAPPED_STONES = 5;
 const TARAGUCHI_OFFERED_STONES = 10;
 
+interface FiveWindow {
+  cells: Square[];
+  ends: Square[];
+}
+
+const fiveWindowsBySize = new Map<string, FiveWindow[]>();
+
 // gomoku and pente open with swap2; renju with Taraguchi-10
 export type FiveInARowOpening = 'swap2' | 'taraguchi10';
 
@@ -57,19 +64,18 @@ export abstract class GameFamily extends Variant {
   };
   static opening: FiveInARowOpening = 'swap2';
   static captureTarget: number | undefined = undefined;
-  static forbiddenMoves = false;
+  static forbiddenActions = false;
 
   stones: Map<Square, Role> = new Map();
   offered: Square[] = [];
   blackSeat: PlayerIndex = 'p1';
   openingStep: OpeningStep = 'o';
   captures: FiveInARowCaptures = { p1: 0, p2: 0 };
-  // a forbidden drop loses on the spot, and the fen does not record it
+  // a forbidden drop loses on the spot; the fen records only the loss, as the opening step z
   forbiddenDrop: Square | undefined = undefined;
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (move.uci.includes('@')) return move.uci.split('@')[1];
-    if (move.uci.startsWith('ss:')) return move.uci.substring(3);
     return move.uci;
   }
 
@@ -119,13 +125,8 @@ export abstract class GameFamily extends Variant {
     );
   }
 
-  // a pick puts the chosen offered stone on the board as black's fifth
   static override parseLexicalUci(uci: string): LexicalUci | undefined {
     if (!uci || uci === 'swap' || uci === 'swap2' || uci === 'offer10') return undefined;
-    if (uci.startsWith('ss:')) {
-      const picked = uci.substring(3) as LexicalUci['to'];
-      return { from: picked, to: picked, dropRole: 'b-piece' };
-    }
     return super.parseLexicalUci(uci);
   }
 
@@ -144,6 +145,47 @@ export abstract class GameFamily extends Variant {
 
   static winningLine(_role: Role, length: number): boolean {
     return length >= 5;
+  }
+
+  private static fiveWindows(): FiveWindow[] {
+    const size = `${this.width}x${this.height}`;
+    const cached = fiveWindowsBySize.get(size);
+    if (cached) return cached;
+    const windows: FiveWindow[] = [];
+    for (let rank = 0; rank < this.height; rank++) {
+      for (let file = 0; file < this.width; file++) {
+        for (const [df, dr] of LINE_DIRECTIONS) {
+          if (!this.onBoard(file + df * 4, rank + dr * 4)) continue;
+          const cells = [0, 1, 2, 3, 4].map(n => (rank + dr * n) * this.width + file + df * n);
+          const ends = [[file - df, rank - dr], [file + df * 5, rank + dr * 5]]
+            .filter(([f, r]) => this.onBoard(f, r))
+            .map(([f, r]) => r * this.width + f);
+          windows.push({ cells, ends });
+        }
+      }
+    }
+    fiveWindowsBySize.set(size, windows);
+    return windows;
+  }
+
+  // a window that would join a stone of its own colour beyond either end can only ever make an overline
+  private static windowOpenTo(stones: Map<Square, Role>, role: Role, window: FiveWindow): boolean {
+    return window.cells.every(square => (stones.get(square) ?? role) === role)
+      && (this.winningLine(role, 6) || !window.ends.some(square => stones.get(square) === role));
+  }
+
+  // not a proven minimum, only a count below which a blocked board is too rare to scan for: each row
+  // splits into width / 5 stretches, and a stretch usually holds a stone of both colours once blocked
+  private static fewestStonesBlockingEveryFive(): number {
+    return 2 * this.height * Math.floor(this.width / 5);
+  }
+
+  // captures can reopen a blocked line, so only a variant without them can run out of fives
+  static noFivePossible(stones: Map<Square, Role>): boolean {
+    return this.captureTarget === undefined && stones.size >= this.fewestStonesBlockingEveryFive()
+      && !this.fiveWindows().some(window =>
+        (['b-piece', 'w-piece'] as const).some(role => this.windowOpenTo(stones, role, window))
+      );
   }
 
   private static onBoard(file: number, rank: number): boolean {
@@ -210,9 +252,10 @@ export abstract class GameFamily extends Variant {
     return role && { role, playerIndex: this.seatOf(role) };
   }
 
-  // the points the next stone may be dropped on
+  // the points the next stone may be dropped on; after offer10, only the offered ones
   emptyPoints(): Square[] {
-    if (this.isVariantEnd() || this.openingStep === 'k') return [];
+    if (this.isVariantEnd()) return [];
+    if (this.openingStep === 'k') return this.offeredPoints();
     return this.points().filter(square => !this.stones.has(square) && this.openingAllowsDrop(square));
   }
 
@@ -223,10 +266,10 @@ export abstract class GameFamily extends Variant {
   // the empty points where black's drop would lose on the spot
   forbiddenPoints(): Square[] {
     if (
-      !this.variant.forbiddenMoves || this.isVariantEnd() || this.nextColour() !== 'b-piece'
-      || this.openingStep === 'x'
+      !this.variant.forbiddenActions || this.nextColour() !== 'b-piece' || this.openingStep === 'x'
+      || this.openingStep === 'k'
     ) return [];
-    return this.points().filter(square => !this.stones.has(square) && this.isForbiddenDrop('b-piece', square));
+    return this.emptyPoints().filter(square => this.isForbiddenDrop('b-piece', square));
   }
 
   canSwap(): boolean {
@@ -245,12 +288,12 @@ export abstract class GameFamily extends Variant {
       && this.droppedCount() === 4;
   }
 
-  canSelectSquares(): boolean {
-    return !this.isVariantEnd() && this.openingStep === 'k';
-  }
-
   isBoardFull(): boolean {
     return this.stones.size === this.variant.width * this.variant.height;
+  }
+
+  isDrawn(): boolean {
+    return this.isBoardFull() || this.variant.noFivePossible(this.stones);
   }
 
   override ctx(): Context {
@@ -284,13 +327,25 @@ export abstract class GameFamily extends Variant {
       this.endAction();
       return;
     }
+    // white drops black's fifth on one offered point, the other nine go, and white drops the sixth
+    if (this.openingStep === 'k') {
+      this.stones.set(move.to, move.role);
+      this.offered = [];
+      this.openingStep = 'p';
+      this.endAction();
+      return;
+    }
     const forbidden = this.isForbiddenDrop(move.role, move.to);
     this.stones.set(move.to, move.role);
     this.capture(move.role, move.to);
-    if (forbidden) this.forbiddenDrop = move.to;
-    this.openingStep = this.stepAfterDrop();
-    // the swap2 pair ends with the colours exchanged, exactly as a swap makes
-    if (this.variant.opening === 'swap2' && this.openingStep === 'f') this.swapColours();
+    if (forbidden) {
+      this.forbiddenDrop = move.to;
+      this.openingStep = 'z';
+    } else {
+      this.openingStep = this.stepAfterDrop();
+      // the swap2 pair ends with the colours exchanged, exactly as a swap makes
+      if (this.variant.opening === 'swap2' && this.openingStep === 'f') this.swapColours();
+    }
     this.endAction();
   }
 
@@ -308,15 +363,6 @@ export abstract class GameFamily extends Variant {
 
   offer10(): void {
     this.openingStep = 'x';
-    this.endAction();
-  }
-
-  // white keeps one offered stone as black's fifth, and goes on to drop the sixth
-  selectSquares(squares: Square[]): void {
-    if (!this.canSelectSquares() || squares.length !== 1 || !this.offered.includes(squares[0])) return;
-    this.stones.set(squares[0], 'b-piece');
-    this.offered = [];
-    this.openingStep = 'p';
     this.endAction();
   }
 
@@ -376,7 +422,7 @@ export abstract class GameFamily extends Variant {
   }
 
   private isForbiddenDrop(role: Role, square: Square): boolean {
-    return this.variant.forbiddenMoves && role === 'b-piece'
+    return this.variant.forbiddenActions && role === 'b-piece'
       && isForbidden({ stones: this.stones, width: this.variant.width, height: this.variant.height }, square);
   }
 
@@ -442,14 +488,14 @@ export abstract class GameFamily extends Variant {
   winner(): PlayerIndex | undefined {
     const colour = this.variant.colourWithLine(this.stones);
     if (colour) return this.seatOf(colour);
-    if (this.forbiddenDrop !== undefined) return this.seatOf('w-piece');
+    if (this.openingStep === 'z') return this.seatOf('w-piece');
     const target = this.variant.captureTarget;
     if (target === undefined) return undefined;
     return (['p1', 'p2'] as const).find(seat => this.captures[seat] >= target);
   }
 
   override isVariantEnd(): boolean {
-    return this.winner() !== undefined || this.isBoardFull();
+    return this.winner() !== undefined || this.isDrawn();
   }
 
   override variantOutcome(ctx?: Context): Outcome | undefined {

@@ -22,12 +22,6 @@ export const fiveInARowSupport = (variant: FiveInARowClass) => {
       } else if (action === 'offer10') {
         if (!next.canOffer10()) throw new Error(`illegal ${action}`);
         next.offer10();
-      } else if (action.startsWith('ss:')) {
-        const picked = action.substring(3).split(',').map(square);
-        if (!next.canSelectSquares() || picked.length !== 1 || !next.offeredPoints().includes(picked[0])) {
-          throw new Error(`illegal ${action}`);
-        }
-        next.selectSquares(picked);
       } else {
         const move = parseUci(rules)(action);
         if (!move || !next.isLegal(move)) throw new Error(`illegal ${action}`);

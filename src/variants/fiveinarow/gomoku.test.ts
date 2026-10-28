@@ -237,9 +237,24 @@ test('gomoku full game ends on the fifth stone, won by the seat holding black', 
   expect(read.outcome()).toEqual({ winner: 'p2' });
 });
 
-test('gomoku an overline still wins', () => {
-  const board = '15/15/15/15/15/15/15/BBBBBB9/WWWW11/15/15/15/15/15/15';
-  const pos = Gomoku.fromSetup(parseFen('gomoku')(`${board} w 1 - 6`).unwrap()).unwrap();
+test('gomoku an overline does not win, for either colour', () => {
+  const blackSix = '15/15/15/15/15/15/15/BBBBBB9/WWWW11/15/15/15/15/15/15';
+  expect(Gomoku.fromSetup(parseFen('gomoku')(`${blackSix} w 1 - 6`).unwrap()).unwrap().isEnd()).toBe(false);
+  const whiteSix = '15/15/15/15/15/15/15/WWWWWW9/BBBBBB9/15/15/15/15/15/15';
+  expect(Gomoku.fromSetup(parseFen('gomoku')(`${whiteSix} b 1 - 7`).unwrap()).unwrap().isEnd()).toBe(false);
+});
+
+test('gomoku a drop that makes an overline is legal, and play goes on', () => {
+  const board = '15/15/15/15/15/15/15/3BBB1BB6/W1W1W1W1W6/15/15/15/15/15/15';
+  const pos = Gomoku.fromSetup(parseFen('gomoku')(`${board} b 1 - 6`).unwrap()).unwrap();
+  const after = play(pos, 'B@g8');
+  expect(after.isEnd()).toBe(false);
+  expect(after.emptyPoints().length).toBeGreaterThan(0);
+});
+
+test('gomoku exactly five wins alongside an overline elsewhere', () => {
+  const board = '15/15/15/15/15/15/15/3BBBBBB6/15/15/15/15/15/15/BBBBB10';
+  const pos = Gomoku.fromSetup(parseFen('gomoku')(`${board} w 1 - 12`).unwrap()).unwrap();
   expect(pos.outcome()).toEqual({ winner: 'p1' });
 });
 

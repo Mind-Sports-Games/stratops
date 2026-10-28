@@ -156,36 +156,35 @@ test('renju allows mirror-image offered stones when the position has no symmetry
 const ten = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'a2', 'b2', 'c2'].map(key => `B@${key}`);
 const offered = () => play(offering(), ...ten);
 
-test('renju passes to white to pick once ten are offered', () => {
+test('renju passes to white once ten are offered, with only the offered points to drop on', () => {
   const pos = offered();
   expect(pos.openingStep).toBe('k');
   expect(pos.turn).toBe('p2');
-  expect(pos.emptyPoints()).toEqual([]);
-  expect(pos.canSelectSquares()).toBe(true);
+  expect(pos.nextColour()).toBe('b-piece');
   expect(pos.offeredPoints().length).toBe(10);
+  expect(pos.emptyPoints()).toEqual(pos.offeredPoints());
+  expect(pos.forbiddenPoints()).toEqual([]);
 });
 
-test("renju pick keeps black's fifth, clears the rest, and leaves white to play the sixth", () => {
-  const picked = play(offered(), 'ss:c2');
-  expect(picked.offeredPoints()).toEqual([]);
-  expect(picked.stones.size).toBe(5);
-  expect(picked.stoneAt(square('c2'))?.role).toBe('b-piece');
-  expect(picked.turn).toBe('p2');
-  expect(picked.nextColour()).toBe('w-piece');
-  expect(picked.canSwap()).toBe(false);
-  expect(picked.canSelectSquares()).toBe(false);
-  expect(drops(picked).size).toBe(225 - 5);
-  const six = play(picked, 'W@o15');
+test("renju offered drop keeps black's fifth, clears the rest, and leaves white to play the sixth", () => {
+  const dropped = play(offered(), 'B@c2');
+  expect(dropped.offeredPoints()).toEqual([]);
+  expect(dropped.stones.size).toBe(5);
+  expect(dropped.stoneAt(square('c2'))?.role).toBe('b-piece');
+  expect(dropped.turn).toBe('p2');
+  expect(dropped.nextColour()).toBe('w-piece');
+  expect(dropped.canSwap()).toBe(false);
+  expect(drops(dropped).size).toBe(225 - 5);
+  const six = play(dropped, 'W@o15');
   expect(six.openingStep).toBe('-');
   expect(six.turn).toBe('p1');
 });
 
-test('renju refuses a pick that was not offered, or more than one', () => {
-  expect(refused(offered(), 'ss:h1')).toBe(true);
-  expect(refused(offered(), 'ss:a1,b1')).toBe(true);
-  const ignored = offered();
-  ignored.selectSquares([square('h1')]);
-  expect(ignored.openingStep).toBe('k');
+test('renju refuses an offered drop off the offered points, or of a white stone', () => {
+  expect(refused(offered(), 'B@h1')).toBe(true);
+  expect(refused(offered(), 'B@h8')).toBe(true);
+  expect(refused(offered(), 'W@c2')).toBe(true);
+  expect(refused(offered(), 'ss:c2')).toBe(true);
 });
 
 test('renju round trips the offered stones through the fen', () => {
@@ -238,15 +237,27 @@ test('renju lets exactly five win, whatever else the stone makes', () => {
   expect(dropNext(pos, 'h8').outcome()).toEqual({ winner: 'p1' });
 });
 
-test('renju a forbidden move is legal, and loses black the game on the spot', () => {
+test('renju a forbidden action is legal, and loses black the game on the spot', () => {
   const after = dropNext(blackToMove(['f8', 'g8', 'h6', 'h7']), 'h8');
   expect(after.isEnd()).toBe(true);
   expect(after.outcome()).toEqual({ winner: 'p2' });
   expect(after.forbiddenDrop).toBe(square('h8'));
+  expect(after.openingStep).toBe('z');
   expect(after.emptyPoints()).toEqual([]);
 });
 
-test('renju a forbidden move is won by whichever seat holds white', () => {
+test('renju a game lost to a forbidden action reads back from its fen as over', () => {
+  const after = dropNext(blackToMove(['f8', 'g8', 'h6', 'h7']), 'h8');
+  const written = fen(after);
+  expect(stateFields(after).split(' ').slice(0, 3).join(' ')).toBe('w 1 z');
+  const back = read(written);
+  expect(back.isEnd()).toBe(true);
+  expect(back.outcome()).toEqual({ winner: 'p2' });
+  expect(fen(back)).toBe(written);
+  expect(parseFen('gomoku')(written).isErr).toBe(true);
+});
+
+test('renju a forbidden action is won by whichever seat holds white', () => {
   const pos = blackToMove(['f8', 'g8', 'h6', 'h7']);
   const swapped = read(fen(pos).replace(' b 1 - ', ' b 2 - '));
   expect(dropNext(swapped, 'h8').outcome()).toEqual({ winner: 'p1' });
@@ -281,7 +292,7 @@ const record = [
   ['B@h10'],
   ['W@h11'],
   ['offer10', 'B@a1', 'B@b1', 'B@c1', 'B@d1', 'B@e1', 'B@f1', 'B@g1', 'B@a2', 'B@b2', 'B@c2'],
-  ['ss:c2', 'W@o15'],
+  ['B@c2', 'W@o15'],
   ['B@a15'],
 ];
 
@@ -301,10 +312,9 @@ test('renju plays the strategygames record, keeping each turn with one seat', ()
 
 const notation = (uci: string) => Renju.computeMoveNotation({ san: '', uci, fen: '', prevFen: '' });
 
-test('renju notation names offer10 and the picked point', () => {
+test('renju notation names offer10 and the offered drop by its point', () => {
   expect(notation('offer10')).toBe('offer10');
-  expect(notation('ss:c2')).toBe('c2');
-  expect(notation('B@h8')).toBe('h8');
+  expect(notation('B@c2')).toBe('c2');
   expect(Renju.parseLexicalUci('offer10')).toBeUndefined();
-  expect(Renju.parseLexicalUci('ss:c2')).toEqual({ from: 'c2', to: 'c2', dropRole: 'b-piece' });
+  expect(Renju.parseLexicalUci('B@c2')).toEqual({ from: 'c2', to: 'c2', dropRole: 'b-piece' });
 });
