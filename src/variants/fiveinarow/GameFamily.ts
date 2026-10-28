@@ -5,6 +5,7 @@ import {
   type FiveInARowCaptures,
   fiveInARowDropped,
   fiveInARowNextColour,
+  fiveInARowOtherColour,
   fiveInARowScored,
   fiveInARowSeatOf,
   fiveInARowSeatToMove,
@@ -26,9 +27,7 @@ import {
 import { makeSquare, opposite, roleToChar } from '../../util';
 import { ExtendedMoveInfo, GameFamilyKey, LexicalUci, NotationStyle, VariantKey } from '../types';
 import { Variant } from '../Variant';
-import { isForbidden } from './forbidden';
-
-const LINE_DIRECTIONS: [number, number][] = [[1, 0], [0, 1], [1, 1], [1, -1]];
+import { type Grid, isForbidden, LINE_DIRECTIONS, run, step } from './forbidden';
 
 const CAPTURE_DIRECTIONS: [number, number][] = [
   ...LINE_DIRECTIONS,
@@ -42,6 +41,11 @@ const TARAGUCHI_OFFERED_STONES = 10;
 interface FiveWindow {
   cells: Square[];
   ends: Square[];
+}
+
+interface Settled {
+  winner: PlayerIndex | undefined;
+  drawn: boolean;
 }
 
 const fiveWindowsBySize = new Map<string, FiveWindow[]>();
@@ -73,6 +77,12 @@ export abstract class GameFamily extends Variant {
   captures: FiveInARowCaptures = { p1: 0, p2: 0 };
   // a forbidden drop loses on the spot; the fen records only the loss, as the opening step z
   forbiddenDrop: Square | undefined = undefined;
+  // worked out on first asking, and forgotten by every action
+  private settled: Settled | undefined = undefined;
+
+  static override default(): GameFamily {
+    return this.fromSetup(parseFen(this.rules)(this.getInitialFen('p1')).unwrap()).unwrap();
+  }
 
   static override computeMoveNotation(move: ExtendedMoveInfo): string {
     if (move.uci.includes('@')) return move.uci.split('@')[1];
@@ -125,6 +135,11 @@ export abstract class GameFamily extends Variant {
     );
   }
 
+  // without a fen there is no black seat to read, so a stone goes to the seat holding its colour at the start
+  static override isPieceOfPlayer(piece: string, playerIndex: PlayerIndex): boolean {
+    return piece.toLowerCase() === this.playerFENChars[playerIndex];
+  }
+
   static override parseLexicalUci(uci: string): LexicalUci | undefined {
     if (!uci || uci === 'swap' || uci === 'swap2' || uci === 'offer10') return undefined;
     return super.parseLexicalUci(uci);
@@ -152,16 +167,13 @@ export abstract class GameFamily extends Variant {
     const cached = fiveWindowsBySize.get(size);
     if (cached) return cached;
     const windows: FiveWindow[] = [];
-    for (let rank = 0; rank < this.height; rank++) {
-      for (let file = 0; file < this.width; file++) {
-        for (const [df, dr] of LINE_DIRECTIONS) {
-          if (!this.onBoard(file + df * 4, rank + dr * 4)) continue;
-          const cells = [0, 1, 2, 3, 4].map(n => (rank + dr * n) * this.width + file + df * n);
-          const ends = [[file - df, rank - dr], [file + df * 5, rank + dr * 5]]
-            .filter(([f, r]) => this.onBoard(f, r))
-            .map(([f, r]) => r * this.width + f);
-          windows.push({ cells, ends });
-        }
+    for (let square = 0; square < this.width * this.height; square++) {
+      for (const [df, dr] of LINE_DIRECTIONS) {
+        if (step(this, square, df * 4, dr * 4) === undefined) continue;
+        const cells = [0, 1, 2, 3, 4].map(n => step(this, square, df * n, dr * n)!);
+        const ends = [step(this, square, -df, -dr), step(this, square, df * 5, dr * 5)]
+          .filter((end): end is Square => end !== undefined);
+        windows.push({ cells, ends });
       }
     }
     fiveWindowsBySize.set(size, windows);
@@ -188,31 +200,18 @@ export abstract class GameFamily extends Variant {
       );
   }
 
-  private static onBoard(file: number, rank: number): boolean {
-    return file >= 0 && file < this.width && rank >= 0 && rank < this.height;
-  }
-
-  private static runLength(stones: Map<Square, Role>, from: Square, role: Role, df: number, dr: number): number {
-    let file = from % this.width;
-    let rank = Math.floor(from / this.width);
-    let length = 0;
-    while (this.onBoard(file, rank) && stones.get(rank * this.width + file) === role) {
-      length++;
-      file += df;
-      rank += dr;
-    }
-    return length;
+  static grid(stones: Map<Square, Role>): Grid {
+    return { stones, width: this.width, height: this.height };
   }
 
   // counted only from the first stone of each run, so a long line is measured once
   static colourWithLine(stones: Map<Square, Role>): Role | undefined {
+    const grid = this.grid(stones);
     for (const [square, role] of stones) {
-      const file = square % this.width;
-      const rank = Math.floor(square / this.width);
       for (const [df, dr] of LINE_DIRECTIONS) {
-        const continuesBack = this.onBoard(file - df, rank - dr)
-          && stones.get((rank - dr) * this.width + file - df) === role;
-        if (!continuesBack && this.winningLine(role, this.runLength(stones, square, role, df, dr))) return role;
+        const back = step(grid, square, -df, -dr);
+        const continuesBack = back !== undefined && stones.get(back) === role;
+        if (!continuesBack && this.winningLine(role, run(grid, square, df, dr, role).length)) return role;
       }
     }
     return undefined;
@@ -224,13 +223,6 @@ export abstract class GameFamily extends Variant {
 
   private points(): Square[] {
     return [...Array(this.variant.width * this.variant.height).keys()];
-  }
-
-  private step(from: Square, df: number, dr: number): Square | undefined {
-    const { width, height } = this.variant;
-    const file = (from % width) + df;
-    const rank = Math.floor(from / width) + dr;
-    return file >= 0 && file < width && rank >= 0 && rank < height ? file + rank * width : undefined;
   }
 
   // black and white alternate from the first stone, so the stones dropped of each say which colour comes next
@@ -254,9 +246,14 @@ export abstract class GameFamily extends Variant {
 
   // the points the next stone may be dropped on; after offer10, only the offered ones
   emptyPoints(): Square[] {
-    if (this.isVariantEnd()) return [];
-    if (this.openingStep === 'k') return this.offeredPoints();
-    return this.points().filter(square => !this.stones.has(square) && this.openingAllowsDrop(square));
+    return this.points().filter(this.dropAllowed());
+  }
+
+  private dropAllowed(): (square: Square) => boolean {
+    if (this.isVariantEnd()) return () => false;
+    if (this.openingStep === 'k') return square => this.offered.includes(square);
+    const openingAllows = this.openingAllowsDrop();
+    return square => !this.stones.has(square) && openingAllows(square);
   }
 
   offeredPoints(): Square[] {
@@ -293,7 +290,7 @@ export abstract class GameFamily extends Variant {
   }
 
   isDrawn(): boolean {
-    return this.isBoardFull() || this.variant.noFivePossible(this.stones);
+    return this.settle().drawn;
   }
 
   override ctx(): Context {
@@ -316,7 +313,8 @@ export abstract class GameFamily extends Variant {
   }
 
   override isLegal(move: Move, _ctx?: Context): boolean {
-    return isDrop(move) && move.role === this.nextColour() && this.emptyPoints().includes(move.to);
+    return isDrop(move) && move.role === this.nextColour()
+      && move.to >= 0 && move.to < this.variant.width * this.variant.height && this.dropAllowed()(move.to);
   }
 
   override play(move: Move): void {
@@ -382,21 +380,23 @@ export abstract class GameFamily extends Variant {
   }
 
   // the nth stone of Taraguchi-10 goes within the (2n - 1) square about the centre, until the fifth
-  private openingAllowsDrop(square: Square): boolean {
-    if (this.variant.opening === 'swap2') return true;
-    if (this.openingStep === 'x') return this.offerAllowed(square);
+  private openingAllowsDrop(): (square: Square) => boolean {
+    if (this.variant.opening === 'swap2') return () => true;
+    if (this.openingStep === 'x') return this.offerAllowed();
     const dropped = this.droppedCount();
-    if (!this.inTaraguchiPlacing() || dropped >= TARAGUCHI_RESTRICTED_STONES) return true;
+    if (!this.inTaraguchiPlacing() || dropped >= TARAGUCHI_RESTRICTED_STONES) return () => true;
     const { width, height } = this.variant;
-    const fileDistance = Math.abs((square % width) - Math.floor(width / 2));
-    const rankDistance = Math.abs(Math.floor(square / width) - Math.floor(height / 2));
-    return Math.max(fileDistance, rankDistance) <= dropped;
+    return square => {
+      const fileDistance = Math.abs((square % width) - Math.floor(width / 2));
+      const rankDistance = Math.abs(Math.floor(square / width) - Math.floor(height / 2));
+      return Math.max(fileDistance, rankDistance) <= dropped;
+    };
   }
 
-  private offerAllowed(square: Square): boolean {
-    if (this.offered.includes(square)) return false;
-    const mirrors = this.symmetries().map(symmetry => symmetry(square));
-    return !this.offered.some(offered => mirrors.includes(offered));
+  private offerAllowed(): (square: Square) => boolean {
+    const symmetries = this.symmetries();
+    return square =>
+      !this.offered.includes(square) && !symmetries.some(symmetry => this.offered.includes(symmetry(square)));
   }
 
   // the board's rotations and reflections that leave every stone where it was, colour and all
@@ -423,17 +423,18 @@ export abstract class GameFamily extends Variant {
 
   private isForbiddenDrop(role: Role, square: Square): boolean {
     return this.variant.forbiddenActions && role === 'b-piece'
-      && isForbidden({ stones: this.stones, width: this.variant.width, height: this.variant.height }, square);
+      && isForbidden(this.variant.grid(this.stones), square);
   }
 
   // exactly two of the other colour, closed off at the far end by the colour just dropped
   private capture(role: Role, at: Square): void {
     if (this.variant.captureTarget === undefined) return;
-    const other: Role = role === 'b-piece' ? 'w-piece' : 'b-piece';
+    const other = fiveInARowOtherColour(role);
+    const grid = this.variant.grid(this.stones);
     for (const [df, dr] of CAPTURE_DIRECTIONS) {
-      const first = this.step(at, df, dr);
-      const second = first === undefined ? undefined : this.step(first, df, dr);
-      const closer = second === undefined ? undefined : this.step(second, df, dr);
+      const first = step(grid, at, df, dr);
+      const second = first === undefined ? undefined : step(grid, first, df, dr);
+      const closer = second === undefined ? undefined : step(grid, second, df, dr);
       if (
         first !== undefined && second !== undefined && closer !== undefined
         && this.stones.get(first) === other && this.stones.get(second) === other && this.stones.get(closer) === role
@@ -451,6 +452,7 @@ export abstract class GameFamily extends Variant {
   }
 
   private endAction(): void {
+    this.settled = undefined;
     const next = fiveInARowSeatToMove(this.stones, this.blackSeat, this.captures, this.openingStep);
     this.halfmoves += 1;
     if (next !== this.turn && next === 'p1') this.fullmoves += 1;
@@ -478,6 +480,7 @@ export abstract class GameFamily extends Variant {
     pos.openingStep = this.openingStep;
     pos.captures = { ...this.captures };
     pos.forbiddenDrop = this.forbiddenDrop;
+    pos.settled = this.settled;
     return pos;
   }
 
@@ -486,6 +489,17 @@ export abstract class GameFamily extends Variant {
   }
 
   winner(): PlayerIndex | undefined {
+    return this.settle().winner;
+  }
+
+  private settle(): Settled {
+    return this.settled ??= {
+      winner: this.findWinner(),
+      drawn: this.isBoardFull() || this.variant.noFivePossible(this.stones),
+    };
+  }
+
+  private findWinner(): PlayerIndex | undefined {
     const colour = this.variant.colourWithLine(this.stones);
     if (colour) return this.seatOf(colour);
     if (this.openingStep === 'z') return this.seatOf('w-piece');

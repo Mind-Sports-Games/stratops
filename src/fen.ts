@@ -670,6 +670,8 @@ export const fiveInARowScored = (rules: Rules): boolean => rules === 'pente';
 export const fiveInARowOpeningSteps = (rules: Rules): readonly OpeningStep[] =>
   rules === 'renju' ? ['p', 'q', 'x', 'k', '-', 'z'] : ['o', 'c', 's', 'f', '-'];
 
+export const fiveInARowOtherColour = (role: Role): Role => role === 'b-piece' ? 'w-piece' : 'b-piece';
+
 export const fiveInARowSeatOf = (role: Role, blackSeat: PlayerIndex): PlayerIndex =>
   role === 'b-piece' ? blackSeat : opposite(blackSeat);
 
@@ -681,8 +683,7 @@ export const fiveInARowDropped = (
   role: Role,
 ): number => {
   const onBoard = [...stones.values()].filter(stone => stone === role).length;
-  const otherColour: Role = role === 'b-piece' ? 'w-piece' : 'b-piece';
-  return onBoard + captures[fiveInARowSeatOf(otherColour, blackSeat)];
+  return onBoard + captures[fiveInARowSeatOf(fiveInARowOtherColour(role), blackSeat)];
 };
 
 export const fiveInARowNextColour = (
@@ -759,6 +760,30 @@ export const makeFiveInARowStones = (rules: Rules) => (stones: Map<Square, Role>
   return rows.join('/');
 };
 
+// each opening step holds only so many dropped stones, and only renju's offer10 holds offered ones
+const fiveInARowStepFits = (openingStep: OpeningStep, dropped: number, offered: number): boolean => {
+  switch (openingStep) {
+    case 'o':
+      return dropped < 3 && offered === 0;
+    case 'c':
+      return dropped === 3 && offered === 0;
+    case 's':
+      return dropped >= 3 && dropped < 5 && offered === 0;
+    case 'f':
+      return dropped === 5 && offered === 0;
+    case 'p':
+      return dropped <= 5 && offered === 0;
+    case 'q':
+      return dropped >= 1 && dropped <= 5 && offered === 0;
+    case 'x':
+      return dropped === 4 && offered < 10;
+    case 'k':
+      return dropped === 4 && offered === 10;
+    default:
+      return offered === 0;
+  }
+};
+
 export const parseFiveInARowFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...parts] = fen.split(' ');
   const scored = fiveInARowScored(rules);
@@ -783,6 +808,11 @@ export const parseFiveInARowFen = (rules: Rules) => (fen: string): Result<Setup,
       const captures = { p1: p1Captures, p2: p2Captures };
       if (parts[0] !== roleToChar(fiveInARowNextColour(stones, blackSeat, captures))) {
         return Result.err(new FenError(InvalidFen.Turn));
+      }
+      const dropped = fiveInARowDropped(stones, blackSeat, captures, 'b-piece')
+        + fiveInARowDropped(stones, blackSeat, captures, 'w-piece');
+      if (!fiveInARowStepFits(openingStep, dropped, offered.length)) {
+        return Result.err(new FenError(InvalidFen.OpeningStep));
       }
       return Result.ok({
         ...defaultSetup(),

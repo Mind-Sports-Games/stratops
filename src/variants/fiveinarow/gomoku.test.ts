@@ -300,3 +300,25 @@ test('gomoku pieces coordinates follow the black seat', () => {
     { piece: 'B', coord: 'i8' },
   ]);
 });
+
+test('gomoku pieces of a player, read without a fen, follow the starting colours', () => {
+  expect(Gomoku.isPieceOfPlayer('B', 'p1')).toBe(true);
+  expect(Gomoku.isPieceOfPlayer('W', 'p2')).toBe(true);
+  expect(Gomoku.isPieceOfPlayer('W', 'p1')).toBe(false);
+  expect(Gomoku.isPieceOfPlayer('B', 'p2')).toBe(false);
+});
+
+test('gomoku rejects a fen whose opening step disagrees with the stones dropped', () => {
+  const empty14 = Array(14).fill('15').join('/');
+  expect(parseFen('gomoku')(`${empty14}/BWB12 w 1 c 1`).isOk).toBe(true);
+  expect(parseFen('gomoku')(`${empty14}/BWB12 w 1 o 1`).isErr).toBe(true);
+  expect(parseFen('gomoku')(`${empty14}/BWBW11 b 1 o 1`).isErr).toBe(true);
+  expect(parseFen('gomoku')(`${empty14}/BWBW11 b 1 s 1`).isOk).toBe(true);
+  expect(parseFen('gomoku')(`${empty14}/BWBWBW9 b 1 s 1`).isErr).toBe(true);
+  expect(parseFen('gomoku')(`${empty14}/BWBWB10 w 1 c 1`).isErr).toBe(true);
+});
+
+test('gomoku rejects a fen holding offered stones', () => {
+  expect(parseFen('gomoku')(`${Array(14).fill('15').join('/')}/b14 b 1 o 1`).isErr).toBe(true);
+  expect(parseFen('gomoku')(`${Array(14).fill('15').join('/')}/BWBb11 w 1 - 1`).isErr).toBe(true);
+});

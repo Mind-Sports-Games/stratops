@@ -318,3 +318,14 @@ test('renju notation names offer10 and the offered drop by its point', () => {
   expect(Renju.parseLexicalUci('offer10')).toBeUndefined();
   expect(Renju.parseLexicalUci('B@c2')).toEqual({ from: 'c2', to: 'c2', dropRole: 'b-piece' });
 });
+
+test('renju rejects a fen whose offered stones disagree with the opening step', () => {
+  const withOneOffer = fen(play(offering(), 'B@a1'));
+  expect(read(withOneOffer).offeredPoints().length).toBe(1);
+  expect(parseFen('renju')(withOneOffer.replace(' x ', ' p ')).isErr).toBe(true);
+  expect(parseFen('renju')(withOneOffer.replace(' x ', ' k ')).isErr).toBe(true);
+  expect(parseFen('renju')(fen(offering()).replace(' x ', ' k ')).isErr).toBe(true);
+  expect(parseFen('renju')(fen(offered()).replace(' k ', ' x ')).isErr).toBe(true);
+  expect(parseFen('renju')(initialFen.replace(' p ', ' x ')).isErr).toBe(true);
+  expect(parseFen('renju')(initialFen.replace(' p ', ' q ')).isErr).toBe(true);
+});
