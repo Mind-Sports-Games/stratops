@@ -21,6 +21,8 @@ export const backgammon: ScoreReader = (fen, playerIndex) => +fen.split(' ')[pla
 
 export const entropy: ScoreReader = (fen, playerIndex) => +fen.split(' ')[playerIndex === 'p1' ? 2 : 3];
 
+export const pente: ScoreReader = (fen, playerIndex) => +fen.split(' ')[playerIndex === 'p1' ? 4 : 5];
+
 export const fiveCheck: ScoreReader = (fen, playerIndex) => +fen.split(' ')[6][playerIndex === 'p1' ? 1 : 3];
 
 const readers: Partial<Record<`${VariantKey}`, ScoreReader>> = {
@@ -41,6 +43,7 @@ const readers: Partial<Record<`${VariantKey}`, ScoreReader>> = {
   backgammon,
   hyper: backgammon,
   nackgammon: backgammon,
+  pente,
 };
 
 export function getScoreFromFen(variantKey: string, fen: string, playerIndex: string): number | undefined {

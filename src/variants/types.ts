@@ -100,6 +100,7 @@ export enum GameFamilyKey {
   abalone = 'abalone',
   dameo = 'dameo',
   entropy = 'entropy',
+  fiveinarow = 'fiveinarow',
 }
 
 export enum VariantKey {
@@ -153,4 +154,7 @@ export enum VariantKey {
   frysk = 'frysk',
   dameo = 'dameo',
   entropy = 'entropy',
+  gomoku = 'gomoku',
+  pente = 'pente',
+  renju = 'renju',
 }

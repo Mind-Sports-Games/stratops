@@ -177,11 +177,11 @@ export function charToRole(ch: string): Role | undefined {
 }
 
 export const parseSquare = (rules: Rules) => (str: SquareName | string): Square | undefined => {
-  const { files } = dimensionsForRules(rules);
+  const { files, ranks } = dimensionsForRules(rules);
   if (str.length !== 2 && str.length !== 3) return;
   const file = str.charCodeAt(0) - 'a'.charCodeAt(0);
   const rank = parseInt(str.substr(1)) - 1;
-  if (file < 0 || file >= 10 || isNaN(rank) || rank < 0 || rank >= 10) return;
+  if (file < 0 || file >= Math.max(10, files) || isNaN(rank) || rank < 0 || rank >= Math.max(10, ranks)) return;
   return file + files * rank;
 };
 
@@ -259,6 +259,9 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'minixiangqi':
     case 'entropy':
       return { ranks: 7, files: 7 };
+    case 'gomoku':
+    case 'renju':
+      return { ranks: 15, files: 15 };
     case 'flipello':
       return { ranks: 8, files: 8 };
     case 'flipello10':
@@ -280,6 +283,7 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'go13x13':
       return { ranks: 13, files: 13 };
     case 'go19x19':
+    case 'pente':
       return { ranks: 19, files: 19 };
     case 'nackgammon':
     case 'hyper':

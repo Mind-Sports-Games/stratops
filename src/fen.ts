@@ -6,9 +6,11 @@ import { SquareSet } from './squareSet.js';
 import {
   FILE_NAMES,
   type Move,
+  type OpeningStep,
   type Piece,
   type PlayerIndex,
   PLAYERINDEXES,
+  type Role,
   ROLES,
   type Rules,
   type Square,
@@ -19,6 +21,7 @@ import {
   dimensionsForRules,
   makeSquare,
   makeUci,
+  opposite,
   parseSquare,
   parseUci,
   roleToChar,
@@ -55,6 +58,8 @@ export enum InvalidFen {
   Ko = 'ERR_KO',
   BackgammonScore = 'ERR_BACKGAMMON_SCORE',
   Round = 'ERR_ROUND',
+  BlackSeat = 'ERR_BLACK_SEAT',
+  OpeningStep = 'ERR_OPENING_STEP',
 }
 
 export class FenError extends Error {}
@@ -648,6 +653,197 @@ export const makeEntropyFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): 
   ].join(' ');
 
 // ------------------------------------------------------------------------------
+// Five in a row fens
+// 15/15/15/15/15/15/15/15/15/15/15/15/15/15/15 b 1 o 1 : board nextColour blackSeat openingStep fullmoves
+// Pente adds each seat's captured stones, P1's first: board nextColour blackSeat openingStep p1 p2 fullmoves
+// A stone's letter is its colour; it belongs to whichever seat currently plays that colour.
+// A lowercase b is one of renju's offered fifth stones, waiting beside the board for white's drop on one of them.
+// Renju's opening step z marks a game black lost to a forbidden action, which no line of five shows.
+// The stones are kept outside the Board, whose SquareSets cannot hold a 15x15 board.
+const FIVE_IN_A_ROW_STONES: Partial<Record<string, Role>> = { B: 'b-piece', W: 'w-piece' };
+const FIVE_IN_A_ROW_OFFERED = 'b';
+
+export type FiveInARowCaptures = Record<PlayerIndex, number>;
+
+export const fiveInARowScored = (rules: Rules): boolean => rules === 'pente';
+
+export const fiveInARowOpeningSteps = (rules: Rules): readonly OpeningStep[] =>
+  rules === 'renju' ? ['p', 'q', 'x', 'k', '-', 'z'] : ['o', 'c', 's', 'f', '-'];
+
+export const fiveInARowOtherColour = (role: Role): Role => role === 'b-piece' ? 'w-piece' : 'b-piece';
+
+export const fiveInARowSeatOf = (role: Role, blackSeat: PlayerIndex): PlayerIndex =>
+  role === 'b-piece' ? blackSeat : opposite(blackSeat);
+
+// captured stones still count as dropped, so black and white alternate from the first stone
+export const fiveInARowDropped = (
+  stones: Map<Square, Role>,
+  blackSeat: PlayerIndex,
+  captures: FiveInARowCaptures,
+  role: Role,
+): number => {
+  const onBoard = [...stones.values()].filter(stone => stone === role).length;
+  return onBoard + captures[fiveInARowSeatOf(fiveInARowOtherColour(role), blackSeat)];
+};
+
+export const fiveInARowNextColour = (
+  stones: Map<Square, Role>,
+  blackSeat: PlayerIndex,
+  captures: FiveInARowCaptures,
+): Role =>
+  fiveInARowDropped(stones, blackSeat, captures, 'b-piece')
+      === fiveInARowDropped(stones, blackSeat, captures, 'w-piece')
+    ? 'b-piece'
+    : 'w-piece';
+
+// one seat drops both colours through the opening and the swap2 pair, and white drops black's fifth on an offered point
+export const fiveInARowSeatToMove = (
+  stones: Map<Square, Role>,
+  blackSeat: PlayerIndex,
+  captures: FiveInARowCaptures,
+  openingStep: OpeningStep,
+): PlayerIndex => {
+  if (openingStep === 'o') return 'p1';
+  if (openingStep === 's') return 'p2';
+  const seatOfNext = fiveInARowSeatOf(fiveInARowNextColour(stones, blackSeat, captures), blackSeat);
+  return openingStep === 'k' ? opposite(seatOfNext) : seatOfNext;
+};
+
+export const parseFiveInARowStones = (rules: Rules) =>
+(
+  boardPart: string,
+): Result<{ stones: Map<Square, Role>; offered: Square[] }, FenError> => {
+  const { ranks, files } = dimensionsForRules(rules);
+  const rows = boardPart.split('/');
+  if (rows.length !== ranks) return Result.err(new FenError(InvalidFen.Board));
+  const stones = new Map<Square, Role>();
+  const offered: Square[] = [];
+  for (const [index, row] of rows.entries()) {
+    const rank = ranks - 1 - index;
+    let file = 0;
+    for (const token of row.match(/\d+|./g) ?? []) {
+      if (/^\d+$/.test(token)) {
+        file += parseInt(token, 10);
+      } else {
+        const role = FIVE_IN_A_ROW_STONES[token];
+        if ((!role && token !== FIVE_IN_A_ROW_OFFERED) || file >= files) {
+          return Result.err(new FenError(InvalidFen.Board));
+        }
+        if (role) stones.set(file + rank * files, role);
+        else offered.push(file + rank * files);
+        file++;
+      }
+    }
+    if (file !== files) return Result.err(new FenError(InvalidFen.Board));
+  }
+  return Result.ok({ stones, offered: offered.sort((a, b) => a - b) });
+};
+
+export const makeFiveInARowStones = (rules: Rules) => (stones: Map<Square, Role>, offered: Square[] = []): string => {
+  const { ranks, files } = dimensionsForRules(rules);
+  const rows: string[] = [];
+  for (let rank = ranks - 1; rank >= 0; rank--) {
+    let row = '';
+    let empty = 0;
+    for (let file = 0; file < files; file++) {
+      const square = file + rank * files;
+      const role = stones.get(square);
+      const char = role ? roleToChar(role).toUpperCase() : offered.includes(square) ? FIVE_IN_A_ROW_OFFERED : '';
+      if (!char) empty++;
+      else {
+        row += `${empty || ''}${char}`;
+        empty = 0;
+      }
+    }
+    rows.push(`${row}${empty || ''}`);
+  }
+  return rows.join('/');
+};
+
+// each opening step holds only so many dropped stones, and only renju's offer10 holds offered ones
+const fiveInARowStepFits = (openingStep: OpeningStep, dropped: number, offered: number): boolean => {
+  switch (openingStep) {
+    case 'o':
+      return dropped < 3 && offered === 0;
+    case 'c':
+      return dropped === 3 && offered === 0;
+    case 's':
+      return dropped >= 3 && dropped < 5 && offered === 0;
+    case 'f':
+      return dropped === 5 && offered === 0;
+    case 'p':
+      return dropped <= 5 && offered === 0;
+    case 'q':
+      return dropped >= 1 && dropped <= 5 && offered === 0;
+    case 'x':
+      return dropped === 4 && offered < 10;
+    case 'k':
+      return dropped === 4 && offered === 10;
+    default:
+      return offered === 0;
+  }
+};
+
+export const parseFiveInARowFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+  const [boardPart, ...parts] = fen.split(' ');
+  const scored = fiveInARowScored(rules);
+
+  if (parts.length !== (scored ? 6 : 4)) {
+    return Result.err(new FenError(InvalidFen.Fen));
+  }
+
+  const blackSeat: PlayerIndex | undefined = parts[1] === '1' ? 'p1' : parts[1] === '2' ? 'p2' : undefined;
+  const openingStep = fiveInARowOpeningSteps(rules).find(step => step === parts[2]);
+
+  return fp
+    .resultZip([
+      parseFiveInARowStones(rules)(boardPart),
+      blackSeat ? Result.ok(blackSeat) : Result.err(new FenError(InvalidFen.BlackSeat)),
+      openingStep ? Result.ok(openingStep) : Result.err(new FenError(InvalidFen.OpeningStep)),
+      scored ? parseCaptures(parts[3]) : Result.ok(0),
+      scored ? parseCaptures(parts[4]) : Result.ok(0),
+      parseFullMoves(parts[scored ? 5 : 3]),
+    ])
+    .chain(([{ stones, offered }, blackSeat, openingStep, p1Captures, p2Captures, fullmoves]) => {
+      const captures = { p1: p1Captures, p2: p2Captures };
+      if (parts[0] !== roleToChar(fiveInARowNextColour(stones, blackSeat, captures))) {
+        return Result.err(new FenError(InvalidFen.Turn));
+      }
+      const dropped = fiveInARowDropped(stones, blackSeat, captures, 'b-piece')
+        + fiveInARowDropped(stones, blackSeat, captures, 'w-piece');
+      if (!fiveInARowStepFits(openingStep, dropped, offered.length)) {
+        return Result.err(new FenError(InvalidFen.OpeningStep));
+      }
+      return Result.ok({
+        ...defaultSetup(),
+        board: Board.empty(rules),
+        unmovedRooks: SquareSet.empty(),
+        stones,
+        offered,
+        turn: fiveInARowSeatToMove(stones, blackSeat, captures, openingStep),
+        blackSeat,
+        openingStep,
+        ...(scored ? { p1Captures, p2Captures } : {}),
+        fullmoves,
+      });
+    });
+};
+
+export const makeFiveInARowFen = (rules: Rules) => (setup: Setup): string => {
+  const stones = setup.stones ?? new Map<Square, Role>();
+  const blackSeat = setup.blackSeat ?? 'p1';
+  const captures = { p1: setup.p1Captures ?? 0, p2: setup.p2Captures ?? 0 };
+  return [
+    makeFiveInARowStones(rules)(stones, setup.offered),
+    roleToChar(fiveInARowNextColour(stones, blackSeat, captures)),
+    blackSeat === 'p1' ? '1' : '2',
+    setup.openingStep ?? '-',
+    ...(fiveInARowScored(rules) ? [`${captures.p1}`, `${captures.p2}`] : []),
+    `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
+  ].join(' ');
+};
+
+// ------------------------------------------------------------------------------
 // Default fens
 export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...originalParts] = fen.split(' ');
@@ -705,6 +901,9 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   }
   if (rules === 'entropy') {
     return parseEntropyFen(rules)(fen);
+  }
+  if (rules === 'gomoku' || rules === 'pente' || rules === 'renju') {
+    return parseFiveInARowFen(rules)(fen);
   }
   return parseDefaultFen(rules)(fen);
 };
@@ -879,6 +1078,9 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   }
   if (rules === 'entropy') {
     return makeEntropyFen(rules)(setup, opts);
+  }
+  if (rules === 'gomoku' || rules === 'pente' || rules === 'renju') {
+    return makeFiveInARowFen(rules)(setup);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),
