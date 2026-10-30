@@ -97,7 +97,9 @@ export function playstrategyRules(
     | 'entropy'
     | 'gomoku'
     | 'pente'
-    | 'renju',
+    | 'renju'
+    | 'yonkoma10x10'
+    | 'yonkoma12x12',
 ): Rules {
   switch (variant) {
     case 'standard':
@@ -180,6 +182,8 @@ export function playstrategyVariants(
   | 'gomoku'
   | 'pente'
   | 'renju'
+  | 'yonkoma10x10'
+  | 'yonkoma12x12'
 {
   switch (rules) {
     case 'chess':
