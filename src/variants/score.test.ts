@@ -35,6 +35,7 @@ const CASES: Case[] = [
     p2: 9,
   },
   { keys: ['entropy'], fen: '7/7/7/7/7/7/7[] w 12 7 2 50', p1: 12, p2: 7 },
+  { keys: ['pente'], fen: `${Array(19).fill('19').join('/')} b 1 - 6 4 1`, p1: 6, p2: 4 },
   { keys: ['fiveCheck'], fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 +2+3', p1: 2, p2: 3 },
 ];
 
@@ -78,6 +79,7 @@ describe('score', () => {
         'nackgammon',
         'octagonflipello',
         'oware',
+        'pente',
         'togyzkumalak',
       ].sort(),
     );

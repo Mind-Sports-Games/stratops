@@ -340,9 +340,19 @@ export const RULES = [
   'frysk',
   'dameo',
   'entropy',
+  'gomoku',
+  'pente',
+  'renju',
 ] as const;
 
 export type Rules = typeof RULES[number];
+
+// five in a row's opening, as its fen records it. Swap2: opening, choice, swap2 drops, final choice.
+// Taraguchi-10: placing, swap offered, offering ten, offered. Both end in play, and renju may end in z,
+// lost to black's forbidden action.
+export const OPENING_STEPS = ['o', 'c', 's', 'f', 'p', 'q', 'x', 'k', '-', 'z'] as const;
+
+export type OpeningStep = typeof OPENING_STEPS[number];
 
 export interface Outcome {
   winner: PlayerIndex | undefined;

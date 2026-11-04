@@ -38,6 +38,10 @@ import { Portuguese } from './draughts/Portuguese';
 import { Russian } from './draughts/Russian';
 import { Entropy } from './entropy/Entropy';
 import { GameFamily as EntropyGameFamily } from './entropy/GameFamily';
+import { GameFamily as FiveInARowGameFamily } from './fiveinarow/GameFamily';
+import { Gomoku } from './fiveinarow/Gomoku';
+import { Pente } from './fiveinarow/Pente';
+import { Renju } from './fiveinarow/Renju';
 import { GameFamily as GoGameFamily } from './go/GameFamily';
 import { Go13x13 } from './go/Go13x13';
 import { Go19x19 } from './go/Go19x19';
@@ -161,6 +165,12 @@ export function variantClass(rules: Rules): typeof Variant {
       return Dameo.getClass();
     case 'entropy':
       return Entropy.getClass();
+    case 'gomoku':
+      return Gomoku.getClass();
+    case 'pente':
+      return Pente.getClass();
+    case 'renju':
+      return Renju.getClass();
     default:
       return Variant.getClass();
   }
@@ -269,6 +279,12 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'dameo';
     case VariantKey.entropy:
       return 'entropy';
+    case VariantKey.gomoku:
+      return 'gomoku';
+    case VariantKey.pente:
+      return 'pente';
+    case VariantKey.renju:
+      return 'renju';
     default:
       return 'chess';
   }
@@ -284,6 +300,8 @@ export function gameFamilyClass(gameFamilyKey?: GameFamilyKey): typeof Variant {
       return DameoGameFamily.getClass();
     case GameFamilyKey.entropy:
       return EntropyGameFamily.getClass();
+    case GameFamilyKey.fiveinarow:
+      return FiveInARowGameFamily.getClass();
     case GameFamilyKey.chess:
       return ChessGameFamily.getClass();
     case GameFamilyKey.loa:
