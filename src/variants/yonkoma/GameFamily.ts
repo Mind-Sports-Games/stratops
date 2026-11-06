@@ -1,5 +1,5 @@
 import { Result } from '@badrap/result';
-import type { Context } from '../../chess';
+import type { Context, Position } from '../../chess';
 import { IllegalSetup, PositionError } from '../../chess';
 import { type FenError, makeYonkomaFen, parseFen } from '../../fen';
 import type { Setup } from '../../setup';
@@ -31,7 +31,10 @@ const DIAGONALS: [number, number][] = [
 // loses, so the player to move in a crosscut has won.
 //
 // The checkers live in `checkers`, not `board`: a SquareSet holds 128 squares and the
-// 12x12 board has 144.
+// 12x12 board has 144. The moves come from destinations() and allDestinations(), which
+// return squares; hasDests() and allDests() are derived from them, with the limit that on
+// the 12x12 board a SquareSet cannot hold the squares from i11 up. lila does not depend on
+// either: the round and the analysis board take their destinations from the server.
 export abstract class GameFamily extends Variant {
   checkers: Map<Square, Piece> = new Map();
 
@@ -95,8 +98,8 @@ export abstract class GameFamily extends Variant {
     return super.parseLexicalUci(uci);
   }
 
-  // the checkers are set before the position is validated, so the base validation (which
-  // reads them) is deferred to validateYonkoma
+  // the base class builds the position from the (empty) board and runs validate(), which
+  // has nothing to check here; the checkers are then set and checked by validateYonkoma
   static override fromSetup(setup: Setup): Result<GameFamily, PositionError> {
     return (super.fromSetup(setup) as Result<GameFamily, PositionError>).chain(pos => {
       pos.pockets = undefined;
@@ -149,12 +152,8 @@ export abstract class GameFamily extends Variant {
     return out;
   }
 
-  // the destinations the rules allow the checker on `from`
-  destinations(from: Square): Square[] {
-    const piece = this.checkers.get(from);
-    if (!piece || piece.playerIndex !== this.turn || this.isVariantEnd()) return [];
-    const enemies = this.checkersOf(opposite(piece.playerIndex));
-    const partner = this.checkersOf(piece.playerIndex).find(s => s !== from);
+  // the rule applied to one checker, given its partner and the two enemy checkers
+  private destinationsOf(from: Square, partner: Square | undefined, enemies: Square[]): Square[] {
     const sumBefore = enemies.reduce((sum, e) => sum + this.kingDistance(from, e), 0);
     const partnerBefore = partner === undefined ? 0 : this.kingDistance(from, partner);
     return this.slides(from).filter(to => {
@@ -164,37 +163,41 @@ export abstract class GameFamily extends Variant {
     });
   }
 
+  // the destinations the rules allow the checker on `from`
+  destinations(from: Square): Square[] {
+    const piece = this.checkers.get(from);
+    if (!piece || piece.playerIndex !== this.turn || this.isCrosscut()) return [];
+    const partner = this.checkersOf(piece.playerIndex).find(s => s !== from);
+    return this.destinationsOf(from, partner, this.checkersOf(opposite(piece.playerIndex)));
+  }
+
   // every legal move of the player to move, by origin; empty when he must pass
   allDestinations(): Map<Square, Square[]> {
     const all = new Map<Square, Square[]>();
-    for (const from of this.checkersOf(this.turn)) {
-      const dests = this.destinations(from);
+    if (this.isCrosscut()) return all;
+    const mine = this.checkersOf(this.turn);
+    const enemies = this.checkersOf(opposite(this.turn));
+    for (const from of mine) {
+      const dests = this.destinationsOf(from, mine.find(s => s !== from), enemies);
       if (dests.length) all.set(from, dests);
     }
     return all;
   }
 
   mustPass(): boolean {
-    return !this.isVariantEnd() && this.allDestinations().size === 0;
+    return !this.isCrosscut() && this.allDestinations().size === 0;
   }
 
-  // all four checkers in a 2x2 block, each side's two on one diagonal of it
+  // all four checkers in a 2x2 block: as P1's checkers stand on dark squares and P2's on
+  // light ones, each side then holds one diagonal of the block
   isCrosscut(): boolean {
-    const p1 = this.checkersOf('p1');
-    const p2 = this.checkersOf('p2');
-    if (p1.length !== 2 || p2.length !== 2) return false;
+    if (this.checkers.size !== 4) return false;
     const file = squareFile(this.rules);
     const rank = squareRank(this.rules);
-    const all = [...p1, ...p2];
+    const all = [...this.checkers.keys()];
     const files = all.map(file);
     const ranks = all.map(rank);
-    const onDiagonal = ([a, b]: Square[]) => Math.abs(file(a) - file(b)) === 1 && Math.abs(rank(a) - rank(b)) === 1;
-    return (
-      Math.max(...files) - Math.min(...files) === 1
-      && Math.max(...ranks) - Math.min(...ranks) === 1
-      && onDiagonal(p1)
-      && onDiagonal(p2)
-    );
+    return Math.max(...files) - Math.min(...files) === 1 && Math.max(...ranks) - Math.min(...ranks) === 1;
   }
 
   override ctx(): Context {
@@ -207,13 +210,24 @@ export abstract class GameFamily extends Variant {
     };
   }
 
-  // a SquareSet cannot name every square of the 12x12 board: ask destinations() instead
-  override dests(_square: Square, _ctx?: Context): SquareSet {
-    return SquareSet.empty();
+  override dests(square: Square, _ctx?: Context): SquareSet {
+    return this.destinations(square).reduce((set, to) => set.with(to), SquareSet.empty());
   }
 
   override dropDests(_ctx?: Context): SquareSet {
     return SquareSet.empty();
+  }
+
+  override hasDests(_ctx?: Context): boolean {
+    return this.allDestinations().size > 0;
+  }
+
+  override allDests(_ctx?: Context): Map<Square, SquareSet> {
+    const all = new Map<Square, SquareSet>();
+    for (const [from, dests] of this.allDestinations()) {
+      all.set(from, dests.reduce((set, to) => set.with(to), SquareSet.empty()));
+    }
+    return all;
   }
 
   override isLegal(move: Move, _ctx?: Context): boolean {
@@ -229,8 +243,9 @@ export abstract class GameFamily extends Variant {
     this.endTurn();
   }
 
-  // the skipped turn of a player with no legal move
+  // the skipped turn of a player with no legal move; nothing else may pass
   pass(): void {
+    if (!this.mustPass()) return;
     this.endTurn();
   }
 
@@ -254,6 +269,20 @@ export abstract class GameFamily extends Variant {
     return pos;
   }
 
+  // the same checkers on the same squares, the same player to move
+  override equalsIgnoreMoves(other: Position): boolean {
+    return (
+      other instanceof GameFamily
+      && this.rules === other.rules
+      && this.turn === other.turn
+      && this.checkers.size === other.checkers.size
+      && [...this.checkers].every(([square, piece]) => {
+        const theirs = other.checkers.get(square);
+        return !!theirs && theirs.role === piece.role && theirs.playerIndex === piece.playerIndex;
+      })
+    );
+  }
+
   // the board is empty by design (the checkers are elsewhere), so nothing to check here
   protected override validate(): Result<undefined, PositionError> {
     return Result.ok(undefined);
@@ -266,6 +295,9 @@ export abstract class GameFamily extends Variant {
     const p2 = this.checkersOf('p2');
     const onBoard = (s: Square) => s >= 0 && s < width * height;
     if (p1.length !== 2 || p2.length !== 2 || this.checkers.size !== 4) {
+      return Result.err(new PositionError(IllegalSetup.Variant));
+    }
+    if ([...this.checkers.values()].some(piece => piece.role !== 'c-piece')) {
       return Result.err(new PositionError(IllegalSetup.Variant));
     }
     if (![...p1, ...p2].every(onBoard)) return Result.err(new PositionError(IllegalSetup.Variant));
