@@ -844,6 +844,84 @@ export const makeFiveInARowFen = (rules: Rules) => (setup: Setup): string => {
 };
 
 // ------------------------------------------------------------------------------
+// Yonkoma: "<board> <player> <fullmove>", the board rank by rank from the top, C a p1
+// checker and c a p2 one, a run of empty squares as its length (two digits on these boards)
+const YONKOMA_RULES: Rules[] = ['yonkoma10x10', 'yonkoma12x12'];
+
+export const isYonkomaRules = (rules: Rules): boolean => YONKOMA_RULES.includes(rules);
+
+export const parseYonkomaCheckers = (rules: Rules) => (boardPart: string): Result<Map<Square, Piece>, FenError> => {
+  const { ranks, files } = dimensionsForRules(rules);
+  const rows = boardPart.split('/');
+  if (rows.length !== ranks) return Result.err(new FenError(InvalidFen.Board));
+  const checkers = new Map<Square, Piece>();
+  for (const [index, row] of rows.entries()) {
+    const rank = ranks - 1 - index;
+    let file = 0;
+    for (const token of row.match(/\d+|./g) ?? []) {
+      if (/^\d+$/.test(token)) {
+        if (token.startsWith('0')) return Result.err(new FenError(InvalidFen.Board));
+        file += parseInt(token, 10);
+      } else {
+        if ((token !== 'C' && token !== 'c') || file >= files) return Result.err(new FenError(InvalidFen.Board));
+        checkers.set(file + rank * files, { role: 'c-piece', playerIndex: token === 'C' ? 'p1' : 'p2' });
+        file++;
+      }
+    }
+    if (file !== files) return Result.err(new FenError(InvalidFen.Board));
+  }
+  return Result.ok(checkers);
+};
+
+export const parseYonkomaFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
+  const [boardPart, ...parts] = fen.split(' ');
+  if (parts.length !== 2) return Result.err(new FenError(InvalidFen.Fen));
+  const turn: PlayerIndex | undefined = parts[0] === 'w' ? 'p1' : parts[0] === 'b' ? 'p2' : undefined;
+  return fp
+    .resultZip([
+      parseYonkomaCheckers(rules)(boardPart),
+      turn ? Result.ok(turn) : Result.err(new FenError(InvalidFen.Turn)),
+      parseFullMoves(parts[1]),
+    ])
+    .map(([checkers, turn, fullmoves]) => ({
+      ...defaultSetup(),
+      board: Board.empty(rules),
+      unmovedRooks: SquareSet.empty(),
+      checkers,
+      turn,
+      fullmoves,
+    }));
+};
+
+export const makeYonkomaCheckers = (rules: Rules) => (checkers: Map<Square, Piece>): string => {
+  const { ranks, files } = dimensionsForRules(rules);
+  const rows: string[] = [];
+  for (let rank = ranks - 1; rank >= 0; rank--) {
+    let row = '';
+    let empty = 0;
+    for (let file = 0; file < files; file++) {
+      const piece = checkers.get(file + rank * files);
+      if (!piece) empty++;
+      else {
+        if (empty > 0) row += empty;
+        empty = 0;
+        row += piece.playerIndex === 'p1' ? 'C' : 'c';
+      }
+    }
+    if (empty > 0) row += empty;
+    rows.push(row);
+  }
+  return rows.join('/');
+};
+
+export const makeYonkomaFen = (rules: Rules) => (setup: Setup): string =>
+  [
+    makeYonkomaCheckers(rules)(setup.checkers ?? new Map()),
+    setup.turn === 'p1' ? 'w' : 'b',
+    `${Math.max(1, Math.min(setup.fullmoves, 9999))}`,
+  ].join(' ');
+
+// ------------------------------------------------------------------------------
 // Default fens
 export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, FenError> => {
   const [boardPart, ...originalParts] = fen.split(' ');
@@ -904,6 +982,9 @@ export const parseFen = (rules: Rules) => (fen: string): Result<Setup, FenError>
   }
   if (rules === 'gomoku' || rules === 'pente' || rules === 'renju') {
     return parseFiveInARowFen(rules)(fen);
+  }
+  if (isYonkomaRules(rules)) {
+    return parseYonkomaFen(rules)(fen);
   }
   return parseDefaultFen(rules)(fen);
 };
@@ -1081,6 +1162,9 @@ export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string 
   }
   if (rules === 'gomoku' || rules === 'pente' || rules === 'renju') {
     return makeFiveInARowFen(rules)(setup);
+  }
+  if (isYonkomaRules(rules)) {
+    return makeYonkomaFen(rules)(setup);
   }
   return [
     makeBoardFen(rules)(setup.board, opts) + (setup.pockets ? `[${makePockets(rules)(setup.pockets)}]` : ''),

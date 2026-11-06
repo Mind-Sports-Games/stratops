@@ -1,7 +1,7 @@
 import { Board } from './board.js';
 import type * as fp from './fp.js';
 import { SquareSet } from './squareSet.js';
-import { type Move, type OpeningStep, type PlayerIndex, type Role, ROLES, type Square } from './types.js';
+import { type Move, type OpeningStep, type Piece, type PlayerIndex, type Role, ROLES, type Square } from './types.js';
 
 export class MaterialSide {
   'a-piece': number;
@@ -261,6 +261,8 @@ export interface Setup {
   offered?: Square[];
   blackSeat?: fp.Option<PlayerIndex>;
   openingStep?: fp.Option<OpeningStep>;
+  // yonkoma's four checkers, which the 12x12 board cannot fit in a SquareSet
+  checkers?: Map<Square, Piece>;
   lastMove?: fp.Option<Move>;
 }
 

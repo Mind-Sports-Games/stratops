@@ -343,6 +343,8 @@ export const RULES = [
   'gomoku',
   'pente',
   'renju',
+  'yonkoma10x10',
+  'yonkoma12x12',
 ] as const;
 
 export type Rules = typeof RULES[number];
