@@ -3,8 +3,8 @@ import { chessgroundDests } from '../../compat';
 import { makeFen, parseFen } from '../../fen';
 import { hashSetup } from '../../hash';
 import { makeSquare, parseSquare } from '../../util';
-import { variantClassFromKey, variantKeyToRules } from '../util';
 import { GameFamilyKey, NotationStyle, VariantKey } from '../types';
+import { variantClassFromKey, variantKeyToRules } from '../util';
 import { Yonkoma10x10 } from './Yonkoma10x10';
 import { Yonkoma12x12 } from './Yonkoma12x12';
 
@@ -45,12 +45,14 @@ test('a pass has no squares to read', () => {
 });
 
 test('the fen round-trips on both boards, with two-digit runs of empty squares', () => {
-  for (const [rules, fen] of [
-    ['yonkoma10x10', INITIAL_10],
-    ['yonkoma12x12', INITIAL_12],
-    ['yonkoma10x10', '10/10/10/10/4cC4/4C5/10/10/10/9c b 2'],
-    ['yonkoma12x12', '12/12/12/12/12/12/12/12/12/C11/c10C/11c w 3'],
-  ] as const) {
+  for (
+    const [rules, fen] of [
+      ['yonkoma10x10', INITIAL_10],
+      ['yonkoma12x12', INITIAL_12],
+      ['yonkoma10x10', '10/10/10/10/4cC4/4C5/10/10/10/9c b 2'],
+      ['yonkoma12x12', '12/12/12/12/12/12/12/12/12/C11/c10C/11c w 3'],
+    ] as const
+  ) {
     const setup = parseFen(rules)(fen).unwrap();
     expect(makeFen(rules)(setup)).toBe(fen);
     expect(setup.checkers?.size).toBe(4);
@@ -63,7 +65,14 @@ test('the fen round-trips on both boards, with two-digit runs of empty squares',
 });
 
 test('a fen is refused when it does not fit the board or name the player', () => {
-  const bad = ['c9C/10/10/10/10/10/10/10/10/C8c w 1', 'c8C/10/10/10/10/10/10/10/10/C8c x 1', INITIAL_12, 'c8X/10/10/10/10/10/10/10/10/C8c w 1', 'c8C/10/10/10/10/10/10/10/10/C08c w 1', 'c8C/10/10/10/10/10/10/10/10/C8c w'];
+  const bad = [
+    'c9C/10/10/10/10/10/10/10/10/C8c w 1',
+    'c8C/10/10/10/10/10/10/10/10/C8c x 1',
+    INITIAL_12,
+    'c8X/10/10/10/10/10/10/10/10/C8c w 1',
+    'c8C/10/10/10/10/10/10/10/10/C08c w 1',
+    'c8C/10/10/10/10/10/10/10/10/C8c w',
+  ];
   for (const fen of bad) expect(parseFen('yonkoma10x10')(fen).isErr).toBe(true);
   expect(parseFen('yonkoma12x12')(INITIAL_10).isErr).toBe(true);
 });
@@ -91,7 +100,14 @@ test('the rule sheet moves: closer to the enemy pair, or as close and farther fr
   // from the start, every slide up the long diagonal brings a1 closer to both enemies
   const start = position('yonkoma10x10', INITIAL_10);
   expect(keys('yonkoma10x10', start.destinations(parseSquare('yonkoma10x10')('a1')!))).toEqual([
-    'b2', 'c3', 'd4', 'e5', 'f6', 'g7', 'h8', 'i9',
+    'b2',
+    'c3',
+    'd4',
+    'e5',
+    'f6',
+    'g7',
+    'h8',
+    'i9',
   ]);
   expect(start.allDestinations().size).toBe(2);
   expect(start.outcome()).toBeUndefined();
