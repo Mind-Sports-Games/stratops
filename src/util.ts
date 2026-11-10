@@ -285,6 +285,10 @@ export const dimensionsForRules = (rules: Rules): BoardDimensions => {
     case 'go19x19':
     case 'pente':
       return { ranks: 19, files: 19 };
+    case 'yonkoma10x10':
+      return { ranks: 10, files: 10 };
+    case 'yonkoma12x12':
+      return { ranks: 12, files: 12 };
     case 'nackgammon':
     case 'hyper':
     case 'backgammon':
