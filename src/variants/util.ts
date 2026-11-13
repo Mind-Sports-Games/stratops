@@ -66,6 +66,9 @@ import { GameFamilyKey, VariantKey } from './types';
 import { GameFamily as XiangqiGameFamily } from './xiangqi/GameFamily';
 import { MiniXiangqi } from './xiangqi/MiniXiangqi';
 import { Xiangqi } from './xiangqi/Xiangqi';
+import { GameFamily as YonkomaGameFamily } from './yonkoma/GameFamily';
+import { Yonkoma10x10 } from './yonkoma/Yonkoma10x10';
+import { Yonkoma12x12 } from './yonkoma/Yonkoma12x12';
 
 import { Variant } from './Variant';
 
@@ -171,6 +174,10 @@ export function variantClass(rules: Rules): typeof Variant {
       return Pente.getClass();
     case 'renju':
       return Renju.getClass();
+    case 'yonkoma10x10':
+      return Yonkoma10x10.getClass();
+    case 'yonkoma12x12':
+      return Yonkoma12x12.getClass();
     default:
       return Variant.getClass();
   }
@@ -285,6 +292,10 @@ export function variantKeyToRules(variantKey?: VariantKey | string): Rules {
       return 'pente';
     case VariantKey.renju:
       return 'renju';
+    case VariantKey.yonkoma10x10:
+      return 'yonkoma10x10';
+    case VariantKey.yonkoma12x12:
+      return 'yonkoma12x12';
     default:
       return 'chess';
   }
@@ -302,6 +313,8 @@ export function gameFamilyClass(gameFamilyKey?: GameFamilyKey): typeof Variant {
       return EntropyGameFamily.getClass();
     case GameFamilyKey.fiveinarow:
       return FiveInARowGameFamily.getClass();
+    case GameFamilyKey.yonkoma:
+      return YonkomaGameFamily.getClass();
     case GameFamilyKey.chess:
       return ChessGameFamily.getClass();
     case GameFamilyKey.loa:

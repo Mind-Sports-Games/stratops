@@ -101,6 +101,7 @@ export enum GameFamilyKey {
   dameo = 'dameo',
   entropy = 'entropy',
   fiveinarow = 'fiveinarow',
+  yonkoma = 'yonkoma',
 }
 
 export enum VariantKey {
@@ -157,4 +158,6 @@ export enum VariantKey {
   gomoku = 'gomoku',
   pente = 'pente',
   renju = 'renju',
+  yonkoma10x10 = 'yonkoma10x10',
+  yonkoma12x12 = 'yonkoma12x12',
 }

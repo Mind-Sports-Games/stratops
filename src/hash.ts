@@ -1,6 +1,6 @@
 import type { Board } from './board.js';
 import type { Material, MaterialSide, RemainingChecks, Setup } from './setup.js';
-import { PLAYERINDEXES, ROLES, type Tuple } from './types.js';
+import { type Piece, PLAYERINDEXES, type Role, ROLES, type Square, type Tuple } from './types.js';
 import { defined } from './util.js';
 
 function rol32(n: number, left: number): number {
@@ -35,9 +35,32 @@ export function hashRemainingChecks(checks: RemainingChecks, state = 0): number 
   return fxhash32(checks.p1, fxhash32(checks.p2, state));
 }
 
+function hashRole(role: Role, state = 0): number {
+  for (let i = 0; i < role.length; i++) state = fxhash32(role.charCodeAt(i), state);
+  return state;
+}
+
+// the stones of a board too large for a SquareSet (five-in-a-row), in square order
+export function hashStones(stones: Map<Square, Role>, state = 0): number {
+  for (const [square, role] of [...stones].sort(([a], [b]) => a - b)) {
+    state = fxhash32(square, hashRole(role, state));
+  }
+  return state;
+}
+
+// the checkers of yonkoma, likewise
+export function hashCheckers(checkers: Map<Square, Piece>, state = 0): number {
+  for (const [square, piece] of [...checkers].sort(([a], [b]) => a - b)) {
+    state = fxhash32(square, hashRole(piece.role, fxhash32(piece.playerIndex === 'p1' ? 1 : 2, state)));
+  }
+  return state;
+}
+
 export function hashSetup(setup: Setup, state = 0): number {
   state = hashBoard(setup.board, state);
   if (setup.pockets) state = hashMaterial(setup.pockets, state);
+  if (setup.stones) state = hashStones(setup.stones, state);
+  if (setup.checkers) state = hashCheckers(setup.checkers, state);
   if (setup.turn === 'p1') state = fxhash32(1, state);
   state = fxhash128(setup.unmovedRooks.bitParts, state);
   if (defined(setup.epSquare)) state = fxhash32(setup.epSquare, state);
