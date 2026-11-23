@@ -2,6 +2,7 @@ import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import { RemainingChecks, Setup } from '../../setup';
 import { Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
+import * as score from '../score';
 import { GameFamily } from './GameFamily';
 
 export class ThreeCheck extends GameFamily {
@@ -22,6 +23,10 @@ export class ThreeCheck extends GameFamily {
 
   static override getClass() {
     return this;
+  }
+
+  static override getScoreFromFen(fen: string, playerIndex: string): number | undefined {
+    return score.threeCheck(fen, playerIndex);
   }
 
   protected constructor() {

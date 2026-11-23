@@ -23,11 +23,23 @@ export const entropy: ScoreReader = (fen, playerIndex) => +fen.split(' ')[player
 
 export const pente: ScoreReader = (fen, playerIndex) => +fen.split(' ')[playerIndex === 'p1' ? 4 : 5];
 
-export const fiveCheck: ScoreReader = (fen, playerIndex) => +fen.split(' ')[6][playerIndex === 'p1' ? 1 : 3];
+const checksGiven = (checksToWin: number): ScoreReader => (fen, playerIndex) => {
+  const fields = fen.split(' ');
+  const given = fields.find(field => /^\+\d\+\d$/.test(field));
+  if (given) return +given[playerIndex === 'p1' ? 1 : 3];
+  const remaining = fields.find(field => /^\d\+\d$/.test(field));
+  if (remaining) return checksToWin - +remaining[playerIndex === 'p1' ? 0 : 2];
+  return 0;
+};
+
+export const threeCheck: ScoreReader = checksGiven(3);
+
+export const fiveCheck: ScoreReader = checksGiven(5);
 
 const readers: Partial<Record<`${VariantKey}`, ScoreReader>> = {
   entropy,
   fiveCheck,
+  threeCheck,
   flipello: othello,
   flipello10: othello,
   antiflipello: othello,
