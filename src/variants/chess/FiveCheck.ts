@@ -1,7 +1,8 @@
 import { Result } from '@badrap/result';
 import { Context, PositionError } from '../../chess';
 import { RemainingChecks, Setup } from '../../setup';
-import { Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
+import { Move, Outcome, PlayerIndex, PLAYERINDEXES, Rules } from '../../types';
+import { opposite } from '../../util';
 import * as score from '../score';
 import { GameFamily } from './GameFamily';
 
@@ -37,6 +38,14 @@ export class FiveCheck extends GameFamily {
 
   override clone(): FiveCheck {
     return super.clone() as FiveCheck;
+  }
+
+  override play(move: Move): void {
+    super.play(move);
+    if (this.remainingChecks && this.isCheck()) {
+      const checker = opposite(this.turn);
+      this.remainingChecks[checker] = Math.max(0, this.remainingChecks[checker] - 1);
+    }
   }
 
   override hasInsufficientMaterial(playerIndex: PlayerIndex): boolean {

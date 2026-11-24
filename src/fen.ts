@@ -230,25 +230,40 @@ export const parseCastlingFen = (board: Board) => (castlingPart: fp.Option<strin
     O.toResult(fenErr(InvalidFen.Castling)),
   );
 
-export const parseRemainingChecks = (part: string): Result<fp.Option<RemainingChecks>, FenError> => {
+export const checksToWin = (rules: Rules): number => (rules === '3check' ? 3 : 5);
+
+export const parseRemainingChecks = (
+  part: string,
+  toWin: number = 5,
+): Result<fp.Option<RemainingChecks>, FenError> => {
   const parts = part.split('+');
   if (parts.length === 3 && parts[0] === '') {
     const p1 = parseSmallUint(parts[1]);
     const p2 = parseSmallUint(parts[2]);
-    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5) return Result.err(new FenError(InvalidFen.RemainingChecks));
-    return Result.ok(new RemainingChecks(5 - p1, 5 - p2)); // Old notation counting down, not used in games, therefore using highest check mode 5
+    if (!defined(p1) || p1 > toWin || !defined(p2) || p2 > toWin) {
+      return Result.err(new FenError(InvalidFen.RemainingChecks));
+    }
+    return Result.ok(new RemainingChecks(toWin - p1, toWin - p2));
   } else if (parts.length === 2) {
     const p1 = parseSmallUint(parts[0]);
     const p2 = parseSmallUint(parts[1]);
-    if (!defined(p1) || p1 > 5 || !defined(p2) || p2 > 5) return Result.err(new FenError(InvalidFen.RemainingChecks));
+    if (!defined(p1) || p1 > toWin || !defined(p2) || p2 > toWin) {
+      return Result.err(new FenError(InvalidFen.RemainingChecks));
+    }
     return Result.ok(new RemainingChecks(p1, p2));
   } else return Result.err(new FenError(InvalidFen.RemainingChecks));
 };
 
-export const parseRemainingChecksOpt = (part: fp.Option<string>): Result<fp.Option<RemainingChecks>, FenError> =>
+export const parseRemainingChecksOpt = (
+  part: fp.Option<string>,
+  toWin: number = 5,
+): Result<fp.Option<RemainingChecks>, FenError> =>
   fp.pipe(
     part,
-    O.fold(parseRemainingChecks, () => Result.ok(undefined)),
+    O.fold(
+      p => parseRemainingChecks(p, toWin),
+      () => Result.ok(undefined),
+    ),
   );
 
 type BoardAndPocketStrings = {
@@ -943,7 +958,7 @@ export const parseDefaultFen = (rules: Rules) => (fen: string): Result<Setup, Fe
           fp.pipe(parts[0], parsePlayerTurn()),
           parseCastlingFen(board)(parts[1]),
           parseFenSquare(rules)(parts[2]),
-          parseRemainingChecksOpt(hasEarlyRemainingChecks ? parts[3] : parts[5]),
+          parseRemainingChecksOpt(hasEarlyRemainingChecks ? parts[3] : parts[5], checksToWin(rules)),
           parseHalfMoves(hasEarlyRemainingChecks ? parts[4] : parts[3]),
           parseFullMoves(hasEarlyRemainingChecks ? parts[5] : parts[4]),
           parseLastMove(rules)(lastMoveParts[0]),
@@ -1099,8 +1114,8 @@ export const makeCastlingFen = (rules: Rules) => (board: Board, unmovedRooks: Sq
   return fen || '-';
 };
 
-export function makeRemainingChecks(checks: RemainingChecks): string {
-  return `${checks.p1}+${checks.p2}`;
+export function makeRemainingChecks(checks: RemainingChecks, toWin: number): string {
+  return `+${toWin - checks.p1}+${toWin - checks.p2}`;
 }
 export function mancalaScore(northScore: number | undefined, southScore: number | undefined): string {
   if (!northScore) northScore = 0;
@@ -1141,10 +1156,10 @@ const chessVariantFenParts = (rules: Rules) => (setup: Setup, opts?: FenOpts): s
   playerTurn(setup),
   makeCastlingFen(rules)(setup.board, setup.unmovedRooks, opts),
   defined(setup.epSquare) ? makeSquare(rules)(setup.epSquare) : '-',
-  ...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks)] : []),
   ...(opts?.epd
     ? []
     : [`${Math.max(0, Math.min(setup.halfmoves, 9999))}`, `${Math.max(1, Math.min(setup.fullmoves, 9999))}`]),
+  ...(setup.remainingChecks ? [makeRemainingChecks(setup.remainingChecks, checksToWin(rules))] : []),
 ];
 
 export const makeFen = (rules: Rules) => (setup: Setup, opts?: FenOpts): string => {
