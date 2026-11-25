@@ -3,6 +3,7 @@ import { Board } from '../board';
 import { Chess, IllegalSetup, PositionError } from '../chess';
 import {
   boardAndPocketStrings,
+  checksToWin,
   FenError,
   InvalidFen,
   makeFen,
@@ -191,7 +192,7 @@ export abstract class Variant extends Chess {
             fp.pipe(this.parsePlayerTurn(parts[0])),
             parseCastlingFen(board)(parts[1]),
             parseFenSquare(this.rules)(parts[2]),
-            parseRemainingChecksOpt(hasEarlyRemainingChecks ? parts[3] : parts[5]),
+            parseRemainingChecksOpt(hasEarlyRemainingChecks ? parts[3] : parts[5], checksToWin(this.rules)),
             parseHalfMoves(hasEarlyRemainingChecks ? parts[4] : parts[3]),
             parseFullMoves(hasEarlyRemainingChecks ? parts[5] : parts[4]),
             parseLastMove(this.rules)(lastMoveParts[0]),

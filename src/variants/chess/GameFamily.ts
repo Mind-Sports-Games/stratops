@@ -1,6 +1,7 @@
 import { Result } from '@badrap/result';
 import { IllegalSetup, PositionError } from '../../chess';
 import { SquareSet } from '../../squareSet';
+import { Move } from '../../types';
 import { defined, opposite } from '../../util';
 import { GameFamilyKey, VariantKey } from '../types';
 import { Variant } from '../Variant';
@@ -29,6 +30,14 @@ export abstract class GameFamily extends Variant {
       VariantKey.noCastling,
       VariantKey.monster,
     ];
+  }
+
+  override play(move: Move): void {
+    super.play(move);
+    if (this.remainingChecks && this.isCheck()) {
+      const checker = opposite(this.turn);
+      this.remainingChecks[checker] = Math.max(0, this.remainingChecks[checker] - 1);
+    }
   }
 
   protected override validate(): Result<undefined, PositionError> {

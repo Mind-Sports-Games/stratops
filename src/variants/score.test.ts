@@ -37,6 +37,7 @@ const CASES: Case[] = [
   { keys: ['entropy'], fen: '7/7/7/7/7/7/7[] w 12 7 2 50', p1: 12, p2: 7 },
   { keys: ['pente'], fen: `${Array(19).fill('19').join('/')} b 1 - 6 4 1`, p1: 6, p2: 4 },
   { keys: ['fiveCheck'], fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 +2+3', p1: 2, p2: 3 },
+  { keys: ['threeCheck'], fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 +1+2', p1: 1, p2: 2 },
 ];
 
 const UNSCORED_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -57,6 +58,12 @@ describe('score', () => {
     const variant = variantClassFromKey(key);
     expect(variant.getScoreFromFen(fen, 'p1')).toBe(p1);
     expect(variant.getScoreFromFen(fen, 'p2')).toBe(p2);
+  });
+
+  it('reads checks given from the remaining-checks form', () => {
+    expect(getScoreFromFen('fiveCheck', 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 5+5 0 1', 'p1')).toBe(0);
+    expect(getScoreFromFen('threeCheck', 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 2+1 0 1', 'p1')).toBe(1);
+    expect(getScoreFromFen('threeCheck', 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 2+1 0 1', 'p2')).toBe(2);
   });
 
   it('scores the families that have a score, and only those', () => {
@@ -80,6 +87,7 @@ describe('score', () => {
         'octagonflipello',
         'oware',
         'pente',
+        'threeCheck',
         'togyzkumalak',
       ].sort(),
     );
