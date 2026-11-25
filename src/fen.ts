@@ -234,7 +234,7 @@ export const checksToWin = (rules: Rules): number => (rules === '3check' ? 3 : 5
 
 export const parseRemainingChecks = (
   part: string,
-  toWin: number = 5,
+  toWin: number,
 ): Result<fp.Option<RemainingChecks>, FenError> => {
   const parts = part.split('+');
   if (parts.length === 3 && parts[0] === '') {
@@ -256,7 +256,7 @@ export const parseRemainingChecks = (
 
 export const parseRemainingChecksOpt = (
   part: fp.Option<string>,
-  toWin: number = 5,
+  toWin: number,
 ): Result<fp.Option<RemainingChecks>, FenError> =>
   fp.pipe(
     part,
